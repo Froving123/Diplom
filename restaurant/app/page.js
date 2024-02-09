@@ -1,5 +1,13 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { Welcome } from "";
+import { Advantages } from "";
+import { Our_story } from "";
+import { Discount } from "";
+import { Our_menu } from "";
+import { Delivery_menu } from "";
+import { Feedback } from "";
+import { Gallery } from "";
+import { Forma_feedback } from "";
+
 
 export default function Home() {
   return (

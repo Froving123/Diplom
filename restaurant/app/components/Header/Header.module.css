@@ -1,0 +1,24 @@
+.header{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: black;    
+    padding: 0px 70px;
+    height: max-content;
+}
+
+.logo{
+    width: 150px;
+    height: 120px;
+}
+
+.ul_header{
+    display: flex;
+    align-items: center;
+    list-style: none;
+    gap: 55px;
+}
+
+.nav_p{
+    font-size: 30px;   
+}

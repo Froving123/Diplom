@@ -1,0 +1,41 @@
+@font-face {
+  font-family: "Tinos-Regular";
+  src: url(../public/fonts/Tinos-Regular.ttf);
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Tinos-Italic";
+  src: url(../public/fonts/Tinos-Italic.ttf);
+  font-style: italic;
+  font-display: swap;
+}
+
+body {
+  width: 100%;
+  margin: 0%;
+  padding: 0%;
+  line-height: 25px;
+  font-family: "Tinos-Regular";
+  background-color: whitesmoke;
+  display: grid;
+  grid-template-rows: 88px 1fr 72px;
+}
+
+main{
+  margin-top: 30px;
+}
+
+.a_nav{
+  text-decoration: none;
+  color: rgb(252, 130, 37);
+  transition: 0.2s;
+}
+
+.a_nav:hover{
+  color: white;
+}
+
+button {
+  cursor: pointer;
+}
