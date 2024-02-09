@@ -1,0 +1,37 @@
+.our_story {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 90px;
+  padding: 0px 125px;
+  gap: 50px;
+}
+
+.left_story {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.story_h {
+  color: rgb(188, 144, 96);
+  font-size: 60px;
+}
+
+.story_p {
+  color: rgb(82, 82, 82);
+  font-size: 27px;
+  line-height: 32px;
+}
+
+.right_story {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.story_img {
+  height: 580px;
+  width: 620px;
+}

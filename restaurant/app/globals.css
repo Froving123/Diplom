@@ -22,17 +22,22 @@ body {
   grid-template-rows: 88px 1fr 72px;
 }
 
-main{
+main {
   margin-top: 30px;
 }
 
-.a_nav{
+.logo {
+  width: 150px;
+  height: 120px;
+}
+
+.a_nav {
   text-decoration: none;
   color: rgb(252, 130, 37);
   transition: 0.2s;
 }
 
-.a_nav:hover{
+.a_nav:hover {
   color: white;
 }
 

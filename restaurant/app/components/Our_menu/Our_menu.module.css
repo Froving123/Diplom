@@ -1,0 +1,20 @@
+.our_menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 30px;
+  gap: 30px;
+}
+
+.menu_h {
+  color: rgb(188, 144, 96);
+  letter-spacing: 2px;
+  font-size: 70px;
+}
+
+.menu {
+  height: 1500px;
+  width: 1300px;
+  box-shadow: 10px 10px 40px 20px #0000001a;
+  border-radius: 5px;
+}
