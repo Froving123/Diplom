@@ -1,5 +1,5 @@
 .discount {
-  background-image: url(./images/discount_back.png);
+  /*background-image: url(./images/discount_back.png);*/
   background-size: cover;
   background-repeat: no-repeat;
   display: flex;

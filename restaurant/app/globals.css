@@ -26,21 +26,6 @@ main {
   margin-top: 30px;
 }
 
-.logo {
-  width: 150px;
-  height: 120px;
-}
-
-.a_nav {
-  text-decoration: none;
-  color: rgb(252, 130, 37);
-  transition: 0.2s;
-}
-
-.a_nav:hover {
-  color: white;
-}
-
 button {
   cursor: pointer;
 }

@@ -7,11 +7,26 @@
   height: max-content;
 }
 
+.logo {
+  width: 150px;
+  height: 120px;
+}
+
 .ul_header {
   display: flex;
   align-items: center;
   list-style: none;
   gap: 55px;
+}
+
+.a_nav {
+  text-decoration: none;
+  color: rgb(252, 130, 37);
+  transition: 0.2s;
+}
+
+.a_nav:hover {
+  color: white;
 }
 
 .nav_p {
