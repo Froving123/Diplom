@@ -3,7 +3,7 @@ import Styles from "./Header.module.css";
 export const Header = () => {
   return (
     <header className={Styles.header}>
-      <img className={Styles.logo} src="./images/logo.png" />
+      <img className={Styles.logo} src="images/logo.png" />
       <nav>
         <ul className={Styles.ul_header}>
           <li className={Styles.nav_p}>

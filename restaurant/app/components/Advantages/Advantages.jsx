@@ -4,7 +4,7 @@ export const Advantages = () => {
   return (
     <div className={Styles.advantages}>
       <div className={Styles.advantage}>
-        <img className={Styles.advantages_img} src="./images/rest.png" />
+        <img className={Styles.advantages_img} src="images/rest.png" />
         <p className={Styles.advantage_main}>
           Магическая <b>Атмосфера</b>
         </p>
@@ -14,7 +14,7 @@ export const Advantages = () => {
         </p>
       </div>
       <div className={Styles.advantage}>
-        <img className={Styles.advantages_img} src="./images/good.png" />
+        <img className={Styles.advantages_img} src="images/good.png" />
         <p className={Styles.advantage_main}>
           Лучшее качество <b>Еды</b>
         </p>
@@ -23,7 +23,7 @@ export const Advantages = () => {
         </p>
       </div>
       <div className={Styles.advantage}>
-        <img className={Styles.advantages_img} src="./images/low.png" />
+        <img className={Styles.advantages_img} src="images/low.png" />
         <p className={Styles.advantage_main}>
           Недорогая <b>Еда</b>
         </p>
@@ -33,7 +33,7 @@ export const Advantages = () => {
         </p>
       </div>
       <div className={Styles.advantage}>
-        <img className={Styles.advantages_img} src="./images/delivery.png" />
+        <img className={Styles.advantages_img} src="images/delivery.png" />
         <p className={Styles.advantage_main}>
           Еда прямо до <b>Дома</b>
         </p>

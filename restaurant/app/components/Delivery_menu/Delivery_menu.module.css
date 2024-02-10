@@ -1,5 +1,5 @@
 .delivery_menu {
-  /*background-image: url(./images/back_menu.png);*/
+  background-image: url('/images/back_menu.png');
   background-size: cover;
   background-repeat: no-repeat;
   background-position: top;
