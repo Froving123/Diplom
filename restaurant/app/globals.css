@@ -29,3 +29,15 @@ main {
 button {
   cursor: pointer;
 }
+
+@media screen and (max-width: 500px) {
+  body {
+    width: 100%;
+    line-height: 20px;
+  }
+
+  main {
+    max-width: 100%;
+    margin-top: 30px;
+  }
+}
