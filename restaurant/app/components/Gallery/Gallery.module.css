@@ -29,3 +29,8 @@
   border-radius: 10px;
   box-shadow: 10px 10px 40px 20px #0000001a;
 }
+
+@media screen and (max-width: 500px){
+  
+}
+

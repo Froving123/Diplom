@@ -9,6 +9,7 @@
 
 .top_footer {
   display: flex;
+  align-items: center;
   justify-content: space-between;
   height: max-content;
   margin-bottom: 15px;
@@ -52,12 +53,34 @@
 
 @media screen and (max-width: 500px) {
   .all_footer {
+    width: 100%;
     padding: 0px 10px;
   }
 
   .logo {
     width: 80px;
     height: 60px;
+  }
+
+  .top_footer {
+    margin-bottom: 10px;
+  }
+
+  .footer_info {
+    margin-top: 10px;
+  }
+
+  .top_fot_h {
+    margin-bottom: 5px;
+    font-size: 15px;
+  }
+
+  .top_fot_p {
+    font-size: 12px;
+  }
+
+  .fot_copyright {
+    font-size: 10px;
   }
 
 }

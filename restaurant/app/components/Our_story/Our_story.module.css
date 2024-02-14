@@ -35,3 +35,25 @@
   height: 580px;
   width: 620px;
 }
+
+@media screen and (max-width: 500px){
+  .our_story {
+    margin-top: 30px;
+    padding: 0px 25px;
+    gap: 10px;
+  }
+
+  .story_h {
+    font-size: 33px;
+  }
+
+  .story_p {
+    font-size: 12px;
+    line-height: 17px;
+  }
+
+  .story_img {
+    height: 180px;
+    width: 220px;
+  }  
+}

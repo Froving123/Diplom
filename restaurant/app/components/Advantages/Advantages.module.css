@@ -18,6 +18,11 @@
   padding: 30px 40px 10px 40px;
 }
 
+.advantages_img {
+  height: 140px;
+  width: 140px;
+}
+
 .advantage_main {
   font-size: 25px;
   color: rgb(188, 144, 96);
@@ -28,7 +33,35 @@
   font-size: 21px;
 }
 
-.advantages_img {
-  height: 140px;
-  width: 140px;
+@media screen and (max-width: 500px) {
+  .advantages {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 110px;
+    vertical-align: top;
+    flex-wrap: wrap;
+  }
+
+  .advantage {
+    border: 1px solid rgb(188, 144, 96);
+    box-shadow: 5px 5px 20px 10px #0000001a;
+    margin-top: -120px;
+    border-radius: 8px;
+    padding: 10px 20px 5px 20px;
+  }
+
+  .advantage_main {
+    font-size: 17px;
+  }
+
+  .advantage_p {
+    font-size: 11px;
+  }
+
+  .advantages_img {
+    height: 80px;
+    width: 80px;
+  }
 }
