@@ -30,7 +30,24 @@
   box-shadow: 10px 10px 40px 20px #0000001a;
 }
 
-@media screen and (max-width: 500px){
-  
-}
+@media screen and (max-width: 500px) {
+  .gallery {
+    padding: 40px 0px 50px 0px;
+    gap: 60px;
+  }
 
+  .gallery_h {
+    letter-spacing: 1px;
+    font-size: 55px;
+  }
+
+  .imges_rest {
+    gap: 70px;
+  }
+
+  .img_rest {
+    height: 220px;
+    width: 320px;
+    border-radius: 7px;
+  }
+}

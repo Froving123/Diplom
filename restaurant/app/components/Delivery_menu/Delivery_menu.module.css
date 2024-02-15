@@ -1,5 +1,5 @@
 .delivery_menu {
-  background-image: url('/images/back_menu.png');
+  background-image: url("/images/back_menu.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: top;
@@ -73,12 +73,6 @@
   padding-right: 55px;
 }
 
-.strike {
-  font-weight: 700;
-  letter-spacing: 1px;
-  font-size: 20px;
-}
-
 .lowprice_menu {
   font-weight: 700;
   font-size: 35px;
@@ -103,6 +97,58 @@
   color: black;
 }
 
-@media screen and (max-width: 500px){
-  
+@media screen and (max-width: 500px) {
+  .delivery_menu {
+    margin-top: 40px;
+    gap: 30px;
+  }
+
+  .delivery_h {
+    margin-top: 50px;
+    letter-spacing: 2px;
+    font-size: 40px;
+  }
+
+  .foods {
+    margin-top: 20px;
+    padding: 0px 25px 50px 25px;
+    gap: 100px;
+  }
+
+  .food {
+    border-radius: 7px;
+    gap: 12px;
+    padding: 10px 25px;
+  }
+
+  .img_food {
+    height: 150px;
+    width: 150px;
+    border-radius: 7px;
+  }
+
+  .food_h {
+    font-size: 27px;
+    line-height: 29px;
+  }
+
+  .price_menu {
+    font-size: 22px;
+  }
+
+  .lowprice_div {
+    gap: 5px;
+    padding-right: 55px;
+  }
+
+  .lowprice_menu {
+    font-weight: 700;
+    font-size: 29px;
+  }
+
+  .button_menu_delivery {
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 15px;
+  }
 }

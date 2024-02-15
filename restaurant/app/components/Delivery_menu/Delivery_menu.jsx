@@ -53,7 +53,7 @@ export const Delivery_menu = () => {
           <h3 className={Styles.food_h}>Буррито</h3>
           <div className={Styles.lowprice_div}>
             <p className={Styles.price_menu}>
-              <strike className="strike">1000₽</strike>
+              <strike>1000₽</strike>
             </p>
             <p className={Styles.lowprice_menu}>
               <sub>500₽</sub>

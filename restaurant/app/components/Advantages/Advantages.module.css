@@ -36,20 +36,18 @@
 @media screen and (max-width: 500px) {
   .advantages {
     width: 100%;
-    display: flex;
     justify-content: center;
     align-items: center;
-    gap: 110px;
-    vertical-align: top;
+    gap: 170px;
     flex-wrap: wrap;
   }
 
   .advantage {
     border: 1px solid rgb(188, 144, 96);
     box-shadow: 5px 5px 20px 10px #0000001a;
-    margin-top: -120px;
+    margin-top: -100px;
     border-radius: 8px;
-    padding: 10px 20px 5px 20px;
+    padding: 10px 25px 5px 25px;
   }
 
   .advantage_main {
