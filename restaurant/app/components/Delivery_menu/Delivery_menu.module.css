@@ -97,8 +97,9 @@
   color: black;
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 600px) and (orientation: landscape) {
   .delivery_menu {
+    max-width: 100%;
     margin-top: 40px;
     gap: 30px;
   }

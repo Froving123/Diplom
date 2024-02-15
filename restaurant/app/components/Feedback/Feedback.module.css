@@ -155,7 +155,19 @@
   color: black;
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 600px) and (orientation: landscape) {
+  .slider {
+    max-width: 100%;
+  }
+
+  .slider_line {
+    max-width: 300%;
+  }
+
+  .sliders {
+    max-width: 100%;
+  }
+
   .feedback_one {
     padding: 30px 0px 40px 0px;
   }

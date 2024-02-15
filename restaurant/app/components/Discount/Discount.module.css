@@ -53,8 +53,9 @@
   color: black;
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 600px) and (orientation: landscape) {
   .discount {
+    max-width: 100%;
     margin-top: 30px;
     padding: 10px 25px;
     gap: 25px;

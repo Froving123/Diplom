@@ -78,8 +78,9 @@
   color: black;
 }
 
-@media screen and (max-width: 500px) {
+@media screen and (max-width: 600px) and (orientation: landscape) {
   .forma {
+    max-width: 100%;
     flex-direction: column;
     align-items: center;
     padding: 40px 25px 22px 25px;
