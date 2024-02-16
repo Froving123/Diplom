@@ -78,17 +78,17 @@
   color: black;
 }
 
-@media screen and (max-width: 600px) and (orientation: landscape) {
+@media screen and (max-width: 500px) {
   .forma {
     max-width: 100%;
     flex-direction: column;
     align-items: center;
-    padding: 40px 25px 22px 25px;
+    padding: 20px 5px 22px 5px;
   }
 
   .left_form {
     margin-top: 0px;
-    gap: 5px;
+    gap: 0px;
   }
 
   .form_h {
@@ -108,10 +108,10 @@
   }
 
   .input_name {
-    width: 22%;
+    width: 32%;
     border-radius: 3px;
     font-size: 15px;
-    margin: 5px 5px 15px 5px;
+    margin: 5px 5px 10px 5px;
     padding: 5px;
   }
 
@@ -126,8 +126,62 @@
 
   .button_form {
     border-radius: 7px;
-    margin: 15px 0px 0px 165px;
-    padding: 5px 20px;
+    margin: 15px 0px 0px 0px;
+    padding: 5px 15px;
     font-size: 20px;
+  }
+}
+
+@media screen and (min-width: 501px) and (max-width: 750px) {
+  .forma {
+    max-width: 100%;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 10px 35px 10px;
+  }
+
+  .left_form {
+    margin-top: 0px;
+    gap: 10px;
+  }
+
+  .form_h {
+    font-size: 50px;
+    line-height: 50px;
+    letter-spacing: 4px;
+  }
+
+  .form_p {
+    font-size: 25px;
+    line-height: 25px;
+  }
+
+  .form_i {
+    font-size: 25px;
+    margin: 5px;
+  }
+
+  .input_name {
+    width: 45%;
+    border-radius: 3px;
+    font-size: 18px;
+    margin: 5px 5px 20px 5px;
+    padding: 5px;
+  }
+
+  .input_massage {
+    border-radius: 5px;
+    font-size: 18px;
+    margin: 5px;
+    padding: 5px;
+    height: 180px;
+    width: 400px;
+  }
+
+  .button_form {
+    border-radius: 7px;
+    margin: 15px 0px 0px 0px;
+    padding: 10px 20px;
+    font-size: 23px;
   }
 }

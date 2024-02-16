@@ -53,12 +53,41 @@
   color: black;
 }
 
-@media screen and (max-width: 600px) and (orientation: landscape) {
+@media screen and (max-width: 500px) {
+  .discount {
+    max-width: 100%;
+    margin-top: 20px;
+    padding: 10px 15px;
+    gap: 15px;
+  }
+
+  .left_discount {
+    gap: 0px;
+  }
+
+  .discount_h {
+    letter-spacing: 1px;
+    font-size: 20px;
+    line-height: 20px;
+  }
+
+  .discount_p {
+    font-size: 12px;
+  }
+
+  .button_delivery {
+    border-radius: 7px;
+    padding: 8px 13px;
+    font-size: 17px;
+  }
+}
+
+@media screen and (min-width: 501px) and (max-width: 750px) {
   .discount {
     max-width: 100%;
     margin-top: 30px;
-    padding: 10px 25px;
-    gap: 25px;
+    padding: 15px 20px;
+    gap: 15px;
   }
 
   .left_discount {
@@ -66,9 +95,9 @@
   }
 
   .discount_h {
-    letter-spacing: 1px;
-    font-size: 25px;
-    line-height: 25px;
+    letter-spacing: 2px;
+    font-size: 23px;
+    line-height: 23px;
   }
 
   .discount_p {
@@ -76,8 +105,8 @@
   }
 
   .button_delivery {
-    border-radius: 7px;
-    padding: 10px 20px;
+    border-radius: 9px;
+    padding: 10px 15px;
     font-size: 20px;
   }
 }

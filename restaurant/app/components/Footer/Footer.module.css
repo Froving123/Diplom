@@ -51,10 +51,10 @@
   font-size: 20px;
 }
 
-@media screen and (max-width: 600px) and (orientation: landscape) {
+@media screen and (max-width: 500px) {
   .all_footer {
     max-width: 100%;
-    padding: 0px 10px;
+    padding: 0px 5px;
   }
 
   .logo {
@@ -63,11 +63,11 @@
   }
 
   .top_footer {
-    margin-bottom: 10px;
+    margin-bottom: 0px;
   }
 
   .footer_info {
-    margin-top: 10px;
+    margin-top: 8px;
   }
 
   .top_fot_h {
@@ -80,6 +80,41 @@
   }
 
   .fot_copyright {
-    font-size: 10px;
+    font-size: 8px;
+    margin: 0%;
+  }
+}
+
+@media screen and (min-width: 501px) and (max-width: 750px) {
+  .all_footer {
+    max-width: 100%;
+    padding: 5px 15px;
+  }
+
+  .logo {
+    width: 95px;
+    height: 70px;
+  }
+
+  .top_footer {
+    margin-bottom: 0px;
+  }
+
+  .footer_info {
+    margin-top: 10px;
+  }
+
+  .top_fot_h {
+    margin-bottom: 7px;
+    font-size: 15px;
+  }
+
+  .top_fot_p {
+    font-size: 11px;
+  }
+
+  .fot_copyright {
+    font-size: 12px;
+    margin: 0%;
   }
 }

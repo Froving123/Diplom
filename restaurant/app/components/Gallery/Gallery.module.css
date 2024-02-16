@@ -30,11 +30,11 @@
   box-shadow: 10px 10px 40px 20px #0000001a;
 }
 
-@media screen and (max-width: 600px) and (orientation: landscape) {
+@media screen and (max-width: 500px) {
   .gallery {
     max-width: 100%;
-    padding: 40px 0px 50px 0px;
-    gap: 60px;
+    padding: 30px 0px 30px 0px;
+    gap: 50px;
   }
 
   .gallery_h {
@@ -43,12 +43,35 @@
   }
 
   .imges_rest {
-    gap: 70px;
+    gap: 50px;
   }
 
   .img_rest {
     height: 220px;
     width: 320px;
+    border-radius: 7px;
+  }
+}
+
+@media screen and (min-width: 501px) and (max-width: 750px) {
+  .gallery {
+    max-width: 100%;
+    padding: 40px 0px 50px 0px;
+    gap: 55px;
+  }
+
+  .gallery_h {
+    letter-spacing: 2px;
+    font-size: 65px;
+  }
+
+  .imges_rest {
+    gap: 70px;
+  }
+
+  .img_rest {
+    height: 320px;
+    width: 420px;
     border-radius: 7px;
   }
 }

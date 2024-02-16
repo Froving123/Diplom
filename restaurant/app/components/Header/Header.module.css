@@ -33,10 +33,10 @@
   font-size: 30px;
 }
 
-@media screen and (max-width: 600px) and (orientation: landscape) {
+@media screen and (max-width: 500px) {
   .header {
     max-width: 100%;
-    padding: 0px 10px;
+    padding: 0px 5px;
   }
 
   .logo {
@@ -45,10 +45,30 @@
   }
 
   .ul_header {
-    gap: 15px;
+    gap: 10px;
   }
 
   .nav_p {
     font-size: 15px;
+  }
+}
+
+@media screen and (min-width: 501px) and (max-width: 750px) {
+  .header {
+    max-width: 100%;
+    padding: 5px 15px;
+  }
+
+  .logo {
+    width: 95px;
+    height: 70px;
+  }
+
+  .ul_header {
+    gap: 20px;
+  }
+
+  .nav_p {
+    font-size: 18px;
   }
 }

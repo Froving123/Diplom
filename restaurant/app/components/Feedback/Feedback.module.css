@@ -155,7 +155,7 @@
   color: black;
 }
 
-@media screen and (max-width: 600px) and (orientation: landscape) {
+@media screen and (max-width: 500px) {
   .slider {
     max-width: 100%;
   }
@@ -169,7 +169,7 @@
   }
 
   .feedback_one {
-    padding: 30px 0px 40px 0px;
+    padding: 20px 5px 40px 5px;
   }
 
   .feedback_h1 {
@@ -184,15 +184,15 @@
   }
 
   .feedback_p1 {
-    font-size: 15px;
+    font-size: 17px;
   }
 
   .feedback_name1 {
-    font-size: 15px;
+    font-size: 17px;
   }
 
   .feedback_two {
-    padding: 30px 0px 40px 0px;
+    padding: 20px 5px 40px 5px;
   }
 
   .feedback_h2 {
@@ -207,15 +207,15 @@
   }
 
   .feedback_p2 {
-    font-size: 15px;
+    font-size: 17px;
   }
 
   .feedback_name2 {
-    font-size: 15px;
+    font-size: 17px;
   }
 
   .feedback_three {
-    padding: 30px 0px 40px 0px;
+    padding: 20px 5px 40px 5px;
   }
 
   .feedback_h3 {
@@ -230,22 +230,117 @@
   }
 
   .feedback_p3 {
-    font-size: 15px;
+    font-size: 17px;
   }
 
   .feedback_name3 {
-    font-size: 15px;
+    font-size: 17px;
   }
 
   .slider_left {
-    padding: 5px 5px 5px 15px;
+    padding: 8px 8px 8px 13px;
     font-size: 25px;
     border-radius: 7px;
   }
 
   .slider_right {
-    padding: 5px 5px 5px 15px;
+    padding: 8px 8px 8px 13px;
     font-size: 25px;
+    border-radius: 7px;
+  }
+}
+
+@media screen and (min-width: 501px) and (max-width: 750px) {
+  .slider {
+    max-width: 100%;
+  }
+
+  .slider_line {
+    max-width: 300%;
+  }
+
+  .sliders {
+    max-width: 100%;
+  }
+
+  .feedback_one {
+    padding: 20px 10px 40px 10px;
+  }
+
+  .feedback_h1 {
+    font-size: 18px;
+    line-height: 24px;
+    margin-bottom: 30px;
+  }
+
+  .img_profile1 {
+    width: 90px;
+    height: 89px;
+  }
+
+  .feedback_p1 {
+    font-size: 20px;
+  }
+
+  .feedback_name1 {
+    font-size: 20px;
+  }
+
+  .feedback_two {
+    padding: 20px 10px 40px 10px;
+  }
+
+  .feedback_h2 {
+    font-size: 18px;
+    line-height: 24px;
+    margin-bottom: 30px;
+  }
+
+  .img_profile2 {
+    width: 90px;
+    height: 89px;
+  }
+
+  .feedback_p2 {
+    font-size: 20px;
+  }
+
+  .feedback_name2 {
+    font-size: 20px;
+  }
+
+  .feedback_three {
+    padding: 20px 10px 40px 10px;
+  }
+
+  .feedback_h3 {
+    font-size: 18px;
+    line-height: 24px;
+    margin-bottom: 30px;
+  }
+
+  .img_profile3 {
+    width: 90px;
+    height: 89px;
+  }
+
+  .feedback_p3 {
+    font-size: 20px;
+  }
+
+  .feedback_name3 {
+    font-size: 20px;
+  }
+
+  .slider_left {
+    padding: 10px 10px 10px 15px;
+    font-size: 30px;
+    border-radius: 7px;
+  }
+
+  .slider_right {
+    padding: 10px 10px 10px 15px;
+    font-size: 30px;
     border-radius: 7px;
   }
 }
