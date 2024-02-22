@@ -1,0 +1,48 @@
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  background-color: whitesmoke;
+  border-radius: 5px;
+  padding: 32px 78px;
+  display: none;
+  z-index: 3;
+}
+
+.popup_is-opened {
+  display: block;
+}
+
+.close {
+  background-color: transparent;
+  border: none;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.close-icon {
+  width: 16px;
+  height: 25px;
+  transition: 0.3s;
+}
+
+.close-icon:hover {
+  opacity: 0.6;
+}
+
+@media screen and (max-width: 500px) {
+  .popup {
+    width: 70%;
+    padding: 25px 50px;
+  }
+}
+
+@media screen and (min-width: 501px) and (max-width: 750px) {
+  .popup {
+    width: 70%;
+    padding: 30px 60px;
+  }
+}

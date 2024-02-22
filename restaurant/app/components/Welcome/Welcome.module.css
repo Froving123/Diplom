@@ -49,7 +49,7 @@
   transition: 0.5s;
 }
 
-.button_menu:hover {
+.button_reserv:hover {
   background-color: rgb(253, 116, 57);
   color: black;
 }
