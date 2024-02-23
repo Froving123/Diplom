@@ -19,7 +19,7 @@
   gap: 55px;
 }
 
-.a_nav {
+.nav_link{
   text-decoration: none;
   color: rgb(252, 130, 37);
   transition: 0.2s;
@@ -39,7 +39,7 @@
   transition: 0.2s;
 }
 
-.a_nav:hover,
+.nav_link:hover,
 .button_profile:hover {
   color: white;
 }

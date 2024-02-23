@@ -1,6 +1,7 @@
 "use client";
 
 import Styles from "./Header.module.css";
+import Link from "next/link";
 import { useState } from "react";
 import { Overlay } from "../Overlay/Overlay";
 import { Popup } from "../Popup/Popup";
@@ -8,7 +9,7 @@ import { AuthForm } from "../AuthForm/AuthForm";
 
 export const Header = () => {
   const [popupIsOpened, setPopupIsOpened] = useState(false);
-  
+
   const openPopup = () => {
     setPopupIsOpened(true);
   };
@@ -22,25 +23,25 @@ export const Header = () => {
       <img className={Styles.logo} src="images/logo.png" />
       <nav>
         <ul className={Styles.ul_header}>
-        <li className={Styles.nav_p}>
-            <a className={Styles.a_nav} href="#">
-              О нас
-            </a>
+          <li className={Styles.nav_p}>
+            <Link className={Styles.nav_link} href="About.js">
+              <p>О нас</p>
+            </Link>
           </li>
           <li className={Styles.nav_p}>
-            <a className={Styles.a_nav} href="#nav_two">
-              Меню
-            </a>
+          <Link className={Styles.nav_link} href="About.js">
+              <p>Меню</p>
+            </Link>
           </li>
           <li className={Styles.nav_p}>
-            <a className={Styles.a_nav} href="#nav_three">
-              Доставка
-            </a>
+          <Link className={Styles.nav_link} href="About.js">
+              <p>Доставка</p>
+            </Link>
           </li>
           <li className={Styles.nav_p}>
-            <a className={Styles.a_nav} href="shopping_cart.html">
-              Корзина
-            </a>
+          <Link className={Styles.nav_link} href="About.js">
+              <p>Корзина</p>
+            </Link>
           </li>
           <li className={Styles.nav_p}>
             <button className={Styles.button_profile} onClick={openPopup}>
@@ -49,9 +50,9 @@ export const Header = () => {
           </li>
         </ul>
       </nav>
-      <Overlay isOpened={popupIsOpened} close={closePopup}/>
+      <Overlay isOpened={popupIsOpened} close={closePopup} />
       <Popup isOpened={popupIsOpened} close={closePopup}>
-          <AuthForm />
+        <AuthForm />
       </Popup>
     </header>
   );
