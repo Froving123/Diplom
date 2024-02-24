@@ -1,4 +1,5 @@
 import Styles from "./Discount.module.css";
+import Link from "next/link";
 
 export const Discount = () => {
   return (
@@ -10,9 +11,9 @@ export const Discount = () => {
         <p className={Styles.discount_p}>Только в этом месяце завтраки от 500 ₽</p>
       </div>
       <div className={Styles.right_discount}>
-        <a href="#nav_three">
+        <Link href="/Delivery">
           <button className={Styles.button_delivery}>Заказать</button>
-        </a>
+        </Link>
       </div>
     </div>
   );

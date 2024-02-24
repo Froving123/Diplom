@@ -20,26 +20,28 @@ export const Header = () => {
 
   return (
     <header className={Styles.header}>
-      <img className={Styles.logo} src="images/logo.png" />
+      <Link href="/">
+        <img className={Styles.logo} src="images/logo.png" />
+      </Link>
       <nav>
         <ul className={Styles.ul_header}>
           <li className={Styles.nav_p}>
-            <Link className={Styles.nav_link} href="/Our_story.jsx">
+            <Link className={Styles.nav_link} href="/AboutUs">
               <p>О нас</p>
             </Link>
           </li>
           <li className={Styles.nav_p}>
-          <Link className={Styles.nav_link} href="/">
+            <Link className={Styles.nav_link} href="/Menu">
               <p>Меню</p>
             </Link>
           </li>
           <li className={Styles.nav_p}>
-          <Link className={Styles.nav_link} href="/">
+            <Link className={Styles.nav_link} href="/Delivery">
               <p>Доставка</p>
             </Link>
           </li>
           <li className={Styles.nav_p}>
-          <Link className={Styles.nav_link} href="/">
+            <Link className={Styles.nav_link} href="/ShoppingCart">
               <p>Корзина</p>
             </Link>
           </li>

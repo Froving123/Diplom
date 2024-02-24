@@ -2,7 +2,7 @@ import Styles from "./Feedback.module.css";
 
 export const Feedback = () => {
   return (
-    <>
+    <div className={Styles.feedback}>
       <div className={Styles.slider}>
         <div className={Styles.slider_line}>
           <div className={Styles.sliders}>
@@ -52,6 +52,6 @@ export const Feedback = () => {
         <button className={Styles.slider_left}>&#10148;</button>
         <button className={Styles.slider_right}>&#10148;</button>
       </div>
-    </>
+    </div>
   );
 };

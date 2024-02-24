@@ -1,3 +1,10 @@
+.feedback{
+  display: flex;
+  flex-direction: column;
+  height: max-content;
+  background-color: white;
+}
+
 .slider {
   width: 100%;
   overflow: hidden;

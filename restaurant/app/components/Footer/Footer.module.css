@@ -20,6 +20,10 @@
   height: 120px;
 }
 
+.logo:hover{
+  box-shadow: 5px 10px 40px 20px rgba(255, 115, 0, 0.179);
+}
+
 .footer_info {
   display: flex;
   flex-direction: column;
