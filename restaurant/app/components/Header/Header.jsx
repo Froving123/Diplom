@@ -24,22 +24,22 @@ export const Header = () => {
       <nav>
         <ul className={Styles.ul_header}>
           <li className={Styles.nav_p}>
-            <Link className={Styles.nav_link} href="About.js">
+            <Link className={Styles.nav_link} href="/Our_story.jsx">
               <p>О нас</p>
             </Link>
           </li>
           <li className={Styles.nav_p}>
-          <Link className={Styles.nav_link} href="About.js">
+          <Link className={Styles.nav_link} href="/">
               <p>Меню</p>
             </Link>
           </li>
           <li className={Styles.nav_p}>
-          <Link className={Styles.nav_link} href="About.js">
+          <Link className={Styles.nav_link} href="/">
               <p>Доставка</p>
             </Link>
           </li>
           <li className={Styles.nav_p}>
-          <Link className={Styles.nav_link} href="About.js">
+          <Link className={Styles.nav_link} href="/">
               <p>Корзина</p>
             </Link>
           </li>
