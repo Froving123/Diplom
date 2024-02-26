@@ -19,11 +19,6 @@ body {
   font-family: "Tinos-Regular";
   background-color: whitesmoke;
   display: grid;
-  grid-template-rows: 88px 1fr 72px;
-}
-
-main {
-  margin-top: 30px;
 }
 
 button {
@@ -38,7 +33,6 @@ button {
 
   main {
     max-width: 100%;
-    margin-top: -37px;
   }
 }
 
@@ -50,6 +44,5 @@ button {
 
   main {
     max-width: 100%;
-    margin-top: -8px;
   }
 }

@@ -27,22 +27,22 @@ export const Header = () => {
         <ul className={Styles.ul_header}>
           <li className={Styles.nav_p}>
             <Link className={Styles.nav_link} href="/AboutUs">
-              <p>О нас</p>
+              О нас
             </Link>
           </li>
           <li className={Styles.nav_p}>
             <Link className={Styles.nav_link} href="/Menu">
-              <p>Меню</p>
+              Меню
             </Link>
           </li>
           <li className={Styles.nav_p}>
             <Link className={Styles.nav_link} href="/Delivery">
-              <p>Доставка</p>
+              Доставка
             </Link>
           </li>
           <li className={Styles.nav_p}>
             <Link className={Styles.nav_link} href="/ShoppingCart">
-              <p>Корзина</p>
+              Корзина
             </Link>
           </li>
           <li className={Styles.nav_p}>

@@ -2,7 +2,7 @@ import Styles from "./Delivery_menu.module.css";
 
 export const Delivery_menu = () => {
   return (
-    <div className={Styles.delivery_menu} id="nav_three">
+    <div className={Styles.delivery_menu}>
       <h2 className={Styles.delivery_h}>Закажите до дома</h2>
       <div className={Styles.foods}>
         <div className={Styles.food}>
