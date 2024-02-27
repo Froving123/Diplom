@@ -6,7 +6,6 @@ export const AuthForm = () => {
       <h2 className={Styles['form__title']}>Авторизация</h2>
       <div className={Styles['form__fields']}>
         <label className={Styles['form__field']}>
-          <span className={Styles['form__field-title']}>Email</span>
           <input className={Styles['form__field-input']} type="email" placeholder="example@gmail.com"/>
         </label>
         <label className={Styles['form__field']}>

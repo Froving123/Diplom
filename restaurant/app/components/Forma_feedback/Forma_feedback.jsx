@@ -12,25 +12,14 @@ export const Forma_feedback = () => {
         </p>
       </div>
       <form className={Styles.right_form}>
-        <label className={Styles.form_i} for={Styles.input_name}>
-          Имя
+        <label className={Styles.form_i}>
+          <span className={Styles.form_i}>Имя</span>
+          <input className={Styles.input_name} type="text" placeholder="Иван" />
         </label>
-        <input
-          className={Styles.input_name}
-          type="text"
-          id="input_name"
-          name="input_name"
-          placeholder="Иван"
-        />
-        <label className={Styles.form_i} for={Styles.input_massage}>
-          Ваш отзыв
+        <label className={Styles.form_i}>
+          <span className={Styles.form_i}>Ваш отзыв</span>
+          <textarea className={Styles.input_massage} type="text"></textarea>
         </label>
-        <textarea
-          className={Styles.input_massage}
-          type="text"
-          id="input_massage"
-          name="input_massage"
-        ></textarea>
         <button className={Styles.button_form}>Отправить</button>
       </form>
     </div>

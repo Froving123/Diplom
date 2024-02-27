@@ -8,8 +8,9 @@
 }
 
 .logo {
-  width: 150px;
-  height: 120px;
+  width: 135px;
+  height: 105px;
+  border-radius: 50%;
   transition: 0.5s;
 }
 

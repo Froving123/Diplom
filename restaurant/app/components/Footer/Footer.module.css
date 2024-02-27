@@ -10,14 +10,17 @@
 .top_footer {
   display: flex;
   align-items: center;
+  justify-content: center;
   justify-content: space-between;
   height: max-content;
-  margin-bottom: 15px;
+  margin: 5px;
 }
-
+  
 .logo {
   width: 150px;
   height: 120px;
+  border-radius: 50%;
+  transition: 0.5s;
 }
 
 .logo:hover{
