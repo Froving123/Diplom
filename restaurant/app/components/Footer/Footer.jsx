@@ -1,13 +1,22 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import Styles from "./Footer.module.css";
 
 export const Footer = () => {
+  const pathname = usePathname();
+
   return (
     <footer className={Styles.all_footer}>
       <div className={Styles.top_footer}>
-        <Link href="/">
-          <img className={Styles.logo} src="images/logo.png" />
-        </Link>
+        {pathname === "/" ? (
+          <img className={Styles.logo} src="./images/logo.png" />
+        ) : (
+          <Link href="/" className={Styles.logo_link}>
+            <img className={Styles.logo} src="./images/logo.png" />
+          </Link>
+        )}
         <div className={Styles.footer_info}>
           <p className={Styles.top_fot_h}>Позвонить нам</p>
           <p className={Styles.top_fot_p}>+7(985)330-**-**</p>

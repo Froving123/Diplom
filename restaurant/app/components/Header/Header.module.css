@@ -10,11 +10,14 @@
 .logo {
   width: 135px;
   height: 105px;
+}
+
+.logo_link{
   border-radius: 50%;
   transition: 0.5s;
 }
 
-.logo:hover{
+.logo_link:hover {
   box-shadow: 5px 10px 40px 20px rgba(255, 115, 0, 0.179);
 }
 
@@ -25,10 +28,14 @@
   gap: 55px;
 }
 
-.nav_link{
+.nav_link {
   text-decoration: none;
   color: rgb(252, 130, 37);
   transition: 0.2s;
+}
+
+.nav_link_active {
+  color: #ffffff;
 }
 
 .nav_p {

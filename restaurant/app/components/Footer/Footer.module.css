@@ -19,11 +19,14 @@
 .logo {
   width: 150px;
   height: 120px;
+}
+
+.logo_link{
   border-radius: 50%;
   transition: 0.5s;
 }
 
-.logo:hover{
+.logo_link:hover{
   box-shadow: 5px 10px 40px 20px rgba(255, 115, 0, 0.179);
 }
 
