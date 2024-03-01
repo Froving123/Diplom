@@ -56,10 +56,16 @@
   transition: 0.3s;
 }
 
-.form__reset:hover,
-.form__submit:hover {
-  background-color: rgb(253, 116, 57);
-  color: black;
+.form__transition {
+  background-color: rgb(195, 84, 36);
+  color: #ffffff;
+  font-family: "Tinos-Regular";
+  border-radius: 7px;
+  font-size: 20px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 16px 24px;
+  transition: 0.3s;
 }
 
 .form__submit {
@@ -72,6 +78,19 @@
   text-transform: uppercase;
   padding: 16px 24px;
   transition: 0.3s;
+}
+
+.form__reset:hover,
+.form__submit:hover,
+.form__transition:hover {
+  background-color: rgb(253, 116, 57);
+  color: black;
+}
+
+.error_message {
+  color: red;
+  font-weight: bold;
+  font-size: large;
 }
 
 @media screen and (max-width: 500px) {
@@ -95,6 +114,11 @@
   }
 
   .form__reset {
+    font-size: 12px;
+    padding: 12px 14px;
+  }
+
+  .form__transition {
     font-size: 12px;
     padding: 12px 14px;
   }
@@ -126,6 +150,11 @@
   }
 
   .form__reset {
+    font-size: 15px;
+    padding: 12px 14px;
+  }
+
+  .form__transition {
     font-size: 15px;
     padding: 12px 14px;
   }
