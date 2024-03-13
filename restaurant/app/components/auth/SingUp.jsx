@@ -64,6 +64,7 @@ const SignUp = () => {
         <button className={Styles["form__submit"]} type="submit">
           Зарегистрироваться
         </button>
+        {error ? <p>{error}</p>: ""}
       </form>
     </div>
   );
