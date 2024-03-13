@@ -1,5 +1,10 @@
-import React, { useState } from "react";
+"use client";  
+
+import React, { useEffect, useState } from "react";
 import Styles from "./AuthForm.module.css";
+import { auth } from "@/app/firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
 export const AuthForm = () => {
   const [isLoginForm, setIsLoginForm] = useState(true);
@@ -8,9 +13,10 @@ export const AuthForm = () => {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
 
-  const toggleForm = () => {
+  const toggleForm = (e) => {
+    e.preventDefault();
     setIsLoginForm(!isLoginForm);
-    setError("");
+    setError("")
   };
 
   const handleLogin = (e) => {
@@ -46,7 +52,7 @@ export const AuthForm = () => {
   };
 
   return (
-    <form className={Styles["form"]} onSubmit={isLoginForm ? handleLogin : handleRegister}>
+    <form className={Styles["form"]}>
       {isLoginForm ? (
         <>
           <h2 className={Styles["form__title"]}>Авторизация</h2>
@@ -79,7 +85,7 @@ export const AuthForm = () => {
             <button className={Styles["form__transition"]} onClick={toggleForm}>
               Нет аккаунта
             </button>
-            <button className={Styles["form__submit"]} type="submit">
+            <button onClick={handleLogin} className={Styles["form__submit"]}>
               Войти
             </button>
           </div>
@@ -127,7 +133,7 @@ export const AuthForm = () => {
             <button className={Styles["form__transition"]} onClick={toggleForm}>
               Уже есть аккаунт?
             </button>
-            <button className={Styles["form__submit"]} type="submit">
+            <button onClick={handleRegister} className={Styles["form__submit"]}>
               Зарегистрироваться
             </button>
           </div>
