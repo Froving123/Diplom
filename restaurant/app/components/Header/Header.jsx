@@ -44,7 +44,9 @@ export const Header = () => {
           <li className={Styles.nav_p}>
             <Link
               href="/Menu"
-              className={`${Styles.nav_link} ${pathname === "/Menu" ? Styles.nav_link_active : ""}`}
+              className={`${Styles.nav_link} ${
+                pathname === "/Menu" ? Styles.nav_link_active : ""
+              }`}
             >
               Меню
             </Link>
@@ -78,7 +80,7 @@ export const Header = () => {
       </nav>
       <Overlay isOpened={popupIsOpened} close={closePopup} />
       <Popup isOpened={popupIsOpened} close={closePopup}>
-        <AuthForm close={closePopup}/>
+        <AuthForm close={closePopup} />
       </Popup>
     </header>
   );
