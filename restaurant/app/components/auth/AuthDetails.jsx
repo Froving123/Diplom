@@ -1,14 +1,14 @@
 "use client";
 
+import Styles from "./AuthDetails.module.css";
+import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import { auth } from "@/app/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import React, { useEffect, useState } from "react";
-import Styles from "./AuthDetails.module.css";
 import { Reservation } from "../Reservation/Reservation";
 import { Delivery_user } from "../Delivery_user/Delivery_user";
 import { Changing_email } from "../Changing/Changing_email/Changing_email";
 import { Changing_password } from "../Changing/Changing_password/Changing_password";
-import Link from "next/link";
 
 const AuthDetails = () => {
   const [authUser, setAuthUser] = useState(null);

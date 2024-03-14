@@ -135,7 +135,6 @@
 
 .slider_left {
   padding: 15px 15px 15px 25px;
-  transform: translateY(-50%) rotate(180deg);
   font-size: 33px;
   color: rgb(255, 255, 255);
   background-color: rgb(255, 106, 43);
@@ -146,7 +145,6 @@
 
 .slider_right {
   padding: 15px 15px 15px 25px;
-  transform: translateY(-50%);
   font-size: 33px;
   color: rgb(255, 255, 255);
   background-color: rgb(255, 106, 43);
