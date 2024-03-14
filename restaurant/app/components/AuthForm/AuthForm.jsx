@@ -43,6 +43,7 @@ export const AuthForm = (props) => {
           setCopyPassword("");
           setPassword("");
           props.close();
+          alert("Пользователь успешно авторизован!");
         })
         .catch((error) => console.log(error));
     }
@@ -63,6 +64,7 @@ export const AuthForm = (props) => {
           setEmail("");
           setPassword("");
           props.close();
+          alert("Пользователь успешно авторизован!");
         })
         .catch((error) => {
           console.log(error);

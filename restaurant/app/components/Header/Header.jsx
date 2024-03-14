@@ -2,15 +2,31 @@
 
 import Styles from "./Header.module.css";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Overlay } from "../Overlay/Overlay";
 import { Popup } from "../Popup/Popup";
 import { AuthForm } from "../AuthForm/AuthForm";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/app/firebase";
 
 export const Header = () => {
   const [popupIsOpened, setPopupIsOpened] = useState(false);
   const pathname = usePathname();
+  const [authUser, setAuthUser] = useState(null);
+
+  useEffect(() => {
+    const listen = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setAuthUser(user);
+      } else {
+        setAuthUser(null);
+      }
+    });
+    return () => {
+      listen();
+    };
+  }, []);
 
   const openPopup = () => {
     setPopupIsOpened(true);
@@ -72,9 +88,20 @@ export const Header = () => {
             </Link>
           </li>
           <li className={Styles.nav_p}>
-            <button className={Styles.button_profile} onClick={openPopup}>
-              Профиль
-            </button>
+            {authUser ? (
+              <Link
+                href="/Profile"
+                className={`${Styles.nav_link} ${
+                  pathname === "/Profile" ? Styles.nav_link_active : ""
+                }`}
+              >
+                Профиль
+              </Link>
+            ) : (
+              <button className={Styles.button_profile} onClick={openPopup}>
+                Войти
+              </button>
+            )}
           </li>
         </ul>
       </nav>

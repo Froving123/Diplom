@@ -3,6 +3,12 @@
 import { auth } from "@/app/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import React, { useEffect, useState } from "react";
+import Styles from "./AuthDetails.module.css";
+import { Reservation } from "../Reservation/Reservation";
+import { Delivery_user } from "../Delivery_user/Delivery_user";
+import { Changing_email } from "../Changing/Changing_email/Changing_email";
+import { Changing_password } from "../Changing/Changing_password/Changing_password";
+import Link from "next/link";
 
 const AuthDetails = () => {
   const [authUser, setAuthUser] = useState(null);
@@ -26,9 +32,17 @@ const AuthDetails = () => {
   return (
     <div>
       {authUser ? (
-        <div>
-          <p>{`Авторизованный юзер ${authUser.email}`}</p>
-          <button onClick={userSignOut}>Выйти</button>
+        <div className={Styles.profile}>
+          <p className={Styles.user}>{`Пользователь: ${authUser.email}`}</p>
+          <Reservation />
+          <Delivery_user />
+          <Changing_email />
+          <Changing_password />
+          <Link href="/">
+            <button className={Styles.button_logOut} onClick={userSignOut}>
+              Выйти
+            </button>
+          </Link>
         </div>
       ) : (
         ""
