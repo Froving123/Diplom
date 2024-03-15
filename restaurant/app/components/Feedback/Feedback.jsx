@@ -1,26 +1,41 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Styles from "./Feedback.module.css";
 
 export const Feedback = () => {
   const [sliderCount, setSliderCount] = useState(0);
   const [sliderWidth, setSliderWidth] = useState(0);
-  const sliderRef = React.createRef();
-  const sliderLineRef = React.createRef();
+
+  const sliderRef = useRef(null);
+  const sliderLineRef = useRef(null);
 
   useEffect(() => {
-    setSliderWidth(sliderRef.current.offsetWidth);
+    const updateSliderWidth = () => {
+      if (sliderRef.current) {
+        setSliderWidth(sliderRef.current.offsetWidth);
+      }
+    };
+
+    updateSliderWidth();
+
+    window.addEventListener("resize", updateSliderWidth);
+
+    return () => {
+      window.removeEventListener("resize", updateSliderWidth);
+    };
   }, []);
 
   useEffect(() => {
     rollSlider();
-  }, [sliderCount]); // Trigger rollSlider whenever sliderCount changes
+  }, [sliderCount, sliderWidth]); // Trigger rollSlider whenever sliderCount or sliderWidth changes
 
   const rollSlider = () => {
-    sliderLineRef.current.style.transform = `translateX(${
-      -sliderCount * sliderWidth
-    }px)`;
+    if (sliderLineRef.current) {
+      sliderLineRef.current.style.transform = `translateX(${
+        -sliderCount * sliderWidth
+      }px)`;
+    }
   };
 
   const rightSlide = () => {
@@ -41,8 +56,8 @@ export const Feedback = () => {
   }, []);
 
   const sliders = [
-    <div className={Styles.feedback_one} key={1}>
-      <h2 className={Styles.feedback_h1}>
+    <div className={Styles.feedback_all} key={1}>
+      <h2 className={Styles.feedback_h_all}>
         Я надолго запомню мой День рождения, проведённый в этом ресторане!{" "}
         <br />
         Отдельное спасибо за комплепент в виде фруктовой тарелки. Будем
@@ -52,14 +67,14 @@ export const Feedback = () => {
       </h2>
       <img
         src="images/profile1.svg"
-        className={Styles.img_profile1}
+        className={Styles.img_profile_all}
         alt="Profile 1"
       />
-      <p className={Styles.feedback_p1}>Посетитель</p>
-      <p className={Styles.feedback_name1}>Михаил</p>
+      <p className={Styles.feedback_p_all}>Посетитель</p>
+      <p className={Styles.feedback_name_all}>Михаил</p>
     </div>,
-    <div className={Styles.feedback_two} key={2}>
-      <h2 className={Styles.feedback_h2}>
+    <div className={Styles.feedback_all} key={2}>
+      <h2 className={Styles.feedback_h_all}>
         Хороший ресторан. Еда была вкусной, а атмосфера заведения придавала
         особое очарование. <br />
         Очень вежливый персонал, официант отлично знает позиции в меню и помог с
@@ -68,14 +83,14 @@ export const Feedback = () => {
       </h2>
       <img
         src="images/profile2.png"
-        className={Styles.img_profile2}
+        className={Styles.img_profile_all}
         alt="Profile 2"
       />
-      <p className={Styles.feedback_p2}>Посетитель</p>
-      <p className={Styles.feedback_name2}>Николай</p>
+      <p className={Styles.feedback_p_all}>Посетитель</p>
+      <p className={Styles.feedback_name_all}>Николай</p>
     </div>,
-    <div className={Styles.feedback_three} key={3}>
-      <h2 className={Styles.feedback_h3}>
+    <div className={Styles.feedback_all} key={3}>
+      <h2 className={Styles.feedback_h_all}>
         Отмечали юбилей. Прекрасная праздничная атмосфера, бесподобная кухня,
         профессиональная подача блюд, <br />
         торт выше всех похвал. Обязательно вернемся сюда. Огромное спасибо всем
@@ -85,30 +100,32 @@ export const Feedback = () => {
       </h2>
       <img
         src="images/profile3.png"
-        className={Styles.img_profile3}
+        className={Styles.img_profile_all}
         alt="Profile 3"
       />
-      <p className={Styles.feedback_p3}>Посетитель</p>
-      <p className={Styles.feedback_name3}>Виктор</p>
+      <p className={Styles.feedback_p_all}>Посетитель</p>
+      <p className={Styles.feedback_name_all}>Виктор</p>
     </div>,
   ];
 
   return (
-    <div className={Styles.slider} ref={sliderRef}>
-      <div className={Styles.slider_line} ref={sliderLineRef}>
-        {sliders.map((slider, index) => (
-          <div className={Styles.sliders} key={index}>
-            {slider}
-          </div>
-        ))}
-      </div>
-      <div className={Styles.slider_button}>
-        <button className={Styles.slider_left} onClick={leftSlide}>
-          &lt;
-        </button>
-        <button className={Styles.slider_right} onClick={rightSlide}>
-          &gt;
-        </button>
+    <div className={Styles.feedback}>
+      <div className={Styles.slider} ref={sliderRef}>
+        <div className={Styles.slider_line} ref={sliderLineRef}>
+          {sliders.map((slider, index) => (
+            <div className={Styles.sliders} key={index}>
+              {slider}
+            </div>
+          ))}
+        </div>
+        <div className={Styles.slider_button}>
+          <button className={Styles.slider_left} onClick={leftSlide}>
+            &lt;
+          </button>
+          <button className={Styles.slider_right} onClick={rightSlide}>
+            &gt;
+          </button>
+        </div>
       </div>
     </div>
   );
