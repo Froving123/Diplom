@@ -51,7 +51,7 @@ export const Feedback = () => {
   };
 
   useEffect(() => {
-    const intervalId = setInterval(rightSlide, 3000);
+    const intervalId = setInterval(rightSlide, 10000);
     return () => clearInterval(intervalId);
   }, []);
 
