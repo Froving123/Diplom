@@ -9,9 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "firebase": "^10.8.1",
+    "@fullcalendar/daygrid": "^6.1.11",
+    "@fullcalendar/interaction": "^6.1.11",
+    "@fullcalendar/react": "^6.1.11",
+    "@fullcalendar/timegrid": "^6.1.11",
+    "firebase": "^10.9.0",
+    "fullcalendar": "^6.1.11",
     "next": "14.1.0",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "vue-flatpickr-component": "^11.0.5"
   }
 }

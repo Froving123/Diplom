@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Styles from "./ReservForm.module.css";
+import { collection,addDoc } from "firebase/firestore"
+import {db} from "./firebase"
 
 export const ReservForm = (props) => {
   const [date, setDate] = useState("");
