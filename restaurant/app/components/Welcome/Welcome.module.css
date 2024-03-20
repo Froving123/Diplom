@@ -41,10 +41,11 @@
 .button_reserv {
   background-color: rgb(255, 106, 43);
   color: white;
-  border-radius: 10px;
-  padding: 20px 30px;
+  border-radius: 9px;
+  padding: 23px 37px;
+  letter-spacing: 0.6px;
   font-weight: bold;
-  font-size: 23px;
+  font-size: 30px;
   width: max-content;
   transition: 0.5s;
 }
