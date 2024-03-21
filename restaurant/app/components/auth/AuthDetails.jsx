@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { auth } from "@/app/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { Reservation } from "../Reservation/Reservation";
+import { Reservation, UserReservations } from "../Reservations/Reservations";
 import { Delivery_user } from "../Delivery_user/Delivery_user";
 import { Changing_email } from "../Changing/Changing_email/Changing_email";
 import { Changing_password } from "../Changing/Changing_password/Changing_password";
@@ -33,8 +33,8 @@ const AuthDetails = () => {
     <div>
       {authUser ? (
         <div className={Styles.profile}>
-          <p className={Styles.user}>{`Пользователь: ${authUser.email}`}</p>
-          <Reservation />
+          <p className={Styles.user}>{`Пользователь ${authUser.email}`}</p>
+          <UserReservations />
           <Delivery_user />
           <Changing_email />
           <Changing_password />

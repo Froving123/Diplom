@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState} from "react";
 import Styles from "./ReservForm.module.css";
 import { ref, push, set } from "firebase/database";
 import { db, auth } from "../firebase"; // Импорт auth и realtimeDb из Firebase
@@ -33,12 +33,9 @@ export const ReservForm = (props) => {
           setError("");
           props.close();
           alert("Ваша бронь принята");
-        } else {
-          // Пользователь не аутентифицирован
-          alert("Пожалуйста, войдите, чтобы забронировать");
-        }
+        } 
       } catch (error) {
-        console.error("Error adding document: ", error);
+        console.error("Ошибка при добавлении документа: ", error);
       }
     }
   };
