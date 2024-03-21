@@ -2,28 +2,60 @@
 
 import React, { useState, useEffect } from "react";
 import Styles from "./ReservForm.module.css";
-import { collection,addDoc } from "firebase/firestore"
-import {db} from "./firebase"
+import {
+  collection,
+  addDoc,
+  getDoc,
+  querySnapshot,
+  query,
+  onSnapshot,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
+import { db } from "../firebase";
 
 export const ReservForm = (props) => {
-  const [date, setDate] = useState("");
-  const [time, setTime] = useState("");
-  const [error, setError] = useState("");
+  const [items, setItems] = useState([
+  ]);
+  const [newItem, setNewItem] = useState({ date: "", time: "" });
+  const [total, setTotal] = useState(0);
+const [error, setError] = useState("");
 
-  const reserv = (e) => {
+  const reserv = async (e) => {
     e.preventDefault();
-    if (!date || !time) {
+      if (!newItem.date || !newItem.time) {
       setError("Пожалуйста, заполните все поля");
       setTimeout(() => {
         setError("");
       }, 5000);
-    } else {
+    }
+    if (newItem.date !== "" && newItem.time !== "") {
+      await addDoc(collection(db, "items"), {
+        date: newItem.date,
+        time: newItem.time,
+      });
+      setNewItem({ date: "", time: "" });
       setError("");
-      setDate("");
-      setTime("");
       props.close();
       alert("Ваша бронь принята");
     }
+  };
+
+  useEffect(() => {
+    const q = query(collection(db, 'items'));
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      let itemsArr = [];
+
+      querySnapshot.forEach((doc) => {
+        itemsArr.push({ ...doc.data(), id: doc.id });
+      });
+      setItems(itemsArr);
+    });
+  }, []);
+
+  // Delete items from database
+  const deleteItem = async (id) => {
+    await deleteDoc(doc(db, 'items', id));
   };
 
   const handleClear = () => {
@@ -40,8 +72,8 @@ export const ReservForm = (props) => {
           <input
             className={Styles["form__field-input"]}
             type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
+            value={newItem.date}
+            onChange={(e) => setNewItem({ ...newItem, date: e.target.value })}
           />
         </label>
         <label className={Styles["form__field"]}>
@@ -49,8 +81,8 @@ export const ReservForm = (props) => {
           <input
             className={Styles["form__field-input"]}
             type="time"
-            value={time}
-            onChange={(e) => setTime(e.target.value)}
+            value={newItem.time}
+            onChange={(e) => setNewItem({ ...newItem, time: e.target.value })}
           />
         </label>
       </div>
