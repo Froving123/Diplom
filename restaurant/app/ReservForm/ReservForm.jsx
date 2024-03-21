@@ -1,66 +1,50 @@
-"use client";
-
 import React, { useState, useEffect } from "react";
 import Styles from "./ReservForm.module.css";
-import {
-  collection,
-  addDoc,
-  getDoc,
-  querySnapshot,
-  query,
-  onSnapshot,
-  deleteDoc,
-  doc,
-} from "firebase/firestore";
-import { db } from "../firebase";
+import { ref, push, set } from "firebase/database";
+import { db, auth } from "../firebase"; // Импорт auth и realtimeDb из Firebase
 
 export const ReservForm = (props) => {
-  const [items, setItems] = useState([
-  ]);
   const [newItem, setNewItem] = useState({ date: "", time: "" });
-  const [total, setTotal] = useState(0);
-const [error, setError] = useState("");
+  const [error, setError] = useState("");
 
   const reserv = async (e) => {
     e.preventDefault();
-      if (!newItem.date || !newItem.time) {
+    if (!newItem.date || !newItem.time) {
       setError("Пожалуйста, заполните все поля");
       setTimeout(() => {
         setError("");
       }, 5000);
+    } else {
+      try {
+        const user = auth.currentUser; // Получаем текущего пользователя
+        if (user) {
+          // Генерируем новый ключ
+          const newItemRef = push(ref(db, 'items'));
+          const newItemKey = newItemRef.key;
+          // Создаем объект с данными для записи
+          const newItemData = {
+            date: newItem.date,
+            time: newItem.time,
+            userId: user.uid, // Сохраняем идентификатор пользователя
+          };
+          // Записываем данные по новому ключу
+          await set(ref(db, `items/${newItemKey}`), newItemData);
+          setNewItem({ date: "", time: "" });
+          setError("");
+          props.close();
+          alert("Ваша бронь принята");
+        } else {
+          // Пользователь не аутентифицирован
+          alert("Пожалуйста, войдите, чтобы забронировать");
+        }
+      } catch (error) {
+        console.error("Error adding document: ", error);
+      }
     }
-    if (newItem.date !== "" && newItem.time !== "") {
-      await addDoc(collection(db, "items"), {
-        date: newItem.date,
-        time: newItem.time,
-      });
-      setNewItem({ date: "", time: "" });
-      setError("");
-      props.close();
-      alert("Ваша бронь принята");
-    }
-  };
-
-  useEffect(() => {
-    const q = query(collection(db, 'items'));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      let itemsArr = [];
-
-      querySnapshot.forEach((doc) => {
-        itemsArr.push({ ...doc.data(), id: doc.id });
-      });
-      setItems(itemsArr);
-    });
-  }, []);
-
-  // Delete items from database
-  const deleteItem = async (id) => {
-    await deleteDoc(doc(db, 'items', id));
   };
 
   const handleClear = () => {
-    setDate("");
-    setTime("");
+    setNewItem({ date: "", time: "" });
   };
 
   return (
