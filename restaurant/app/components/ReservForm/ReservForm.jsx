@@ -1,7 +1,9 @@
-import React, { useState} from "react";
+"use client";
+
+import React, { useState } from "react";
 import Styles from "./ReservForm.module.css";
 import { ref, push, set } from "firebase/database";
-import { db, auth } from "../firebase"; // Импорт auth и realtimeDb из Firebase
+import { db, auth } from "../../firebase";
 
 export const ReservForm = (props) => {
   const [newItem, setNewItem] = useState({ date: "", time: "" });
@@ -19,7 +21,7 @@ export const ReservForm = (props) => {
         const user = auth.currentUser; // Получаем текущего пользователя
         if (user) {
           // Генерируем новый ключ
-          const newItemRef = push(ref(db, 'items'));
+          const newItemRef = push(ref(db, "reserv"));
           const newItemKey = newItemRef.key;
           // Создаем объект с данными для записи
           const newItemData = {
@@ -28,12 +30,12 @@ export const ReservForm = (props) => {
             userId: user.uid, // Сохраняем идентификатор пользователя
           };
           // Записываем данные по новому ключу
-          await set(ref(db, `items/${newItemKey}`), newItemData);
+          await set(ref(db, `reserv/${newItemKey}`), newItemData);
           setNewItem({ date: "", time: "" });
           setError("");
           props.close();
           alert("Ваша бронь принята");
-        } 
+        }
       } catch (error) {
         console.error("Ошибка при добавлении документа: ", error);
       }

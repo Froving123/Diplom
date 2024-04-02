@@ -12,7 +12,7 @@ export const UserReservations = () => {
     const fetchUserReservations = async () => {
       const user = auth.currentUser;
       if (user) {
-        const reservationsRef = ref(db, "items");
+        const reservationsRef = ref(db, "reserv");
         const userReservationsQuery = query(
           reservationsRef,
           orderByChild("userId"),

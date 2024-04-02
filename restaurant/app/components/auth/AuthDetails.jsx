@@ -5,10 +5,8 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { auth } from "@/app/firebase";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { Reservation, UserReservations } from "../Reservations/Reservations";
+import { UserReservations } from "../Reservations/Reservations";
 import { Delivery_user } from "../Delivery_user/Delivery_user";
-import { Changing_email } from "../Changing/Changing_email/Changing_email";
-import { Changing_password } from "../Changing/Changing_password/Changing_password";
 
 const AuthDetails = () => {
   const [authUser, setAuthUser] = useState(null);
@@ -36,8 +34,6 @@ const AuthDetails = () => {
           <p className={Styles.user}>{`Пользователь ${authUser.email}`}</p>
           <UserReservations />
           <Delivery_user />
-          <Changing_email />
-          <Changing_password />
           <Link href="/">
             <button className={Styles.button_logOut} onClick={userSignOut}>
               Выйти
