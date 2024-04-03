@@ -44,25 +44,23 @@ export const Delivery_user = () => {
 
   return (
     <div className={Styles.reservation}>
-    <h2 className={Styles.title_reserv}>Ваши заказа</h2>
-    {userReservations.length > 0 ? (
-      <ul className={Styles.ul_reserv}>
-        {userDelivery.map((delivery) => (
-          <li key={delivery.id}>
-            <p className={Styles.reserv_description}>
-              Дата: {delivery.date}
-            </p>
-            <p className={Styles.reserv_description}>
-              Время: {delivery.time}
-            </p>
-          </li>
-        ))}
-      </ul>
-    ) : (
-      <ul className={Styles.empty_delivery}>
-        <p className={Styles.empty_description}>Сейчас у вас нет заказов</p>
-      </ul>
-    )}
-  </div>
+      <h2 className={Styles.title_reserv}>Ваши заказа</h2>
+      {userReservations.length > 0 ? (
+        <ul className={Styles.ul_reserv}>
+          {userDelivery.map((delivery) => (
+            <li key={delivery.id}>
+              <p className={Styles.reserv_description}>Дата: {delivery.date}</p>
+              <p className={Styles.reserv_description}>
+                Время: {delivery.time}
+              </p>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ul className={Styles.empty_delivery}>
+          <p className={Styles.empty_description}>Сейчас у вас нет заказов</p>
+        </ul>
+      )}
+    </div>
   );
 };

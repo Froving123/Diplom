@@ -33,7 +33,7 @@ const AuthDetails = () => {
         <div className={Styles.profile}>
           <p className={Styles.user}>{`Пользователь ${authUser.email}`}</p>
           <UserReservations />
-          
+
           <Link href="/">
             <button className={Styles.button_logOut} onClick={userSignOut}>
               Выйти

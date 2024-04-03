@@ -10,4 +10,3 @@ export default function Home() {
     </main>
   );
 }
-/* <Shopping_cart_button />*/

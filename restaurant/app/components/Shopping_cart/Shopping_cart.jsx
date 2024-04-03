@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ref, get, query, orderByChild, equalTo, remove } from "firebase/database";
+import {
+  ref,
+  get,
+  query,
+  orderByChild,
+  equalTo,
+  remove,
+} from "firebase/database";
 import { db, auth } from "@/app/firebase";
 import Styles from "./Shopping_cart.module.css";
 
@@ -48,7 +55,9 @@ export const Shopping_cart = () => {
       await remove(ref(db, `product/${id}`));
 
       // Обновляем состояние userProduct, удаляя товар с заданным id
-      const updatedProducts = userProduct.filter((product) => product.id !== id);
+      const updatedProducts = userProduct.filter(
+        (product) => product.id !== id
+      );
       setUserProduct(updatedProducts);
     } catch (error) {
       console.error("Ошибка при удалении товара: ", error);
@@ -58,15 +67,22 @@ export const Shopping_cart = () => {
   return (
     <div className={Styles.shopping_cart}>
       {userProduct.length > 0 ? (
-        <ul className={Styles.ul_product}>
+        <div className={Styles.ul_product}>
           {userProduct.map((product) => (
-            <li key={product.id} className={Styles.product}>
-              <p className={Styles.product_description}>{product.name}</p>
-              <button onClick={() => deleteItem(product.id)}>Удалить</button>
-              <p className={Styles.product_description}>{product.price}</p>
-            </li>
+            <div className={Styles.product}>
+              <div key={product.id} className={Styles.product_content}>
+                <p className={Styles.product_description}>{product.name}</p>
+                <p className={Styles.product_description}>{product.price}</p>
+              </div>
+              <button
+                onClick={() => deleteItem(product.id)}
+                className={Styles.button_remove}
+              >
+                <p className={Styles.remove_text}>Удалить</p>
+              </button>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : (
         <ul className={Styles.empty_product}>
           <p className={Styles.empty_description}>В корзине нет товаров</p>

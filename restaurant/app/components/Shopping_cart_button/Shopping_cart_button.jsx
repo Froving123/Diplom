@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ref, get, query, orderByChild, equalTo } from "firebase/database";
-import Styles from "../Shopping_cart/Shopping_cart.module.css";
+import { ref, query, orderByChild, equalTo, onValue } from "firebase/database";
+import Styles from "./Shopping_cart_button.module.css";
 import { db, auth } from "@/app/firebase";
 
 export const Shopping_cart_button = () => {
@@ -21,19 +21,20 @@ export const Shopping_cart_button = () => {
         );
 
         try {
-          const snapshot = await get(userProductQuery);
-          if (snapshot.exists()) {
-            const product = [];
-            snapshot.forEach((childSnapshot) => {
-              product.push({
-                id: childSnapshot.key,
-                ...childSnapshot.val(),
+          onValue(userProductQuery, (snapshot) => {
+            if (snapshot.exists()) {
+              const product = [];
+              snapshot.forEach((childSnapshot) => {
+                product.push({
+                  id: childSnapshot.key,
+                  ...childSnapshot.val(),
+                });
               });
-            });
-            setUserProduct(product);
-          } else {
-            console.log("Данные не найдены");
-          }
+              setUserProduct(product);
+            } else {
+              console.log("Данные не найдены");
+            }
+          });
         } catch (error) {
           console.error("Ошибка при получении данных: ", error);
         }
@@ -43,26 +44,22 @@ export const Shopping_cart_button = () => {
     fetchUserProduct();
   }, []);
 
-  const calculateTotal = () => {
+  // Обновляем значение total при изменении userProduct
+  useEffect(() => {
     const totalPrice = userProduct.reduce(
       (sum, item) => sum + parseFloat(item.price),
       0
     );
     setTotal(totalPrice); // Обновляем состояние суммы
-  };
-
-  // Вызываем функцию подсчета суммы при изменении userProduct
-  useEffect(() => {
-    calculateTotal();
   }, [userProduct]);
 
   return (
-    <div className={Styles.shopping_cart}>
+    <div className={Styles.shopping_cart_button}>
       {userProduct.length > 0 ? (
-        <div>
-          <p>Заказать</p>
-          <p>{total}₽</p>
-        </div>
+        <button className={Styles.order_button}>
+          <p className={Styles.order_content}>Заказать</p>
+          <p className={Styles.order_content}>{total}₽</p>
+        </button>
       ) : (
         ""
       )}
