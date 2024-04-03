@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ref, get, query, orderByChild, equalTo } from "firebase/database";
+import { ref, get, query, orderByChild, equalTo, remove } from "firebase/database";
 import { db, auth } from "@/app/firebase";
 import Styles from "./Shopping_cart.module.css";
 
@@ -42,6 +42,19 @@ export const Shopping_cart = () => {
     fetchUserProduct();
   }, []);
 
+  const deleteItem = async (id) => {
+    try {
+      // Удаляем товар из базы данных
+      await remove(ref(db, `product/${id}`));
+
+      // Обновляем состояние userProduct, удаляя товар с заданным id
+      const updatedProducts = userProduct.filter((product) => product.id !== id);
+      setUserProduct(updatedProducts);
+    } catch (error) {
+      console.error("Ошибка при удалении товара: ", error);
+    }
+  };
+
   return (
     <div className={Styles.shopping_cart}>
       {userProduct.length > 0 ? (
@@ -49,6 +62,7 @@ export const Shopping_cart = () => {
           {userProduct.map((product) => (
             <li key={product.id} className={Styles.product}>
               <p className={Styles.product_description}>{product.name}</p>
+              <button onClick={() => deleteItem(product.id)}>Удалить</button>
               <p className={Styles.product_description}>{product.price}</p>
             </li>
           ))}

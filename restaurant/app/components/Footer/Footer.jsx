@@ -23,8 +23,8 @@ export const Footer = () => {
         </div>
         <div className={Styles.footer_info}>
           <p className={Styles.top_fot_h}>График работы:</p>
-          <p className={Styles.top_fot_p}>ВС-ЧТ - 10:00-00:00</p>
-          <p className={Styles.top_fot_p}>ПТ-СБ - 12:00-22:00</p>
+          <p className={Styles.top_fot_p}>24</p>
+          <p className={Styles.top_fot_p}>часа</p>
         </div>
         <div className={Styles.footer_info}>
           <p className={Styles.top_fot_h}>Прийти к нам</p>

@@ -79,9 +79,9 @@ export const Header = () => {
           </li>
           <li className={Styles.nav_p}>
             <Link
-              href="/ShoppingCart"
+              href="/Cart"
               className={`${Styles.nav_link} ${
-                pathname === "/ShoppingCart" ? Styles.nav_link_active : ""
+                pathname === "/Cart" ? Styles.nav_link_active : ""
               }`}
             >
               Корзина
