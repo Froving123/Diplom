@@ -1,12 +1,21 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ref, get, query, orderByChild, equalTo } from "firebase/database";
+import {
+  ref,
+  get,
+  query,
+  orderByChild,
+  equalTo,
+  onValue,
+} from "firebase/database";
 import { db, auth } from "@/app/firebase";
 import Styles from "./Delivery_user.module.css";
 
 export const Delivery_user = () => {
   const [userDelivery, setUserDelivery] = useState([]);
+  const [userProduct, setUserProduct] = useState([]);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     const fetchUserDelivery = async () => {
@@ -42,23 +51,71 @@ export const Delivery_user = () => {
     fetchUserDelivery();
   }, []);
 
+  useEffect(() => {
+    const fetchUserProduct = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const productRef = ref(db, "product");
+        const userProductQuery = query(
+          productRef,
+          orderByChild("userId"),
+          equalTo(user.uid)
+        );
+
+        try {
+          onValue(userProductQuery, (snapshot) => {
+            if (snapshot.exists()) {
+              const product = [];
+              snapshot.forEach((childSnapshot) => {
+                product.push({
+                  id: childSnapshot.key,
+                  ...childSnapshot.val(),
+                });
+              });
+              setUserProduct(product);
+            } else {
+              console.log("Данные не найдены");
+            }
+          });
+        } catch (error) {
+          console.error("Ошибка при получении данных: ", error);
+        }
+      }
+    };
+
+    fetchUserProduct();
+  }, []);
+
+  useEffect(() => {
+    const totalPrice = userProduct.reduce(
+      (sum, item) => sum + parseFloat(item.price),
+      0
+    );
+    setTotal(totalPrice); // Обновляем состояние суммы
+  }, [userProduct]);
+
   return (
-    <div className={Styles.reservation}>
-      <h2 className={Styles.title_reserv}>Ваши заказа</h2>
-      {userReservations.length > 0 ? (
-        <ul className={Styles.ul_reserv}>
+    <div className={Styles.Delivery}>
+      <h2 className={Styles.title_delivery}>Ваши текущие заказы</h2>
+      {userDelivery.length > 0 ? (
+        <ul className={Styles.ul_delivery}>
           {userDelivery.map((delivery) => (
-            <li key={delivery.id}>
-              <p className={Styles.reserv_description}>Дата: {delivery.date}</p>
-              <p className={Styles.reserv_description}>
-                Время: {delivery.time}
+            <li key={delivery.id} className={Styles.li_delivery}>
+              <p className={Styles.delivery_description}>
+                Адрес: {delivery.address}
+              </p>
+              <p className={Styles.delivery_description}>
+                Оплата: При получении
+              </p>
+              <p className={Styles.delivery_description}>
+                Стоимость заказа: {total}₽
               </p>
             </li>
           ))}
         </ul>
       ) : (
-        <ul className={Styles.empty_delivery}>
-          <p className={Styles.empty_description}>Сейчас у вас нет заказов</p>
+        <ul className={Styles.ul_delivery}>
+          <p className={Styles.delivery_empty}>Сейчас у вас нет заказов</p>
         </ul>
       )}
     </div>

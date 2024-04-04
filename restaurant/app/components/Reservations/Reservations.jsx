@@ -48,7 +48,7 @@ export const UserReservations = () => {
       {userReservations.length > 0 ? (
         <ul className={Styles.ul_reserv}>
           {userReservations.map((reservation) => (
-            <li key={reservation.id}>
+            <li key={reservation.id} className={Styles.li_reserv}>
               <p className={Styles.reserv_description}>
                 Дата: {reservation.date}
               </p>
@@ -60,7 +60,7 @@ export const UserReservations = () => {
         </ul>
       ) : (
         <ul className={Styles.ul_reserv}>
-          <p className={Styles.reserv_description}>У вас нет бронирования</p>
+          <p className={Styles.reserv_empty}>У вас нет бронирования</p>
         </ul>
       )}
     </div>
