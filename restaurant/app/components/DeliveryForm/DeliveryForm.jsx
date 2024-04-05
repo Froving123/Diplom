@@ -37,6 +37,7 @@ export const DeliveryForm = (props) => {
           const newItemData = {
             address: newItem.address,
             userId: user.uid, // Сохраняем идентификатор пользователя
+            price: total,
           };
           // Записываем данные по новому ключу
           await set(ref(db, `delivery/${newItemKey}`), newItemData);

@@ -15,7 +15,6 @@ import Styles from "./Delivery_user.module.css";
 export const Delivery_user = () => {
   const [userDelivery, setUserDelivery] = useState([]);
   const [userProduct, setUserProduct] = useState([]);
-  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     const fetchUserDelivery = async () => {
@@ -86,14 +85,6 @@ export const Delivery_user = () => {
     fetchUserProduct();
   }, []);
 
-  useEffect(() => {
-    const totalPrice = userProduct.reduce(
-      (sum, item) => sum + parseFloat(item.price),
-      0
-    );
-    setTotal(totalPrice); // Обновляем состояние суммы
-  }, [userProduct]);
-
   return (
     <div className={Styles.Delivery}>
       <h2 className={Styles.title_delivery}>Ваши текущие заказы</h2>
@@ -108,7 +99,7 @@ export const Delivery_user = () => {
                 Оплата: При получении
               </p>
               <p className={Styles.delivery_description}>
-                Стоимость заказа: {total}₽
+                Стоимость заказа: {delivery.price}₽
               </p>
             </li>
           ))}

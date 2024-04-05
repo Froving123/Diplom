@@ -98,7 +98,7 @@ export const Delivery_menu = () => {
           <img className={Styles.img_food} src="images/eggs_bacon.png" />
           <h3 className={Styles.food_h}>
             Яйца с ветчиной <br />
-            или беконом
+            и беконом
           </h3>
           <div className={Styles.lowprice_div}>
             <p className={Styles.price_menu}>
@@ -112,7 +112,7 @@ export const Delivery_menu = () => {
             <button
               className={Styles.button_menu_delivery}
               onClick={() =>
-                addProductToCart("Яйца с ветчиной или беконом", "500₽")
+                addProductToCart("Яйца с ветчиной и беконом", "500₽")
               }
             >
               Добавить в корзину
