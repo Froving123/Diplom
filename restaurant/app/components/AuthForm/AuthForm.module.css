@@ -114,18 +114,18 @@
   }
 
   .form__reset {
-    font-size: 12px;
-    padding: 12px 14px;
+    padding: 7px 10px;
+    font-size: 10px;
   }
 
   .form__transition {
-    font-size: 12px;
-    padding: 12px 14px;
+    padding: 7px 10px;
+    font-size: 10px;
   }
 
   .form__submit {
-    font-size: 12px;
-    padding: 12px 14px;
+    padding: 7px 10px;
+    font-size: 10px;
   }
 }
 
@@ -150,17 +150,17 @@
   }
 
   .form__reset {
-    font-size: 15px;
+    font-size: 12px;
     padding: 12px 14px;
   }
 
   .form__transition {
-    font-size: 15px;
+    font-size: 12px;
     padding: 12px 14px;
   }
 
   .form__submit {
-    font-size: 15px;
+    font-size: 12px;
     padding: 12px 14px;
   }
 }

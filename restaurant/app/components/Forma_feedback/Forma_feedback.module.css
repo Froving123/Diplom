@@ -63,6 +63,12 @@
   width: 660px;
 }
 
+.error_message {
+  color: red;
+  font-weight: bold;
+  font-size: large;
+}
+
 .button_form {
   background-color: rgb(255, 106, 43);
   color: white;

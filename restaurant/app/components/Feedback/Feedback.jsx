@@ -65,11 +65,6 @@ export const Feedback = () => {
         этот ресторан своим друзьям и родственникам, путешествующих в
         Санкт-Петербург!!! <br />
       </h2>
-      <img
-        src="images/profile1.svg"
-        className={Styles.img_profile_all}
-        alt="Profile 1"
-      />
       <p className={Styles.feedback_p_all}>Посетитель</p>
       <p className={Styles.feedback_name_all}>Михаил</p>
     </div>,
@@ -81,11 +76,6 @@ export const Feedback = () => {
         выбором. <br />
         В общем нам все очень понравилось. Рекомендую посетить это место. <br />
       </h2>
-      <img
-        src="images/profile2.png"
-        className={Styles.img_profile_all}
-        alt="Profile 2"
-      />
       <p className={Styles.feedback_p_all}>Посетитель</p>
       <p className={Styles.feedback_name_all}>Николай</p>
     </div>,
@@ -98,11 +88,6 @@ export const Feedback = () => {
         организации нашего праздника. Рекомендуем всем посетить это волшебное
         место. <br />
       </h2>
-      <img
-        src="images/profile3.png"
-        className={Styles.img_profile_all}
-        alt="Profile 3"
-      />
       <p className={Styles.feedback_p_all}>Посетитель</p>
       <p className={Styles.feedback_name_all}>Виктор</p>
     </div>,

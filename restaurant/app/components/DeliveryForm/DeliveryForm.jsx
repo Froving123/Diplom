@@ -6,6 +6,7 @@ import {
   ref,
   push,
   set,
+  remove,
   query,
   orderByChild,
   equalTo,
@@ -19,6 +20,15 @@ export const DeliveryForm = (props) => {
   const [userProduct, setUserProduct] = useState([]);
   const [total, setTotal] = useState(0);
 
+  const removeAllProducts = async () => {
+    try {
+      await remove(ref(db, "product"));
+      console.log("Все записи из базы данных 'product' удалены");
+    } catch (error) {
+      console.error("Ошибка при удалении записей: ", error);
+    }
+  };
+
   const delivery = async (e) => {
     e.preventDefault();
     if (!newItem.address) {
@@ -28,22 +38,21 @@ export const DeliveryForm = (props) => {
       }, 5000);
     } else {
       try {
-        const user = auth.currentUser; // Получаем текущего пользователя
+        const user = auth.currentUser;
         if (user) {
-          // Генерируем новый ключ
           const newItemRef = push(ref(db, "delivery"));
           const newItemKey = newItemRef.key;
-          // Создаем объект с данными для записи
           const newItemData = {
             address: newItem.address,
-            userId: user.uid, // Сохраняем идентификатор пользователя
+            userId: user.uid,
             price: total,
           };
-          // Записываем данные по новому ключу
           await set(ref(db, `delivery/${newItemKey}`), newItemData);
           setNewItem({ address: "" });
           setError("");
           props.close();
+          await removeAllProducts();
+          window.location.reload();
           alert("Ваш заказ принят");
         }
       } catch (error) {
@@ -92,7 +101,7 @@ export const DeliveryForm = (props) => {
       (sum, item) => sum + parseFloat(item.price),
       0
     );
-    setTotal(totalPrice); // Обновляем состояние суммы
+    setTotal(totalPrice);
   }, [userProduct]);
 
   return (

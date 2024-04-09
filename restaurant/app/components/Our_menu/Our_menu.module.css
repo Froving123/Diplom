@@ -4,6 +4,7 @@
   align-items: center;
   margin: 30px 0px 50px 0px;
   gap: 30px;
+  height: 100%;
 }
 
 .menu_h {
@@ -22,7 +23,7 @@
 @media screen and (max-width: 500px) {
   .our_menu {
     max-width: 100%;
-    margin-top: 10px;
+    margin: 0px 0px 20px 0px;
     gap: 5px;
   }
 
@@ -41,7 +42,7 @@
 @media screen and (min-width: 501px) and (max-width: 750px) {
   .our_menu {
     max-width: 100%;
-    margin-top: 8px;
+    margin: 0px 0px 20px 0px;
     gap: 0px;
   }
 

@@ -1,10 +1,18 @@
+.str_profile{
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(226, 226, 226);
+}
+
 .profile {
   padding: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: rgb(226, 226, 226)
+  background-color: rgb(226, 226, 226);
 }
 
 .user {

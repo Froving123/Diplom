@@ -28,7 +28,7 @@ const AuthDetails = () => {
       .catch((e) => console.log(e));
   }
   return (
-    <div>
+    <div className={Styles.str_profile}>
       {authUser ? (
         <div className={Styles.profile}>
           <p className={Styles.user}>{`Пользователь ${authUser.email}`}</p>

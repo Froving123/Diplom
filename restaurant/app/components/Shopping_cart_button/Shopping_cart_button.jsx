@@ -14,41 +14,32 @@ export const Shopping_cart_button = () => {
   const [popupIsOpened, setPopupIsOpened] = useState(false);
 
   useEffect(() => {
-    const fetchUserProduct = async () => {
-      const user = auth.currentUser;
-      if (user) {
-        const productRef = ref(db, "product");
-        const userProductQuery = query(
-          productRef,
-          orderByChild("userId"),
-          equalTo(user.uid)
-        );
+    const user = auth.currentUser;
+    if (user) {
+      const productRef = ref(db, "product");
+      const userProductQuery = query(
+        productRef,
+        orderByChild("userId"),
+        equalTo(user.uid)
+      );
 
-        try {
-          onValue(userProductQuery, (snapshot) => {
-            if (snapshot.exists()) {
-              const product = [];
-              snapshot.forEach((childSnapshot) => {
-                product.push({
-                  id: childSnapshot.key,
-                  ...childSnapshot.val(),
-                });
-              });
-              setUserProduct(product);
-            } else {
-              console.log("Данные не найдены");
-            }
+      onValue(userProductQuery, (snapshot) => {
+        if (snapshot.exists()) {
+          const product = [];
+          snapshot.forEach((childSnapshot) => {
+            product.push({
+              id: childSnapshot.key,
+              ...childSnapshot.val(),
+            });
           });
-        } catch (error) {
-          console.error("Ошибка при получении данных: ", error);
+          setUserProduct(product);
+        } else {
+          setUserProduct([]);
         }
-      }
-    };
+      });
+    }
+  }, [auth.currentUser]);
 
-    fetchUserProduct();
-  }, []);
-
-  // Обновляем значение total при изменении userProduct
   useEffect(() => {
     const totalPrice = userProduct.reduce(
       (sum, item) => sum + parseFloat(item.price),

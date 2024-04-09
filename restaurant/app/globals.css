@@ -18,7 +18,9 @@ body {
   line-height: 25px;
   font-family: "Tinos-Regular";
   background-color: whitesmoke;
+  min-height: 100vh;
   display: grid;
+  grid-template-rows: auto 1fr auto;
 }
 
 button {
@@ -30,19 +32,11 @@ button {
     max-width: 100%;
     line-height: 20px;
   }
-
-  main {
-    max-width: 100%;
-  }
 }
 
 @media screen and (min-width: 501px) and (max-width: 750px) {
   body {
     max-width: 100%;
     line-height: 23px;
-  }
-
-  main {
-    max-width: 100%;
   }
 }
