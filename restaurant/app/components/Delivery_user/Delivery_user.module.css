@@ -44,17 +44,49 @@
 }
 
 @media screen and (max-width: 500px) {
-  .text {
-    margin-top: 15px;
+  .delivery {
+    margin: 15px 0px 35px 0px;
+  }
+
+  .title_delivery {
+    margin-bottom: 30px;
+    font-size: 27px;
+  }
+
+  .li_delivery {
+    padding: 25px;
+  }
+
+  .delivery_description {
     font-size: 20px;
-    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .delivery_empty {
+    font-size: 20px;
+    margin: 20px;
   }
 }
 
 @media screen and (min-width: 501px) and (max-width: 750px) {
-  .text {
-    margin-top: 15px;
-    font-size: 25px;
-    font-family: Arial, Helvetica, sans-serif;
+  .delivery {
+    margin: 15px 0px 35px 0px;
+  }
+
+  .title_delivery {
+    margin-bottom: 30px;
+    font-size: 27px;
+  }
+
+  .li_delivery {
+    padding: 25px;
+  }
+
+  .delivery_description {
+    font-size: 20px;
+  }
+
+  .delivery_empty {
+    font-size: 20px;
+    margin: 20px;
   }
 }

@@ -43,17 +43,49 @@
 }
 
 @media screen and (max-width: 500px) {
-  .text {
-    margin-top: 15px;
+  .reservation {
+    margin: 15px 0px 35px 0px;
+  }
+
+  .title_reserv {
+    margin-bottom: 30px;
+    font-size: 27px;
+  }
+
+  .li_reserv {
+    padding: 25px;
+  }
+
+  .reserv_description {
     font-size: 20px;
-    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .reserv_empty {
+    font-size: 20px;
+    margin: 20px;
   }
 }
 
 @media screen and (min-width: 501px) and (max-width: 750px) {
-  .text {
-    margin-top: 15px;
-    font-size: 25px;
-    font-family: Arial, Helvetica, sans-serif;
+  .reservation {
+    margin: 15px 0px 35px 0px;
+  }
+
+  .title_reserv {
+    margin-bottom: 30px;
+    font-size: 27px;
+  }
+
+  .li_reserv {
+    padding: 25px;
+  }
+
+  .reserv_description {
+    font-size: 20px;
+  }
+
+  .reserv_empty {
+    font-size: 20px;
+    margin: 20px;
   }
 }
