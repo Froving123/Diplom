@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getDatabase } from "firebase/database"; // Добавляем эту строку
+import { getDatabase } from "firebase/database"; 
 
 const firebaseConfig = {
   apiKey: "AIzaSyDO_-hjElfDwtU1ESVRSFt8hZJ7IIMwlno",
@@ -15,4 +15,4 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
-export const db = getDatabase(app); // Инициализация Realtime Database
+export const db = getDatabase(app); 
