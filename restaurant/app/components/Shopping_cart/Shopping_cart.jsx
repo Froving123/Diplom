@@ -69,8 +69,8 @@ export const Shopping_cart = () => {
       {userProduct.length > 0 ? (
         <div className={Styles.ul_product}>
           {userProduct.map((product) => (
-            <div className={Styles.product}>
-              <div key={product.id} className={Styles.product_content}>
+            <div key={product.id} className={Styles.product}>
+              <div className={Styles.product_content}>
                 <p className={Styles.product_description}>{product.name}</p>
                 <p className={Styles.product_description}>{product.price}</p>
               </div>
