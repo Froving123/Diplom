@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import {
   ref,
-  get,
+  onValue,
   query,
   orderByChild,
   equalTo,
@@ -14,20 +14,28 @@ import Styles from "./Shopping_cart.module.css";
 
 export const Shopping_cart = () => {
   const [userProduct, setUserProduct] = useState([]);
+  const [loading, setLoading] = useState(true); // Состояние для обработки загрузки
 
   useEffect(() => {
-    const fetchUserProduct = async () => {
-      const user = auth.currentUser;
+    const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        const productRef = ref(db, "product");
-        const userProductQuery = query(
-          productRef,
-          orderByChild("userId"),
-          equalTo(user.uid)
-        );
+        fetchUserProduct(user.uid);
+      } else {
+        setUserProduct([]);
+        setLoading(false);
+      }
+    });
 
-        try {
-          const snapshot = await get(userProductQuery);
+    return () => unsubscribe();
+  }, []);
+
+  const fetchUserProduct = async (uid) => {
+    const productRef = ref(db, "product");
+    const userProductQuery = query(productRef, orderByChild("userId"), equalTo(uid));
+
+    try {
+      await new Promise((resolve) => {
+        onValue(userProductQuery, (snapshot) => {
           if (snapshot.exists()) {
             const product = [];
             snapshot.forEach((childSnapshot) => {
@@ -37,17 +45,19 @@ export const Shopping_cart = () => {
               });
             });
             setUserProduct(product);
+            resolve();
           } else {
             console.log("Данные не найдены");
+            resolve();
           }
-        } catch (error) {
-          console.error("Ошибка при получении данных: ", error);
-        }
-      }
-    };
-
-    fetchUserProduct();
-  }, []);
+        });
+      });
+    } catch (error) {
+      console.error("Ошибка при получении данных: ", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const deleteItem = async (id) => {
     try {
@@ -55,9 +65,7 @@ export const Shopping_cart = () => {
       await remove(ref(db, `product/${id}`));
 
       // Обновляем состояние userProduct, удаляя товар с заданным id
-      const updatedProducts = userProduct.filter(
-        (product) => product.id !== id
-      );
+      const updatedProducts = userProduct.filter((product) => product.id !== id);
       setUserProduct(updatedProducts);
     } catch (error) {
       console.error("Ошибка при удалении товара: ", error);

@@ -12,17 +12,26 @@ export const Shopping_cart_button = () => {
   const [userProduct, setUserProduct] = useState([]);
   const [total, setTotal] = useState(0);
   const [popupIsOpened, setPopupIsOpened] = useState(false);
+  const [loading, setLoading] = useState(true); // Состояние загрузки
 
   useEffect(() => {
-    const user = auth.currentUser;
-    if (user) {
-      const productRef = ref(db, "product");
-      const userProductQuery = query(
-        productRef,
-        orderByChild("userId"),
-        equalTo(user.uid)
-      );
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        fetchUserProduct(user.uid);
+      } else {
+        setUserProduct([]);
+        setLoading(false);
+      }
+    });
 
+    return () => unsubscribe();
+  }, []);
+
+  const fetchUserProduct = async (uid) => {
+    const productRef = ref(db, "product");
+    const userProductQuery = query(productRef, orderByChild("userId"), equalTo(uid));
+
+    try {
       onValue(userProductQuery, (snapshot) => {
         if (snapshot.exists()) {
           const product = [];
@@ -36,9 +45,13 @@ export const Shopping_cart_button = () => {
         } else {
           setUserProduct([]);
         }
+        setLoading(false);
       });
+    } catch (error) {
+      console.error("Ошибка при получении данных: ", error);
+      setLoading(false);
     }
-  }, [auth.currentUser]);
+  };
 
   useEffect(() => {
     const totalPrice = userProduct.reduce(
