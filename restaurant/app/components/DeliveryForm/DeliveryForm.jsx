@@ -6,11 +6,11 @@ import {
   ref,
   push,
   set,
-  remove,
   query,
   orderByChild,
   equalTo,
   onValue,
+  update,
 } from "firebase/database";
 import { db, auth } from "../../firebase";
 
@@ -20,10 +20,94 @@ export const DeliveryForm = (props) => {
   const [userProduct, setUserProduct] = useState([]);
   const [total, setTotal] = useState(0);
 
+  useEffect(() => {
+    const unsubscribeAuth = auth.onAuthStateChanged((user) => {
+      if (user) {
+        fetchUserProduct(user.uid);
+      } else {
+        setUserProduct([]);
+        setTotal(0);
+      }
+    });
+
+    const unsubscribeProduct = onValue(ref(db, "product"), () => {
+      const user = auth.currentUser;
+      if (user) {
+        fetchUserProduct(user.uid);
+      }
+    });
+
+    return () => {
+      unsubscribeAuth();
+      unsubscribeProduct();
+    };
+  }, []);
+
+  const fetchUserProduct = async (uid) => {
+    try {
+      const productRef = ref(db, "product");
+      const userProductQuery = query(productRef, orderByChild("userId"), equalTo(uid));
+
+      await new Promise((resolve) => {
+        onValue(userProductQuery, (snapshot) => {
+          if (snapshot.exists()) {
+            const product = [];
+            snapshot.forEach((childSnapshot) => {
+              product.push({
+                id: childSnapshot.key,
+                ...childSnapshot.val(),
+              });
+            });
+            setUserProduct(product);
+            calculateTotal(product);
+            resolve();
+          } else {
+            setUserProduct([]);
+            setTotal(0);
+            console.log("Данные не найдены");
+            resolve();
+          }
+        });
+      });
+    } catch (error) {
+      console.error("Ошибка при получении данных: ", error);
+    }
+  };
+
+  const calculateTotal = (products) => {
+    const totalPrice = products.reduce(
+      (sum, item) => sum + parseFloat(item.price),
+      0
+    );
+    setTotal(totalPrice);
+  };
+
   const removeAllProducts = async () => {
     try {
-      await remove(ref(db, "product"));
-      console.log("Все записи из базы данных 'product' удалены");
+      const user = auth.currentUser;
+      if (user) {
+        const productRef = ref(db, "product");
+        const userProductQuery = query(productRef, orderByChild("userId"), equalTo(user.uid));
+
+        await new Promise((resolve) => {
+          onValue(userProductQuery, (snapshot) => {
+            if (snapshot.exists()) {
+              const updates = {};
+              snapshot.forEach((childSnapshot) => {
+                updates[`product/${childSnapshot.key}`] = null;
+              });
+              const updatesRef = ref(db);
+              update(updatesRef, updates).then(() => {
+                console.log("Все записи пользователя из базы данных 'product' удалены");
+                resolve();
+              });
+            } else {
+              console.log("Данные не найдены");
+              resolve();
+            }
+          });
+        });
+      }
     } catch (error) {
       console.error("Ошибка при удалении записей: ", error);
     }
@@ -60,49 +144,6 @@ export const DeliveryForm = (props) => {
       }
     }
   };
-
-  useEffect(() => {
-    const fetchUserProduct = async () => {
-      const user = auth.currentUser;
-      if (user) {
-        const productRef = ref(db, "product");
-        const userProductQuery = query(
-          productRef,
-          orderByChild("userId"),
-          equalTo(user.uid)
-        );
-
-        try {
-          onValue(userProductQuery, (snapshot) => {
-            if (snapshot.exists()) {
-              const product = [];
-              snapshot.forEach((childSnapshot) => {
-                product.push({
-                  id: childSnapshot.key,
-                  ...childSnapshot.val(),
-                });
-              });
-              setUserProduct(product);
-            } else {
-              console.log("Данные не найдены");
-            }
-          });
-        } catch (error) {
-          console.error("Ошибка при получении данных: ", error);
-        }
-      }
-    };
-
-    fetchUserProduct();
-  }, []);
-
-  useEffect(() => {
-    const totalPrice = userProduct.reduce(
-      (sum, item) => sum + parseFloat(item.price),
-      0
-    );
-    setTotal(totalPrice);
-  }, [userProduct]);
 
   return (
     <form className={Styles["form"]}>

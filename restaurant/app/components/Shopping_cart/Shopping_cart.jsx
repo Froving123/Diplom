@@ -14,7 +14,6 @@ import Styles from "./Shopping_cart.module.css";
 
 export const Shopping_cart = () => {
   const [userProduct, setUserProduct] = useState([]);
-  const [loading, setLoading] = useState(true); // Состояние для обработки загрузки
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -22,7 +21,6 @@ export const Shopping_cart = () => {
         fetchUserProduct(user.uid);
       } else {
         setUserProduct([]);
-        setLoading(false);
       }
     });
 
@@ -54,9 +52,7 @@ export const Shopping_cart = () => {
       });
     } catch (error) {
       console.error("Ошибка при получении данных: ", error);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   const deleteItem = async (id) => {

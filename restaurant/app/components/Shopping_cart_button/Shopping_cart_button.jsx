@@ -12,7 +12,6 @@ export const Shopping_cart_button = () => {
   const [userProduct, setUserProduct] = useState([]);
   const [total, setTotal] = useState(0);
   const [popupIsOpened, setPopupIsOpened] = useState(false);
-  const [loading, setLoading] = useState(true); // Состояние загрузки
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -20,7 +19,6 @@ export const Shopping_cart_button = () => {
         fetchUserProduct(user.uid);
       } else {
         setUserProduct([]);
-        setLoading(false);
       }
     });
 
@@ -45,11 +43,9 @@ export const Shopping_cart_button = () => {
         } else {
           setUserProduct([]);
         }
-        setLoading(false);
       });
     } catch (error) {
       console.error("Ошибка при получении данных: ", error);
-      setLoading(false);
     }
   };
 
