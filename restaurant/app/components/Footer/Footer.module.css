@@ -1,7 +1,7 @@
 .all_footer {
   display: flex;
   flex-direction: column;
-  background-color: black;
+  background-color: #111;
   height: max-content;
   margin-top: 0px;
   padding: 0px 50px;

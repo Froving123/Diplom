@@ -31,7 +31,7 @@ const AuthDetails = () => {
     <div className={Styles.str_profile}>
       {authUser ? (
         <div className={Styles.profile}>
-          <p className={Styles.user}>{`Пользователь ${authUser.email}`}</p>
+          <p className={Styles.user}>{`Здравствуйте ${authUser.email}`}</p>
           <UserReservations />
           <Delivery_user />
           <Link href="/">

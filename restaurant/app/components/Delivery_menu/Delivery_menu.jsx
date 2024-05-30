@@ -58,7 +58,7 @@ export const Delivery_menu = () => {
   };
   return (
     <div className={Styles.delivery_menu}>
-      <h2 className={Styles.delivery_h}>Закажите до дома</h2>
+      <h2 className={Styles.delivery_h}>Закажите домой</h2>
       <div className={Styles.foods}>
         <div className={Styles.food}>
           <img className={Styles.img_food} src="images/pancakes.png" />
