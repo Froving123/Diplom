@@ -1,5 +1,5 @@
 .str_profile {
-  background-image: url("/images/back_menu.png");
+  background-image: url("/images/shopping_cart.png");
   background-size: cover;
   background-repeat: no-repeat;
   background-position: top;
@@ -20,13 +20,14 @@
 .user {
   margin-top: 55px;
   margin-bottom: 25px;
+  margin-left: 85px;
   font-weight: 400;
   font-size: 55px;
   color: white;
 }
 
 .button_logOut {
-  margin: 35px 0px 20px 0px;
+  margin: 85px 0px 20px 115px;
   background-color: rgb(255, 106, 43);
   border-radius: 8px;
   color: white;

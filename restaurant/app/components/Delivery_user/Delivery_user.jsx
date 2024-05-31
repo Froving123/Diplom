@@ -101,12 +101,19 @@ export const Delivery_user = () => {
               <p className={Styles.delivery_description}>
                 Стоимость заказа: {delivery.price}₽
               </p>
+              <input
+               className={Styles.delivery_box}
+               type="checkbox"
+              > 
+              </input>
             </li>
           ))}
         </ul>
       ) : (
         <ul className={Styles.ul_delivery}>
-          <p className={Styles.delivery_empty}>Сейчас у вас нет заказов</p>
+          <li className={Styles.li_delivery}>
+            <p className={Styles.delivery_empty}>Сейчас у вас нет заказов</p>
+          </li>
         </ul>
       )}
     </div>

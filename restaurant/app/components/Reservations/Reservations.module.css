@@ -2,37 +2,43 @@
   margin: 15px 0px 35px 0px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 
 .title_reserv {
   margin-bottom: 30px;
+  margin-left: 85px;
   font-size: 45px;
   font-weight: 400;
-  color: rgb(251, 145, 64);
-  font-family: Arial, Helvetica, sans-serif;
+  color: rgb(255, 255, 255);
 }
 
 .ul_reserv {
   border: 1px solid black;
-  background-color: rgb(200, 164, 125);
-  border-radius: 8px;
+  background-color: transparent;
+  border-radius: 15px;
   list-style: none;
-  margin: 0%;
+  margin-left: 115px;
   padding: 0%;
 }
 
 .li_reserv {
+  display: flex;
   border: 1px solid black;
+  background-color: rgb(210, 209, 209);
+  border-radius: 15px;
   margin: 0%;
-  padding: 25px;
+  padding: 15px 25px 15px 25px;
+  gap: 50px;
 }
 
 .reserv_description {
   font-weight: 900;
   font-size: 30px;
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.delivery_box {
+  transform: scale(3);
 }
 
 .reserv_empty {

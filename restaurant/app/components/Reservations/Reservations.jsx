@@ -55,12 +55,19 @@ export const UserReservations = () => {
               <p className={Styles.reserv_description}>
                 Время: {reservation.time}
               </p>
+              <input
+               className={Styles.delivery_box}
+               type="checkbox"
+              > 
+              </input>
             </li>
           ))}
         </ul>
       ) : (
         <ul className={Styles.ul_reserv}>
-          <p className={Styles.reserv_empty}>У вас нет бронирования</p>
+          <li className={Styles.li_reserv}>
+            <p className={Styles.reserv_empty}>У вас нет бронирования</p>
+          </li>
         </ul>
       )}
     </div>
