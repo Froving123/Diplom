@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import {
   ref,
   get,
+  set,
   query,
   orderByChild,
   equalTo,
@@ -15,6 +16,7 @@ import Styles from "./Delivery_user.module.css";
 export const Delivery_user = () => {
   const [userDelivery, setUserDelivery] = useState([]);
   const [userProduct, setUserProduct] = useState([]);
+  const [deliveryStatus, setDeliveryStatus] = useState({});
 
   useEffect(() => {
     const fetchUserDelivery = async () => {
@@ -31,13 +33,17 @@ export const Delivery_user = () => {
           const snapshot = await get(userDeliveryQuery);
           if (snapshot.exists()) {
             const delivery = [];
+            const initialStatus = {};
             snapshot.forEach((childSnapshot) => {
-              delivery.push({
+              const deliveryItem = {
                 id: childSnapshot.key,
                 ...childSnapshot.val(),
-              });
+              };
+              delivery.push(deliveryItem);
+              initialStatus[deliveryItem.id] = "Готовится";
             });
             setUserDelivery(delivery);
+            setDeliveryStatus(initialStatus);
           } else {
             console.log("Данные не найдены");
           }
@@ -85,6 +91,35 @@ export const Delivery_user = () => {
     fetchUserProduct();
   }, []);
 
+  useEffect(() => {
+    const intervalIds = {};
+
+    const changeDeliveryStatus = () => {
+      Object.keys(deliveryStatus).forEach((key) => {
+        if (deliveryStatus[key] === "Готовится") {
+          intervalIds[key] = setTimeout(() => {
+            setDeliveryStatus((prevState) => ({
+              ...prevState,
+              [key]: "В пути",
+            }));
+            setTimeout(() => {
+              setDeliveryStatus((prevState) => ({
+                ...prevState,
+                [key]: "Доставлен",
+              }));
+            }, 3600000);
+          }, 900000);
+        }
+      });
+    };
+
+    changeDeliveryStatus();
+
+    return () => {
+      Object.values(intervalIds).forEach((id) => clearTimeout(id));
+    };
+  }, [deliveryStatus]);
+
   return (
     <div className={Styles.Delivery}>
       <h2 className={Styles.title_delivery}>Ваши текущие заказы</h2>
@@ -96,16 +131,15 @@ export const Delivery_user = () => {
                 Адрес: {delivery.address}
               </p>
               <p className={Styles.delivery_description}>
-                Оплата: При получении
+                Оплата: {delivery.payment}
               </p>
               <p className={Styles.delivery_description}>
                 Стоимость заказа: {delivery.price}₽
               </p>
-              <input
-               className={Styles.delivery_box}
-               type="checkbox"
-              > 
-              </input>
+              <p className={Styles.delivery_description}>
+                Статус заказа: {deliveryStatus[delivery.id] || "Готовится"}
+              </p>
+              <input className={Styles.delivery_box} type="checkbox"></input>
             </li>
           ))}
         </ul>
@@ -119,3 +153,4 @@ export const Delivery_user = () => {
     </div>
   );
 };
+

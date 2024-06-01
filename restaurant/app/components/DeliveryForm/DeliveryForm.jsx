@@ -46,7 +46,11 @@ export const DeliveryForm = (props) => {
   const fetchUserProduct = async (uid) => {
     try {
       const productRef = ref(db, "product");
-      const userProductQuery = query(productRef, orderByChild("userId"), equalTo(uid));
+      const userProductQuery = query(
+        productRef,
+        orderByChild("userId"),
+        equalTo(uid)
+      );
 
       await new Promise((resolve) => {
         onValue(userProductQuery, (snapshot) => {
@@ -87,7 +91,11 @@ export const DeliveryForm = (props) => {
       const user = auth.currentUser;
       if (user) {
         const productRef = ref(db, "product");
-        const userProductQuery = query(productRef, orderByChild("userId"), equalTo(user.uid));
+        const userProductQuery = query(
+          productRef,
+          orderByChild("userId"),
+          equalTo(user.uid)
+        );
 
         await new Promise((resolve) => {
           onValue(userProductQuery, (snapshot) => {
@@ -98,7 +106,9 @@ export const DeliveryForm = (props) => {
               });
               const updatesRef = ref(db);
               update(updatesRef, updates).then(() => {
-                console.log("Все записи пользователя из базы данных 'product' удалены");
+                console.log(
+                  "Все записи пользователя из базы данных 'product' удалены"
+                );
                 resolve();
               });
             } else {
@@ -128,6 +138,7 @@ export const DeliveryForm = (props) => {
           const newItemKey = newItemRef.key;
           const newItemData = {
             address: newItem.address,
+            payment: newItem.payment,
             userId: user.uid,
             price: total,
           };
@@ -163,12 +174,17 @@ export const DeliveryForm = (props) => {
         </label>
         <label className={Styles["form__field"]}>
           <span className={Styles["form__field-title"]}>Способ оплаты</span>
-          <input
+          <select
             className={Styles["form__field-input"]}
-            type="text"
-            disabled
-            placeholder="при получении"
-          />
+            value={newItem.payment}
+            onChange={(e) =>
+              setNewItem({ ...newItem, payment: e.target.value })
+            }
+          >
+            <option disabled selected>Выберите способ оплаты</option>
+            <option>Наличными при получении</option>
+            <option>Картой при получении</option>
+          </select>
         </label>
         <div className={Styles.order}>
           <p className={Styles.order_content}>Стоимость заказа</p>
