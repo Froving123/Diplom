@@ -8,12 +8,14 @@ import {
   orderByChild,
   equalTo,
   remove,
+  update,
 } from "firebase/database";
 import { db, auth } from "@/app/firebase";
 import Styles from "./Shopping_cart.module.css";
 
 export const Shopping_cart = () => {
   const [userProduct, setUserProduct] = useState([]);
+  const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -21,6 +23,7 @@ export const Shopping_cart = () => {
         fetchUserProduct(user.uid);
       } else {
         setUserProduct([]);
+        setTotalPrice(0);
       }
     });
 
@@ -29,7 +32,11 @@ export const Shopping_cart = () => {
 
   const fetchUserProduct = async (uid) => {
     const productRef = ref(db, "product");
-    const userProductQuery = query(productRef, orderByChild("userId"), equalTo(uid));
+    const userProductQuery = query(
+      productRef,
+      orderByChild("userId"),
+      equalTo(uid)
+    );
 
     try {
       await new Promise((resolve) => {
@@ -40,19 +47,22 @@ export const Shopping_cart = () => {
               product.push({
                 id: childSnapshot.key,
                 ...childSnapshot.val(),
+                quantity: childSnapshot.val().quantity || 1,
               });
             });
             setUserProduct(product);
+            calculateTotalPrice(product);
             resolve();
           } else {
             console.log("Данные не найдены");
+            setTotalPrice(0);
             resolve();
           }
         });
       });
     } catch (error) {
       console.error("Ошибка при получении данных: ", error);
-    } 
+    }
   };
 
   const deleteItem = async (id) => {
@@ -61,11 +71,37 @@ export const Shopping_cart = () => {
       await remove(ref(db, `product/${id}`));
 
       // Обновляем состояние userProduct, удаляя товар с заданным id
-      const updatedProducts = userProduct.filter((product) => product.id !== id);
+      const updatedProducts = userProduct.filter(
+        (product) => product.id !== id
+      );
       setUserProduct(updatedProducts);
+      calculateTotalPrice(updatedProducts);
     } catch (error) {
       console.error("Ошибка при удалении товара: ", error);
     }
+  };
+
+  const updateQuantity = async (id, quantity) => {
+    try {
+      // Обновляем количество товара в базе данных
+      await update(ref(db, `product/${id}`), { quantity });
+
+      // Обновляем состояние userProduct
+      const updatedProducts = userProduct.map((product) =>
+        product.id === id ? { ...product, quantity } : product
+      );
+      setUserProduct(updatedProducts);
+      calculateTotalPrice(updatedProducts);
+    } catch (error) {
+      console.error("Ошибка при обновлении количества товара: ", error);
+    }
+  };
+
+  const calculateTotalPrice = (products) => {
+    const total = products.reduce((acc, product) => {
+      return acc + product.price * product.quantity;
+    }, 0);
+    setTotalPrice(total);
   };
 
   return (
@@ -75,8 +111,37 @@ export const Shopping_cart = () => {
           {userProduct.map((product) => (
             <div key={product.id} className={Styles.product}>
               <div className={Styles.product_content}>
-                <p className={Styles.product_description}>{product.name}</p>
-                <p className={Styles.product_description}>{product.price}</p>
+                <p className={Styles.product_description}>
+                  {product.name} x {product.quantity}
+                </p>
+                <div className={Styles.quantity_controls}>
+                  <p className={Styles.product_description}>
+                    {parseInt(product.price) * product.quantity
+                      ? (parseInt(product.price) * product.quantity).toFixed(
+                          0
+                        ) + "₽"
+                      : ""}
+                  </p>
+                  <div className={Styles.quantity_buttons}>
+                    <button
+                      className={Styles.button_quantity}
+                      onClick={() =>
+                        updateQuantity(product.id, product.quantity + 1)
+                      }
+                    >
+                      +
+                    </button>
+                    <button
+                      className={Styles.button_quantity}
+                      onClick={() =>
+                        updateQuantity(product.id, product.quantity - 1)
+                      }
+                      disabled={product.quantity <= 1}
+                    >
+                      -
+                    </button>
+                  </div>
+                </div>
               </div>
               <button
                 onClick={() => deleteItem(product.id)}

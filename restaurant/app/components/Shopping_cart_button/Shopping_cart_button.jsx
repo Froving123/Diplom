@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ref, query, orderByChild, equalTo, onValue } from "firebase/database";
+import {
+  ref,
+  set,
+  query,
+  orderByChild,
+  equalTo,
+  onValue,
+} from "firebase/database";
 import Styles from "./Shopping_cart_button.module.css";
 import { db, auth } from "@/app/firebase";
 import { Overlay } from "../Overlay/Overlay";
@@ -19,6 +26,7 @@ export const Shopping_cart_button = () => {
         fetchUserProduct(user.uid);
       } else {
         setUserProduct([]);
+        setTotal(0);
       }
     });
 
@@ -27,21 +35,31 @@ export const Shopping_cart_button = () => {
 
   const fetchUserProduct = async (uid) => {
     const productRef = ref(db, "product");
-    const userProductQuery = query(productRef, orderByChild("userId"), equalTo(uid));
+    const userProductQuery = query(
+      productRef,
+      orderByChild("userId"),
+      equalTo(uid)
+    );
 
     try {
       onValue(userProductQuery, (snapshot) => {
         if (snapshot.exists()) {
           const product = [];
           snapshot.forEach((childSnapshot) => {
+            const price = parseInt(childSnapshot.val().price) || 0;
+            const quantity = parseInt(childSnapshot.val().quantity) || 1;
             product.push({
               id: childSnapshot.key,
               ...childSnapshot.val(),
+              price: price,
+              quantity: quantity,
             });
           });
           setUserProduct(product);
+          calculateTotal(product);
         } else {
           setUserProduct([]);
+          setTotal(0);
         }
       });
     } catch (error) {
@@ -49,13 +67,29 @@ export const Shopping_cart_button = () => {
     }
   };
 
-  useEffect(() => {
-    const totalPrice = userProduct.reduce(
-      (sum, item) => sum + parseFloat(item.price),
-      0
-    );
-    setTotal(totalPrice); // Обновляем состояние суммы
-  }, [userProduct]);
+  const addToCart = async (product) => {
+    try {
+      const newProductRef = ref(db, `product/${product.id}`);
+      const newQuantity = (product.quantity || 1) + 1;
+      await set(newProductRef, {
+        ...product,
+        price: parseInt(product.price), 
+        quantity: newQuantity,
+        userId: auth.currentUser.uid,
+      });
+    } catch (error) {
+      console.error("Ошибка при добавлении товара в корзину: ", error);
+    }
+  };
+
+  const calculateTotal = (products) => {
+    const totalPrice = products.reduce((sum, item) => {
+      const price = parseInt(item.price) || 0;
+      const quantity = parseInt(item.quantity) || 1;
+      return sum + price * quantity;
+    }, 0);
+    setTotal(totalPrice);
+  };
 
   const openPopup = () => {
     setPopupIsOpened(true);
@@ -70,14 +104,14 @@ export const Shopping_cart_button = () => {
       {userProduct.length > 0 ? (
         <button className={Styles.order_button} onClick={openPopup}>
           <p className={Styles.order_content}>Заказать</p>
-          <p className={Styles.order_content}>{total}₽</p>
+          <p className={Styles.order_content}>{total.toFixed(0)}₽</p>
         </button>
       ) : (
         ""
       )}
       <Overlay isOpened={popupIsOpened} close={closePopup} />
       <Popup isOpened={popupIsOpened} close={closePopup}>
-        <DeliveryForm close={closePopup} />
+        <DeliveryForm close={closePopup} addToCart={addToCart} />
       </Popup>
     </div>
   );

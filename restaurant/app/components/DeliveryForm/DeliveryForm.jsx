@@ -80,7 +80,7 @@ export const DeliveryForm = (props) => {
 
   const calculateTotal = (products) => {
     const totalPrice = products.reduce(
-      (sum, item) => sum + parseFloat(item.price),
+      (sum, item) => sum + parseInt(item.price) * item.quantity,
       0
     );
     setTotal(totalPrice);
@@ -181,7 +181,9 @@ export const DeliveryForm = (props) => {
               setNewItem({ ...newItem, payment: e.target.value })
             }
           >
-            <option disabled selected>Выберите способ оплаты</option>
+            <option disabled selected>
+              Выберите способ оплаты
+            </option>
             <option>Наличными при получении</option>
             <option>Картой при получении</option>
           </select>
