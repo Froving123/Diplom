@@ -103,16 +103,21 @@
   .ul_product {
     border-radius: 8px;
     margin: 30px;
-    width: 80%;
+    width: 90%;
   }
 
   .product_content {
-    padding: 10px;
+    padding-left: 10px;
   }
 
   .product_description {
     font-size: 13px;
-    margin: 0%;
+    margin: 10px;
+  }
+
+  .button_quantity {
+    font-size: 15px;
+    padding: 8px 12px;
   }
 
   .button_remove {

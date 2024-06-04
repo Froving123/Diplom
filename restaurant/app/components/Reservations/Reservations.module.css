@@ -48,25 +48,36 @@
 
 @media screen and (max-width: 500px) {
   .reservation {
-    margin: 15px 0px 35px 0px;
+    margin: 0px;
   }
 
   .title_reserv {
-    margin-bottom: 30px;
-    font-size: 27px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    font-size: 20px;
+  }
+
+  .ul_reserv {
+    margin-left: 15px;
   }
 
   .li_reserv {
-    padding: 25px;
+    padding: 10px;
+    border-radius: 10px;
+    gap: 15px;
   }
 
   .reserv_description {
-    font-size: 20px;
+    font-size: 12px;
+  }
+
+  .delivery_box {
+    transform: scale(1);
   }
 
   .reserv_empty {
-    font-size: 20px;
-    margin: 20px;
+    font-size: 12px;
+    margin: 10px;
   }
 }
 

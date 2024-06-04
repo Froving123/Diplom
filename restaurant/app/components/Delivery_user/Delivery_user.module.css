@@ -49,25 +49,36 @@
 
 @media screen and (max-width: 500px) {
   .delivery {
-    margin: 15px 0px 35px 0px;
+    margin: 0px;
   }
 
   .title_delivery {
-    margin-bottom: 30px;
-    font-size: 27px;
+    margin-left: 10px;
+    font-size: 20px;
+  }
+
+  .ul_delivery {
+    margin-left: 15px;
   }
 
   .li_delivery {
-    padding: 25px;
+    padding: 10px;
+    border-radius: 10px;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .delivery_description {
-    font-size: 20px;
+    font-size: 12px;
+  }
+
+  .delivery_box {
+    transform: scale(1);
   }
 
   .delivery_empty {
-    font-size: 20px;
-    margin: 20px;
+    font-size: 12px;
+    margin: 10px;
   }
 }
 

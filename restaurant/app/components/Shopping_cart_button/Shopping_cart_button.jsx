@@ -67,21 +67,6 @@ export const Shopping_cart_button = () => {
     }
   };
 
-  const addToCart = async (product) => {
-    try {
-      const newProductRef = ref(db, `product/${product.id}`);
-      const newQuantity = (product.quantity || 1) + 1;
-      await set(newProductRef, {
-        ...product,
-        price: parseInt(product.price), 
-        quantity: newQuantity,
-        userId: auth.currentUser.uid,
-      });
-    } catch (error) {
-      console.error("Ошибка при добавлении товара в корзину: ", error);
-    }
-  };
-
   const calculateTotal = (products) => {
     const totalPrice = products.reduce((sum, item) => {
       const price = parseInt(item.price) || 0;
@@ -111,7 +96,7 @@ export const Shopping_cart_button = () => {
       )}
       <Overlay isOpened={popupIsOpened} close={closePopup} />
       <Popup isOpened={popupIsOpened} close={closePopup}>
-        <DeliveryForm close={closePopup} addToCart={addToCart} />
+        <DeliveryForm close={closePopup} />
       </Popup>
     </div>
   );

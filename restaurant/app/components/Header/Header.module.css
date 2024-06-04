@@ -60,7 +60,9 @@
 @media screen and (max-width: 500px) {
   .header {
     max-width: 100%;
-    padding: 0px 5px;
+    padding: 0px;
+    justify-content: start;
+    gap: 14px;
   }
 
   .logo {
@@ -69,7 +71,8 @@
   }
 
   .ul_header {
-    gap: 10px;
+    gap: 8px;
+    padding: 0%;
   }
 
   .nav_p {

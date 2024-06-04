@@ -57,9 +57,13 @@ export const DeliveryForm = (props) => {
           if (snapshot.exists()) {
             const product = [];
             snapshot.forEach((childSnapshot) => {
+              const price = parseInt(childSnapshot.val().price) || 0;
+              const quantity = parseInt(childSnapshot.val().quantity) || 1;
               product.push({
                 id: childSnapshot.key,
                 ...childSnapshot.val(),
+                price: price,
+                quantity: quantity,
               });
             });
             setUserProduct(product);
