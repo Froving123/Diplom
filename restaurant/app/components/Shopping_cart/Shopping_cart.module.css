@@ -38,7 +38,7 @@
 .quantity_controls {
   display: flex;
   align-items: center;
-  gap: 15 px;
+  gap: 15px;
 }
 
 .quantity_number {
