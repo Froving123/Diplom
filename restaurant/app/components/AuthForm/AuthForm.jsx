@@ -127,6 +127,46 @@ export const AuthForm = (props) => {
         <>
           <h2 className={Styles["form__title"]}>Регистрация</h2>
           <div className={Styles["form__fields"]}>
+          <label className={Styles["form__field"]}>
+              <span className={Styles["form__field-title"]}>Фамилия</span>
+              <input
+                className={Styles["form__field-input"]}
+                type="text"
+                placeholder="Иванов"
+                value={Text}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </label>
+            <label className={Styles["form__field"]}>
+              <span className={Styles["form__field-title"]}>Имя</span>
+              <input
+                className={Styles["form__field-input"]}
+                type="text"
+                placeholder="Иван"
+                value={Text}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </label>
+            <label className={Styles["form__field"]}>
+              <span className={Styles["form__field-title"]}>Отчество</span>
+              <input
+                className={Styles["form__field-input"]}
+                type="text"
+                placeholder="Иванов"
+                value={Text}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </label>
+            <label className={Styles["form__field"]}>
+              <span className={Styles["form__field-title"]}>Номер телефона</span>
+              <input
+                className={Styles["form__field-input"]}
+                type="number"
+                placeholder="80000000000"
+                value={Number}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </label>
             <label className={Styles["form__field"]}>
               <span className={Styles["form__field-title"]}>Email</span>
               <input
