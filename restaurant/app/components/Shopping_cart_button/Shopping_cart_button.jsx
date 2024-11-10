@@ -1,16 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  ref,
-  set,
-  query,
-  orderByChild,
-  equalTo,
-  onValue,
-} from "firebase/database";
 import Styles from "./Shopping_cart_button.module.css";
-import { db, auth } from "@/app/firebase";
 import { Overlay } from "../Overlay/Overlay";
 import { Popup } from "../Popup/Popup";
 import { DeliveryForm } from "../DeliveryForm/DeliveryForm";

@@ -6,8 +6,6 @@ import { Overlay } from "../Overlay/Overlay";
 import { Popup } from "../Popup/Popup";
 import { AuthForm } from "../AuthForm/AuthForm";
 import { ReservForm } from "@/app/components/ReservForm/ReservForm";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/app/firebase";
 
 export const Welcome = () => {
   const [popupIsOpened, setPopupIsOpened] = useState(false);

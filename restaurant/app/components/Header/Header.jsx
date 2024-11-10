@@ -7,8 +7,6 @@ import { usePathname } from "next/navigation";
 import { Overlay } from "../Overlay/Overlay";
 import { Popup } from "../Popup/Popup";
 import { AuthForm } from "../AuthForm/AuthForm";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "@/app/firebase";
 
 export const Header = () => {
   const [popupIsOpened, setPopupIsOpened] = useState(false);

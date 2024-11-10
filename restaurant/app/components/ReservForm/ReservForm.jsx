@@ -2,8 +2,6 @@
 
 import React, { useState } from "react";
 import Styles from "./ReservForm.module.css";
-import { ref, push, set } from "firebase/database";
-import { db, auth } from "../../firebase";
 
 export const ReservForm = (props) => {
   const [newItem, setNewItem] = useState({ date: "", time: "" });

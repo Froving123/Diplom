@@ -1,14 +1,11 @@
 "use client";
 
 import React from "react";
-import { ref, push, set } from "firebase/database";
-import { db, auth } from "../../firebase";
 import Styles from "./Delivery_menu.module.css";
 import { useEffect, useState } from "react";
 import { Overlay } from "../Overlay/Overlay";
 import { Popup } from "../Popup/Popup";
 import { AuthForm } from "../AuthForm/AuthForm";
-import { onAuthStateChanged } from "firebase/auth";
 
 export const Delivery_menu = () => {
   const [popupIsOpened, setPopupIsOpened] = useState(false);

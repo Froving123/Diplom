@@ -2,17 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import Styles from "./DeliveryForm.module.css";
-import {
-  ref,
-  push,
-  set,
-  query,
-  orderByChild,
-  equalTo,
-  onValue,
-  update,
-} from "firebase/database";
-import { db, auth } from "../../firebase";
 
 export const DeliveryForm = (props) => {
   const [newItem, setNewItem] = useState({ address: "" });

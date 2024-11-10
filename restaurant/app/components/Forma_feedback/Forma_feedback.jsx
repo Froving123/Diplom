@@ -4,9 +4,6 @@ import Styles from "./Forma_feedback.module.css";
 import { Overlay } from "../Overlay/Overlay";
 import { Popup } from "../Popup/Popup";
 import { AuthForm } from "../AuthForm/AuthForm";
-import { onAuthStateChanged } from "firebase/auth";
-import { ref, push, set } from "firebase/database";
-import { auth, db } from "@/app/firebase";
 import { useEffect, useState } from "react";
 
 export const Forma_feedback = () => {

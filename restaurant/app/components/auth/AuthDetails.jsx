@@ -3,8 +3,6 @@
 import Styles from "./AuthDetails.module.css";
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import { auth } from "@/app/firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
 import { UserReservations } from "../Reservations/Reservations";
 import { Delivery_user } from "../Delivery_user/Delivery_user";
 

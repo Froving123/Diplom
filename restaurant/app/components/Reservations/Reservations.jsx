@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { ref, get, query, orderByChild, equalTo } from "firebase/database";
-import { db, auth } from "@/app/firebase";
 import Styles from "./Reservations.module.css";
 
 export const UserReservations = () => {

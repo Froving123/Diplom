@@ -1,16 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  ref,
-  get,
-  set,
-  query,
-  orderByChild,
-  equalTo,
-  onValue,
-} from "firebase/database";
-import { db, auth } from "@/app/firebase";
 import Styles from "./Delivery_user.module.css";
 
 export const Delivery_user = () => {

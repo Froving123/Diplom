@@ -2,9 +2,6 @@
 
 import React, { useState } from "react";
 import Styles from "./AuthForm.module.css";
-import { auth } from "@/app/firebase";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { createUserWithEmailAndPassword } from "firebase/auth";
 
 export const AuthForm = (props) => {
   const [isLoginForm, setIsLoginForm] = useState(true);

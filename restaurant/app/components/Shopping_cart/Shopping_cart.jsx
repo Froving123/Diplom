@@ -1,16 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  ref,
-  onValue,
-  query,
-  orderByChild,
-  equalTo,
-  remove,
-  update,
-} from "firebase/database";
-import { db, auth } from "@/app/firebase";
 import Styles from "./Shopping_cart.module.css";
 
 export const Shopping_cart = () => {
