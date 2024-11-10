@@ -7,7 +7,7 @@ export const Shopping_cart = () => {
   const [userProduct, setUserProduct] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
-  useEffect(() => {
+  /*useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         fetchUserProduct(user.uid);
@@ -18,7 +18,7 @@ export const Shopping_cart = () => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, []);*/
 
   const fetchUserProduct = async (uid) => {
     const productRef = ref(db, "product");

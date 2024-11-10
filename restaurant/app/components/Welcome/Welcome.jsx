@@ -12,7 +12,7 @@ export const Welcome = () => {
   const [popupIsOpen, setPopupIsOpen] = useState(false);
   const [authUser, setAuthUser] = useState(null);
 
-  useEffect(() => {
+  /*useEffect(() => {
     const listen = onAuthStateChanged(auth, (user) => {
       if (user) {
         setAuthUser(user);
@@ -23,7 +23,7 @@ export const Welcome = () => {
     return () => {
       listen();
     };
-  }, []);
+  }, []);*/
 
   const openPopup = () => {
     setPopupIsOpened(true);

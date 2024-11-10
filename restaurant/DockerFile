@@ -1,0 +1,16 @@
+FROM alpine:latest
+
+# Установка Node.js 18
+RUN apk add --no-cache nodejs npm nodejs-current
+
+# Установка Firebase CLI
+RUN npm install -g firebase-tools
+
+# Копирование скрипта в контейнер
+COPY deploy.sh /app/deploy.sh
+
+# Сделать скрипт исполняемым
+RUN chmod +x /app/deploy.sh
+
+# Запуск скрипта при запуске контейнера
+CMD ["/app/deploy.sh"]

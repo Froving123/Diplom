@@ -44,7 +44,7 @@ export const Forma_feedback = () => {
     }
   };
 
-  useEffect(() => {
+  /*useEffect(() => {
     const listen = onAuthStateChanged(auth, (user) => {
       if (user) {
         setAuthUser(user);
@@ -55,7 +55,7 @@ export const Forma_feedback = () => {
     return () => {
       listen();
     };
-  }, []);
+  }, []);*/
 
   const openedPopup = () => {
     setPopupIsOpened(true);

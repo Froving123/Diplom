@@ -9,7 +9,7 @@ export const DeliveryForm = (props) => {
   const [userProduct, setUserProduct] = useState([]);
   const [total, setTotal] = useState(0);
 
-  useEffect(() => {
+  /*useEffect(() => {
     const unsubscribeAuth = auth.onAuthStateChanged((user) => {
       if (user) {
         fetchUserProduct(user.uid);
@@ -30,7 +30,7 @@ export const DeliveryForm = (props) => {
       unsubscribeAuth();
       unsubscribeProduct();
     };
-  }, []);
+  }, []);*/
 
   const fetchUserProduct = async (uid) => {
     try {

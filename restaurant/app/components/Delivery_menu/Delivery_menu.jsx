@@ -11,7 +11,7 @@ export const Delivery_menu = () => {
   const [popupIsOpened, setPopupIsOpened] = useState(false);
   const [authUser, setAuthUser] = useState(null);
 
-  useEffect(() => {
+  /*useEffect(() => {
     const listen = onAuthStateChanged(auth, (user) => {
       if (user) {
         setAuthUser(user);
@@ -22,7 +22,7 @@ export const Delivery_menu = () => {
     return () => {
       listen();
     };
-  }, []);
+  }, []);*/
 
   const openPopup = () => {
     setPopupIsOpened(true);

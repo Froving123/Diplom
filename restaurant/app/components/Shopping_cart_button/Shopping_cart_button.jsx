@@ -11,7 +11,7 @@ export const Shopping_cart_button = () => {
   const [total, setTotal] = useState(0);
   const [popupIsOpened, setPopupIsOpened] = useState(false);
 
-  useEffect(() => {
+  /*useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         fetchUserProduct(user.uid);
@@ -22,7 +22,7 @@ export const Shopping_cart_button = () => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, []);*/
 
   const fetchUserProduct = async (uid) => {
     const productRef = ref(db, "product");
