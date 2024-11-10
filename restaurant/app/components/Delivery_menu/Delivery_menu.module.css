@@ -15,6 +15,7 @@
 .delivery_h {
   margin-top: 100px;
   color: rgb(252, 130, 37);
+  font-family: "Pacifico";
   letter-spacing: 3px;
   font-size: 65px;
 }
@@ -53,6 +54,7 @@
   font-size: 30px;
   line-height: 32px;
   letter-spacing: 1px;
+  font-family: "Pacifico";
   margin: 0%;
   color: rgb(252, 130, 37);
   text-align: center;
@@ -61,6 +63,7 @@
 
 .price_menu {
   font-weight: 700;
+  font-family: "Pacifico";
   font-size: 27px;
   letter-spacing: 1px;
   margin: 0%;
@@ -75,6 +78,7 @@
 
 .lowprice_menu {
   font-weight: 700;
+  font-family: "Pacifico";
   font-size: 35px;
   letter-spacing: 1px;
   margin: 0%;

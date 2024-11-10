@@ -13,6 +13,7 @@
 
 .form_h {
   color: rgb(188, 144, 96);
+  font-family: "Pacifico";
   font-size: 85px;
   line-height: 85px;
   letter-spacing: 4px;
@@ -21,6 +22,7 @@
 
 .form_p {
   color: rgb(82, 82, 82);
+  font-family: "Pacifico";
   font-size: 38px;
   line-height: 38px;
 }

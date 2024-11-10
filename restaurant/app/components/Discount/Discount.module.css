@@ -20,6 +20,7 @@
 
 .discount_h {
   color: rgb(252, 130, 37);
+  font-family: "Pacifico";
   letter-spacing: 2px;
   font-size: 60px;
   line-height: 60px;
@@ -29,6 +30,7 @@
 .discount_p {
   color: white;
   font-size: 30px;
+  font-family: "Pacifico";
 }
 
 .right_discount {

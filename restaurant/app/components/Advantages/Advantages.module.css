@@ -26,11 +26,13 @@
 .advantage_main {
   font-size: 25px;
   color: rgb(188, 144, 96);
+  font-family: "Pacifico";
 }
 
 .advantage_p {
   color: rgb(82, 82, 82);
   font-size: 21px;
+  font-family: "Pacifico"; 
 }
 
 @media screen and (max-width: 500px) {

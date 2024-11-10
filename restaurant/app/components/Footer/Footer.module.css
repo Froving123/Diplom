@@ -40,6 +40,7 @@
 
 .top_fot_h {
   color: rgb(252, 130, 37);
+  font-family: "Pacifico";
   margin: 0%;
   margin-bottom: 20px;
   font-size: 25px;
@@ -49,6 +50,7 @@
   color: rgb(252, 130, 37);
   margin: 0%;
   font-size: 22px;
+  font-family: "Pacifico";
 }
 
 .hr_footer {
