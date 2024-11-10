@@ -66,6 +66,59 @@ export const ReservForm = (props) => {
             onChange={(e) => setNewItem({ ...newItem, time: e.target.value })}
           />
         </label>
+        <label className={Styles["form__field"]}>
+          <span className={Styles["form__field-title"]}>количество человек</span>
+          <select
+            className={Styles["form__field-input"]}
+            value={newItem.people}
+            onChange={(e) =>
+              setNewItem({ ...newItem, people: e.target.value })
+            }
+          >
+            <option disabled selected>
+              сколько будет человек
+            </option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+            <option>11</option>
+            <option>12</option>
+            <option>13</option>
+            <option>14</option>
+            <option>15</option>
+          </select>
+        </label>
+        <label className={Styles["form__field"]}>
+          <span className={Styles["form__field-title"]}>номер стола</span>
+          <select
+            className={Styles["form__field-input"]}
+            value={newItem.number}
+            onChange={(e) =>
+              setNewItem({ ...newItem, number: e.target.value })
+            }
+          >
+            <option disabled selected>
+              Выберите стол
+            </option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+          </select>
+        </label>
       </div>
       {error && <p className={Styles.error_message}>{error}</p>}
       <div className={Styles["form__actions"]}>
