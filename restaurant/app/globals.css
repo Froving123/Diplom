@@ -5,6 +5,26 @@
 }
 
 @font-face {
+  font-family: "Pacifico";
+  src: url(../public/fonts/ofont.ru_Pacifico.ttf);
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pacifico_italic";
+  src: url(../public/fonts/ofont.ru_Pacifico.ttf);
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pacifico_bold";
+  src: url(../public/fonts/ofont.ru_Pacifico.ttf);
+  font-style: bold;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "Tinos-Italic";
   src: url(../public/fonts/Tinos-Italic.ttf);
   font-style: italic;
@@ -36,7 +56,6 @@ body {
   margin: 0%;
   padding: 0%;
   line-height: 25px;
-  font-family: "Roboto-regular";
   background-color: whitesmoke;
   min-height: 100vh;
   display: grid;

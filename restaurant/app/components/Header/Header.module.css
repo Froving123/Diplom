@@ -30,6 +30,7 @@
 
 .nav_link {
   text-decoration: none;
+  font-family: "Pacifico";
   color: rgb(252, 130, 37);
   transition: 0.2s;
 }
@@ -44,7 +45,7 @@
 
 .button_profile {
   font-size: 30px;
-  font-family: "Tinos-Regular";
+  font-family: "Pacifico";
   color: rgb(252, 130, 37);
   background-color: #111;
   border: none;
