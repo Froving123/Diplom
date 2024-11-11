@@ -56,7 +56,7 @@ export const Delivery_menu = () => {
   return (
     <div className={Styles.delivery_menu}>
       <h2 className={Styles.delivery_h}>Закажите домой</h2>
-      <div className={Styles.foods}>
+      <div className={Styles.foods}> //сделать контейнер котегория с наименованием категории (по вертикале)и в нем сделать контейнер с категорией фудс(по горизонтале) 
         <div className={Styles.food_category}>
         <div className={Styles.food}>
           <img className={Styles.img_food} src="images/pancakes.png" />
