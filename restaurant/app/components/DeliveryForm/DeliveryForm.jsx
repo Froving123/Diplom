@@ -154,14 +154,38 @@ export const DeliveryForm = (props) => {
       <h2 className={Styles["form__title"]}>Доставка</h2>
       <div className={Styles["form__fields"]}>
         <label className={Styles["form__field"]}>
-          <span className={Styles["form__field-title"]}>Адрес</span>
+          <span className={Styles["form__field-title"]}>Улица</span>
           <input
             className={Styles["form__field-input"]}
-            type="street"
-            value={newItem.address}
-            placeholder="Ул.Мира 156, кв.45"
+            type="text"
+            value={newItem.street}
+            placeholder="Ленина"
             onChange={(e) =>
-              setNewItem({ ...newItem, address: e.target.value })
+              setNewItem({ ...newItem, street: e.target.value })
+            }
+          />
+        </label>
+        <label className={Styles["form__field"]}>
+          <span className={Styles["form__field-title"]}>Дом</span>
+          <input
+            className={Styles["form__field-input"]}
+            type="text"
+            value={newItem.home}
+            placeholder="156"
+            onChange={(e) =>
+              setNewItem({ ...newItem, home: e.target.value })
+            }
+          />
+        </label>
+        <label className={Styles["form__field"]}>
+          <span className={Styles["form__field-title"]}>Квартира</span>
+          <input
+            className={Styles["form__field-input"]}
+            type="text"
+            value={newItem.flat}
+            placeholder="45"
+            onChange={(e) =>
+              setNewItem({ ...newItem, flat: e.target.value })
             }
           />
         </label>
