@@ -23,10 +23,16 @@
 .foods {
   margin-top: 30px;
   display: flex;
-  justify-content: center;
+  width: 80%;
+  justify-content: left;
+  align-items: center;
   flex-wrap: wrap;
-  vertical-align: top;
   padding: 0px 50px 100px 50px;
+  gap: 100px;
+}
+
+.food_category{
+  display: flex;
   gap: 100px;
 }
 

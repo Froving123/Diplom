@@ -57,6 +57,7 @@ export const Delivery_menu = () => {
     <div className={Styles.delivery_menu}>
       <h2 className={Styles.delivery_h}>Закажите домой</h2>
       <div className={Styles.foods}>
+        <div className={Styles.food_category}>
         <div className={Styles.food}>
           <img className={Styles.img_food} src="images/pancakes.png" />
           <h3 className={Styles.food_h}>Блины</h3>
@@ -91,6 +92,8 @@ export const Delivery_menu = () => {
             </button>
           )}
         </div>
+        </div>
+        <div className={Styles.food_category}>
         <div className={Styles.food}>
           <img className={Styles.img_food} src="images/eggs_bacon.png" />
           <h3 className={Styles.food_h}>
@@ -172,6 +175,8 @@ export const Delivery_menu = () => {
             </button>
           )}
         </div>
+        </div>
+        <div className={Styles.food_category}>
         <div className={Styles.food}>
           <img
             className={Styles.img_food}
@@ -225,6 +230,7 @@ export const Delivery_menu = () => {
               Добавить в корзину
             </button>
           )}
+        </div>
         </div>
       </div>
       <Overlay isOpened={popupIsOpened} close={closePopup} />
