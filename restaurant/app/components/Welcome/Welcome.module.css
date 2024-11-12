@@ -23,6 +23,7 @@
   line-height: 115px;
   font-size: 100px;
   font-family: "Pacifico";
+  color: whitesmoke;
 }
 
 .name_restaurant {
@@ -31,11 +32,12 @@
   gap: 15px;
   color: white;
   font-size: 57px;
+  font-weight: bold;
 }
 
 .hr_name {
   width: 150px;
-  height: 2px;
+  height: 3px;
   border: 2px solid white;
   background-color: rgb(252, 130, 37);
 }
