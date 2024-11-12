@@ -99,6 +99,7 @@
   font-family: "Pacifico";
   font-weight: 900;
   font-size: 35px;
+  letter-spacing: 2px;
 }
 @media screen and (max-width: 500px) {
   .ul_product {

@@ -5,29 +5,21 @@
 }
 
 @font-face {
-  font-family: "Pacifico";
-  src: url(../public/fonts/ofont.ru_Pacifico.ttf);
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Pacifico_italic";
-  src: url(../public/fonts/ofont.ru_Pacifico.ttf);
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Pacifico_bold";
-  src: url(../public/fonts/ofont.ru_Pacifico.ttf);
-  font-style: bold;
-  font-display: swap;
-}
-
-@font-face {
   font-family: "Tinos-Italic";
   src: url(../public/fonts/Tinos-Italic.ttf);
   font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Merri";
+  src: url(../public/fonts/Merriweather-Regular.ttf);
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Pacifico";
+  src: url(../public/fonts/ofont.ru_Pacifico.ttf);
   font-display: swap;
 }
 

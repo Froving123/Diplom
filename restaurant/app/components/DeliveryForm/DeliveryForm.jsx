@@ -200,6 +200,10 @@ export const DeliveryForm = (props) => {
           </select>
         </label>
         <div className={Styles.order}>
+          <p className={Styles.order_content}>Стоимость доставки</p>
+          <p className={Styles.order_content}>{delivery}₽</p>
+        </div>
+        <div className={Styles.order}>
           <p className={Styles.order_content}>Стоимость заказа</p>
           <p className={Styles.order_content}>{total}₽</p>
         </div>

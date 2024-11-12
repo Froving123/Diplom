@@ -22,8 +22,8 @@
 .h1 {
   line-height: 115px;
   font-size: 100px;
-  font-family: "Pacifico";
-  color: whitesmoke;
+  font-family: "Merri";
+  color: rgb(252, 130, 37);
 }
 
 .name_restaurant {
@@ -33,6 +33,7 @@
   color: white;
   font-size: 57px;
   font-weight: bold;
+  font-family: "Tinos-Regular";
 }
 
 .hr_name {

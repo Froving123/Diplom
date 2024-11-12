@@ -77,14 +77,21 @@ export const Forma_feedback = () => {
       </div>
       <div className={Styles.right_form}>
         <label className={Styles.form_i}>
-          <span className={Styles.form_i}>Имя</span>
-          <input
+          <span className={Styles.form_i}>Оценка</span>
+          <select
             className={Styles.input_name}
-            type="text"
-            placeholder="Иван"
-            value={newItem.name}
-            onChange={(e) => setNewItem({ ...newItem, name: e.target.value })}
-          />
+            value={newItem.score}
+            onChange={(e) => setNewItem({ ...newItem, score: e.target.value })}
+          >
+            <option disabled selected>
+              Выберите оценку от 1 до 5
+            </option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+          </select>
         </label>
         <label className={Styles.form_i}>
           <span className={Styles.form_i}>Ваш отзыв</span>

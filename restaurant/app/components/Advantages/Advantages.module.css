@@ -38,7 +38,8 @@
 .advantage_p {
   color: rgb(82, 82, 82);
   font-size: 21px;
-  font-family: "Pacifico";
+  letter-spacing: 0%;
+  font-style: italic;
 }
 
 @media screen and (max-width: 500px) {

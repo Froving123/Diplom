@@ -13,10 +13,10 @@
 
 .form_h {
   color: rgb(188, 144, 96);
-  font-family: "Pacifico";
+  font-family: "Merri";
   font-size: 75px;
   line-height: 85px;
-  letter-spacing: 3px;
+  letter-spacing: 2px;
   margin: 0%;
 }
 
@@ -25,6 +25,7 @@
   font-family: "Pacifico";
   font-size: 38px;
   line-height: 38px;
+  letter-spacing: 2px;
 }
 
 .right_form {
@@ -43,7 +44,7 @@
 }
 
 .input_name {
-  width: 200px;
+  width: 300px;
   border-radius: 3px;
   font-size: 20px;
   margin: 5px 5px 25px 5px;

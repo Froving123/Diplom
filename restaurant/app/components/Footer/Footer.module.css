@@ -44,13 +44,14 @@
   margin: 0%;
   margin-bottom: 20px;
   font-size: 25px;
+  letter-spacing: 2px;
 }
 
 .top_fot_p {
   color: rgb(252, 130, 37);
   margin: 0%;
   font-size: 22px;
-  font-family: "Pacifico";
+  font-family: "Merri";
 }
 
 .hr_footer {
