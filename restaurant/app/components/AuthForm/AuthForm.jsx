@@ -127,7 +127,7 @@ export const AuthForm = (props) => {
         <>
           <h2 className={Styles["form__title"]}>Регистрация</h2>
           <div className={Styles["form__fields"]}>
-          <label className={Styles["form__field"]}>
+            <label className={Styles["form__field"]}>
               <span className={Styles["form__field-title"]}>Фамилия</span>
               <input
                 className={Styles["form__field-input"]}
@@ -158,7 +158,9 @@ export const AuthForm = (props) => {
               />
             </label>
             <label className={Styles["form__field"]}>
-              <span className={Styles["form__field-title"]}>Номер телефона</span>
+              <span className={Styles["form__field-title"]}>
+                Номер телефона
+              </span>
               <input
                 className={Styles["form__field-input"]}
                 type="number"

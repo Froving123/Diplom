@@ -90,7 +90,7 @@ export const Feedback = () => {
       </h2>
       <p className={Styles.feedback_p_all}>Посетитель</p>
       <p className={Styles.feedback_name_all}>Виктор</p>
-    </div>
+    </div>,
   ];
 
   return (

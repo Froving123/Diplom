@@ -8,7 +8,9 @@ export const Discount = () => {
         <h2 className={Styles.discount_h}>
           Закажите еду от одного из <br /> самых лучших ресторанов.
         </h2>
-        <p className={Styles.discount_p}>Только в этом месяце завтраки от 500 ₽</p>
+        <p className={Styles.discount_p}>
+          Только в этом месяце завтраки от 500 ₽
+        </p>
       </div>
       <div className={Styles.right_discount}>
         <Link href="/Delivery">

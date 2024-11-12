@@ -160,9 +160,7 @@ export const DeliveryForm = (props) => {
             type="text"
             value={newItem.street}
             placeholder="Ленина"
-            onChange={(e) =>
-              setNewItem({ ...newItem, street: e.target.value })
-            }
+            onChange={(e) => setNewItem({ ...newItem, street: e.target.value })}
           />
         </label>
         <label className={Styles["form__field"]}>
@@ -172,9 +170,7 @@ export const DeliveryForm = (props) => {
             type="text"
             value={newItem.home}
             placeholder="156"
-            onChange={(e) =>
-              setNewItem({ ...newItem, home: e.target.value })
-            }
+            onChange={(e) => setNewItem({ ...newItem, home: e.target.value })}
           />
         </label>
         <label className={Styles["form__field"]}>
@@ -184,9 +180,7 @@ export const DeliveryForm = (props) => {
             type="text"
             value={newItem.flat}
             placeholder="45"
-            onChange={(e) =>
-              setNewItem({ ...newItem, flat: e.target.value })
-            }
+            onChange={(e) => setNewItem({ ...newItem, flat: e.target.value })}
           />
         </label>
         <label className={Styles["form__field"]}>

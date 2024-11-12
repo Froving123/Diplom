@@ -143,4 +143,3 @@ export const Delivery_user = () => {
     </div>
   );
 };
-

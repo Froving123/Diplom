@@ -91,43 +91,43 @@
     margin-bottom: 24px;
     font-size: 26px;
   }
-  
+
   .form__fields {
     width: 90%;
   }
-  
+
   .form__field {
     margin-bottom: 10px;
   }
-  
+
   .form__field-title {
     margin-bottom: 8px;
     font-size: 15px;
   }
-  
+
   .form__field-input {
     width: 105%;
     padding: 6px 14px;
     font-size: 15px;
   }
-  
+
   .form__actions {
     width: 100%;
   }
-  
+
   .order {
     margin: 15px;
     padding: 10px;
     border-radius: 4px;
     border: 1px solid rgb(93, 93, 93);
   }
-  
+
   .order_content {
     font-size: 15px;
     margin: 0%;
     font-weight: 600;
   }
-  
+
   .form__submit {
     font-size: 15px;
     padding: 12px 15px;
@@ -139,43 +139,43 @@
     margin-bottom: 24px;
     font-size: 26px;
   }
-  
+
   .form__fields {
     width: 90%;
   }
-  
+
   .form__field {
     margin-bottom: 10px;
   }
-  
+
   .form__field-title {
     margin-bottom: 8px;
     font-size: 15px;
   }
-  
+
   .form__field-input {
     width: 100%;
     padding: 6px 14px;
     font-size: 15px;
   }
-  
+
   .form__actions {
     width: 100%;
   }
-  
+
   .order {
     margin: 15px;
     padding: 10px;
     border-radius: 4px;
     border: 1px solid rgb(93, 93, 93);
   }
-  
+
   .order_content {
     font-size: 15px;
     margin: 0%;
     font-weight: 600;
   }
-  
+
   .form__submit {
     font-size: 15px;
     padding: 12px 15px;

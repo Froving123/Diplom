@@ -2,7 +2,11 @@ import Styles from "./Popup.module.css";
 
 export const Popup = (props) => {
   return (
-    <div className={`${Styles["popup"]} ${props.isOpened && Styles["popup_is-opened"]}`}>
+    <div
+      className={`${Styles["popup"]} ${
+        props.isOpened && Styles["popup_is-opened"]
+      }`}
+    >
       <button onClick={props.close} className={Styles["close"]}>
         <svg
           className={Styles["close-icon"]}

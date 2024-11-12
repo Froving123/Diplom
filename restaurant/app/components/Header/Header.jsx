@@ -13,7 +13,7 @@ export const Header = () => {
   const pathname = usePathname();
   const [authUser, setAuthUser] = useState(null);
 
- /*useEffect(() => {
+  /*useEffect(() => {
     const listen = onAuthStateChanged(auth, (user) => {
       if (user) {
         setAuthUser(user);

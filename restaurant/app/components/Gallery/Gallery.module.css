@@ -32,7 +32,7 @@
   transition: 0.5s;
 }
 
-.img_rest:hover{
+.img_rest:hover {
   box-shadow: 15px 20px 40px 30px rgba(0, 0, 0, 0.23);
   transform: scale(1.1);
 }

@@ -56,181 +56,219 @@ export const Delivery_menu = () => {
   return (
     <div className={Styles.delivery_menu}>
       <h2 className={Styles.delivery_h}>Закажите домой</h2>
-      <div className={Styles.foods}> //сделать контейнер котегория с наименованием категории (по вертикале)и в нем сделать контейнер с категорией фудс(по горизонтале) 
-        <div className={Styles.food_category}>
-        <div className={Styles.food}>
-          <img className={Styles.img_food} src="images/pancakes.png" />
-          <h3 className={Styles.food_h}>Блины</h3>
-          <p className={Styles.price_menu}>1500₽</p>
-          {authUser ? (
-            <button
-              className={Styles.button_menu_delivery}
-              onClick={() => addProductToCart("Блины", "1500₽")}
-            >
-              Добавить в корзину
-            </button>
-          ) : (
-            <button className={Styles.button_menu_delivery} onClick={openPopup}>
-              Добавить в корзину
-            </button>
-          )}
-        </div>
-        <div className={Styles.food}>
-          <img className={Styles.img_food} src="images/meat_delivery.png" />
-          <h3 className={Styles.food_h}>Стейк</h3>
-          <p className={Styles.price_menu}>1500₽</p>
-          {authUser ? (
-            <button
-              className={Styles.button_menu_delivery}
-              onClick={() => addProductToCart("Стейк", "1500₽")}
-            >
-              Добавить в корзину
-            </button>
-          ) : (
-            <button className={Styles.button_menu_delivery} onClick={openPopup}>
-              Добавить в корзину
-            </button>
-          )}
-        </div>
-        </div>
-        <div className={Styles.food_category}>
-        <div className={Styles.food}>
-          <img className={Styles.img_food} src="images/eggs_bacon.png" />
-          <h3 className={Styles.food_h}>
-            Яйца с ветчиной <br />
-            и беконом
-          </h3>
-          <div className={Styles.lowprice_div}>
-            <p className={Styles.price_menu}>
-              <strike className="strike">1000₽</strike>
-            </p>
-            <p className={Styles.lowprice_menu}>
-              <sub>500₽</sub>
-            </p>
+      <div className={Styles.foods}>
+        <div className={Styles.category}>
+          <h2 className={Styles.category_h}>Горячие блюда</h2>
+          <hr className={Styles.hr_name} />
+          <div className={Styles.foods_category}>
+            <div className={Styles.food}>
+              <img className={Styles.img_food} src="images/pancakes.png" />
+              <h3 className={Styles.food_h}>Блины</h3>
+              <p className={Styles.price_menu}>1500₽</p>
+              {authUser ? (
+                <button
+                  className={Styles.button_menu_delivery}
+                  onClick={() => addProductToCart("Блины", "1500₽")}
+                >
+                  Добавить в корзину
+                </button>
+              ) : (
+                <button
+                  className={Styles.button_menu_delivery}
+                  onClick={openPopup}
+                >
+                  Добавить в корзину
+                </button>
+              )}
+            </div>
+            <div className={Styles.food}>
+              <img className={Styles.img_food} src="images/meat_delivery.png" />
+              <h3 className={Styles.food_h}>Стейк</h3>
+              <p className={Styles.price_menu}>1500₽</p>
+              {authUser ? (
+                <button
+                  className={Styles.button_menu_delivery}
+                  onClick={() => addProductToCart("Стейк", "1500₽")}
+                >
+                  Добавить в корзину
+                </button>
+              ) : (
+                <button
+                  className={Styles.button_menu_delivery}
+                  onClick={openPopup}
+                >
+                  Добавить в корзину
+                </button>
+              )}
+            </div>
           </div>
-          {authUser ? (
-            <button
-              className={Styles.button_menu_delivery}
-              onClick={() =>
-                addProductToCart("Яйца с ветчиной и беконом", "500₽")
-              }
-            >
-              Добавить в корзину
-            </button>
-          ) : (
-            <button className={Styles.button_menu_delivery} onClick={openPopup}>
-              Добавить в корзину
-            </button>
-          )}
         </div>
-        <div className={Styles.food}>
-          <img className={Styles.img_food} src="images/eggs_tomato.png" />
-          <h3 className={Styles.food_h}>
-            Омлет с помидором <br />и сыром фета
-          </h3>
-          <div className={Styles.lowprice_div}>
-            <p className={Styles.price_menu}>
-              <strike className="strike">1000₽</strike>
-            </p>
-            <p className={Styles.lowprice_menu}>
-              <sub>500₽</sub>
-            </p>
+        <div className={Styles.category}>
+          <h2 className={Styles.category_h}>Завтраки</h2>
+          <hr className={Styles.hr_name} />
+          <div className={Styles.foods_category}>
+            <div className={Styles.food}>
+              <img className={Styles.img_food} src="images/eggs_bacon.png" />
+              <h3 className={Styles.food_h}>
+                Яйца с ветчиной <br />и беконом
+              </h3>
+              <div className={Styles.lowprice_div}>
+                <p className={Styles.price_menu}>
+                  <strike className="strike">1000₽</strike>
+                </p>
+                <p className={Styles.lowprice_menu}>
+                  <sub>500₽</sub>
+                </p>
+              </div>
+              {authUser ? (
+                <button
+                  className={Styles.button_menu_delivery}
+                  onClick={() =>
+                    addProductToCart("Яйца с ветчиной и беконом", "500₽")
+                  }
+                >
+                  Добавить в корзину
+                </button>
+              ) : (
+                <button
+                  className={Styles.button_menu_delivery}
+                  onClick={openPopup}
+                >
+                  Добавить в корзину
+                </button>
+              )}
+            </div>
+            <div className={Styles.food}>
+              <img className={Styles.img_food} src="images/eggs_tomato.png" />
+              <h3 className={Styles.food_h}>
+                Омлет с помидором <br />и сыром фета
+              </h3>
+              <div className={Styles.lowprice_div}>
+                <p className={Styles.price_menu}>
+                  <strike className="strike">1000₽</strike>
+                </p>
+                <p className={Styles.lowprice_menu}>
+                  <sub>500₽</sub>
+                </p>
+              </div>
+              {authUser ? (
+                <button
+                  className={Styles.button_menu_delivery}
+                  onClick={() =>
+                    addProductToCart("Омлет с помидором и сыром фета", "500₽")
+                  }
+                >
+                  Добавить в корзину
+                </button>
+              ) : (
+                <button
+                  className={Styles.button_menu_delivery}
+                  onClick={openPopup}
+                >
+                  Добавить в корзину
+                </button>
+              )}
+            </div>
+            <div className={Styles.food}>
+              <img className={Styles.img_food} src="images/burrito.png" />
+              <h3 className={Styles.food_h}>Буррито</h3>
+              <div className={Styles.lowprice_div}>
+                <p className={Styles.price_menu}>
+                  <strike>1000₽</strike>
+                </p>
+                <p className={Styles.lowprice_menu}>
+                  <sub>500₽</sub>
+                </p>
+              </div>
+              {authUser ? (
+                <button
+                  className={Styles.button_menu_delivery}
+                  onClick={() => addProductToCart("Буррито", "500₽")}
+                >
+                  Добавить в корзину
+                </button>
+              ) : (
+                <button
+                  className={Styles.button_menu_delivery}
+                  onClick={openPopup}
+                >
+                  Добавить в корзину
+                </button>
+              )}
+            </div>
           </div>
-          {authUser ? (
-            <button
-              className={Styles.button_menu_delivery}
-              onClick={() =>
-                addProductToCart("Омлет с помидором и сыром фета", "500₽")
-              }
-            >
-              Добавить в корзину
-            </button>
-          ) : (
-            <button className={Styles.button_menu_delivery} onClick={openPopup}>
-              Добавить в корзину
-            </button>
-          )}
         </div>
-        <div className={Styles.food}>
-          <img className={Styles.img_food} src="images/burrito.png" />
-          <h3 className={Styles.food_h}>Буррито</h3>
-          <div className={Styles.lowprice_div}>
-            <p className={Styles.price_menu}>
-              <strike>1000₽</strike>
-            </p>
-            <p className={Styles.lowprice_menu}>
-              <sub>500₽</sub>
-            </p>
+        <div className={Styles.category}>
+          <h2 className={Styles.category_h}>Напитки</h2>
+          <hr className={Styles.hr_name} />
+          <div className={Styles.foods_category}>
+            <div className={Styles.food}>
+              <img
+                className={Styles.img_food}
+                src="images/milkShake_delivery.png"
+              />
+              <h3 className={Styles.food_h}>Молочный коктель</h3>
+              <p className={Styles.price_menu}>180₽</p>
+              {authUser ? (
+                <button
+                  className={Styles.button_menu_delivery}
+                  onClick={() => addProductToCart("Молочный коктель", "180₽")}
+                >
+                  Добавить в корзину
+                </button>
+              ) : (
+                <button
+                  className={Styles.button_menu_delivery}
+                  onClick={openPopup}
+                >
+                  Добавить в корзину
+                </button>
+              )}
+            </div>
+            <div className={Styles.food}>
+              <img
+                className={Styles.img_food}
+                src="images/coffee_delivery.png"
+              />
+              <h3 className={Styles.food_h}>Кофе</h3>
+              <p className={Styles.price_menu}>180₽</p>
+              {authUser ? (
+                <button
+                  className={Styles.button_menu_delivery}
+                  onClick={() => addProductToCart("Кофе", "180₽")}
+                >
+                  Добавить в корзину
+                </button>
+              ) : (
+                <button
+                  className={Styles.button_menu_delivery}
+                  onClick={openPopup}
+                >
+                  Добавить в корзину
+                </button>
+              )}
+            </div>
+            <div className={Styles.food}>
+              <img className={Styles.img_food} src="images/juice.png" />
+              <h3 className={Styles.food_h}>Сок</h3>
+              <p className={Styles.price_menu}>180₽</p>
+              {authUser ? (
+                <button
+                  className={Styles.button_menu_delivery}
+                  onClick={() => addProductToCart("Сок", "180₽")}
+                >
+                  Добавить в корзину
+                </button>
+              ) : (
+                <button
+                  className={Styles.button_menu_delivery}
+                  onClick={openPopup}
+                >
+                  Добавить в корзину
+                </button>
+              )}
+            </div>
           </div>
-          {authUser ? (
-            <button
-              className={Styles.button_menu_delivery}
-              onClick={() => addProductToCart("Буррито", "500₽")}
-            >
-              Добавить в корзину
-            </button>
-          ) : (
-            <button className={Styles.button_menu_delivery} onClick={openPopup}>
-              Добавить в корзину
-            </button>
-          )}
-        </div>
-        </div>
-        <div className={Styles.food_category}>
-        <div className={Styles.food}>
-          <img
-            className={Styles.img_food}
-            src="images/milkShake_delivery.png"
-          />
-          <h3 className={Styles.food_h}>Молочный коктель</h3>
-          <p className={Styles.price_menu}>180₽</p>
-          {authUser ? (
-            <button
-              className={Styles.button_menu_delivery}
-              onClick={() => addProductToCart("Молочный коктель", "180₽")}
-            >
-              Добавить в корзину
-            </button>
-          ) : (
-            <button className={Styles.button_menu_delivery} onClick={openPopup}>
-              Добавить в корзину
-            </button>
-          )}
-        </div>
-        <div className={Styles.food}>
-          <img className={Styles.img_food} src="images/coffee_delivery.png" />
-          <h3 className={Styles.food_h}>Кофе</h3>
-          <p className={Styles.price_menu}>180₽</p>
-          {authUser ? (
-            <button
-              className={Styles.button_menu_delivery}
-              onClick={() => addProductToCart("Кофе", "180₽")}
-            >
-              Добавить в корзину
-            </button>
-          ) : (
-            <button className={Styles.button_menu_delivery} onClick={openPopup}>
-              Добавить в корзину
-            </button>
-          )}
-        </div>
-        <div className={Styles.food}>
-          <img className={Styles.img_food} src="images/juice.png" />
-          <h3 className={Styles.food_h}>Сок</h3>
-          <p className={Styles.price_menu}>180₽</p>
-          {authUser ? (
-            <button
-              className={Styles.button_menu_delivery}
-              onClick={() => addProductToCart("Сок", "180₽")}
-            >
-              Добавить в корзину
-            </button>
-          ) : (
-            <button className={Styles.button_menu_delivery} onClick={openPopup}>
-              Добавить в корзину
-            </button>
-          )}
-        </div>
         </div>
       </div>
       <Overlay isOpened={popupIsOpened} close={closePopup} />
