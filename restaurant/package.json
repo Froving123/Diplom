@@ -13,6 +13,7 @@
     "@fullcalendar/interaction": "^6.1.11",
     "@fullcalendar/react": "^6.1.11",
     "@fullcalendar/timegrid": "^6.1.11",
+    "express": "^4.21.1",
     "fullcalendar": "^6.1.11",
     "next": "14.1.0",
     "react": "^18",
