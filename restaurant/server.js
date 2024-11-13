@@ -101,4 +101,4 @@ import { auth } from "@/app/firebase";
 
 \AuthDetails
 import { auth } from "@/app/firebase";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged, signOut } from "firebase/auth";*/
