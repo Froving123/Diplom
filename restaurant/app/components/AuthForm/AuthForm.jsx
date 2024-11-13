@@ -5,6 +5,10 @@ import Styles from "./AuthForm.module.css";
 
 export const AuthForm = (props) => {
   const [isLoginForm, setIsLoginForm] = useState(true);
+  const [last, setLast] = useState("");
+  const [name, setName] = useState("");
+  const [fat, setFat] = useState("");
+  const [number, setNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [copyPassword, setCopyPassword] = useState("");
@@ -18,7 +22,15 @@ export const AuthForm = (props) => {
 
   const register = (e) => {
     e.preventDefault();
-    if (!email || !password || !copyPassword) {
+    if (
+      !email ||
+      !password ||
+      !copyPassword ||
+      !last ||
+      !name ||
+      !fat ||
+      !number
+    ) {
       setError("Пожалуйста, заполните все поля");
       setTimeout(() => {
         setError("");
@@ -77,6 +89,16 @@ export const AuthForm = (props) => {
     setEmail("");
     setPassword("");
     setCopyPassword("");
+    setLast("");
+    setName("");
+    setFat("");
+    setNumber("");
+  };
+
+  const handleRussianInput = (setter) => (e) => {
+    const value = e.target.value.replace(/[^А-Яа-яЁё\s]/g, ''); // Удаляет все, кроме русских букв и пробелов
+    const formattedValue = value.replace(/(^|\s)([А-Яа-яЁё])/g, (match) => match.toUpperCase()); // Преобразует первую букву каждого слова в верхний регистр
+    setter(formattedValue);
   };
 
   return (
@@ -133,8 +155,8 @@ export const AuthForm = (props) => {
                 className={Styles["form__field-input"]}
                 type="text"
                 placeholder="Иванов"
-                value={Text}
-                onChange={(e) => setEmail(e.target.value)}
+                value={last}
+                onChange={handleRussianInput(setLast)}
               />
             </label>
             <label className={Styles["form__field"]}>
@@ -143,8 +165,8 @@ export const AuthForm = (props) => {
                 className={Styles["form__field-input"]}
                 type="text"
                 placeholder="Иван"
-                value={Text}
-                onChange={(e) => setEmail(e.target.value)}
+                value={name}
+                onChange={handleRussianInput(setName)}
               />
             </label>
             <label className={Styles["form__field"]}>
@@ -153,8 +175,8 @@ export const AuthForm = (props) => {
                 className={Styles["form__field-input"]}
                 type="text"
                 placeholder="Иванов"
-                value={Text}
-                onChange={(e) => setEmail(e.target.value)}
+                value={fat}
+                onChange={handleRussianInput(setFat)}
               />
             </label>
             <label className={Styles["form__field"]}>
@@ -165,8 +187,8 @@ export const AuthForm = (props) => {
                 className={Styles["form__field-input"]}
                 type="number"
                 placeholder="80000000000"
-                value={Number}
-                onChange={(e) => setEmail(e.target.value)}
+                value={number}
+                onChange={(e) => setNumber(e.target.value)}
               />
             </label>
             <label className={Styles["form__field"]}>

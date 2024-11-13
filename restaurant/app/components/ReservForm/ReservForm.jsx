@@ -68,7 +68,7 @@ export const ReservForm = (props) => {
         </label>
         <label className={Styles["form__field"]}>
           <span className={Styles["form__field-title"]}>
-            количество человек
+            Количество человек
           </span>
           <select
             className={Styles["form__field-input"]}
@@ -76,7 +76,7 @@ export const ReservForm = (props) => {
             onChange={(e) => setNewItem({ ...newItem, people: e.target.value })}
           >
             <option disabled selected>
-              сколько будет человек
+              Сколько будет человек
             </option>
             <option>1</option>
             <option>2</option>
@@ -96,7 +96,7 @@ export const ReservForm = (props) => {
           </select>
         </label>
         <label className={Styles["form__field"]}>
-          <span className={Styles["form__field-title"]}>номер стола</span>
+          <span className={Styles["form__field-title"]}>Номер стола</span>
           <select
             className={Styles["form__field-input"]}
             value={newItem.number}

@@ -71,12 +71,13 @@
 
   .discount_h {
     letter-spacing: 1px;
-    font-size: 20px;
-    line-height: 20px;
+    font-size: 17px;
+    line-height: 17px;
   }
 
   .discount_p {
-    font-size: 10px;
+    font-size: 13px;
+    letter-spacing: 1px;
   }
 
   .button_delivery {
