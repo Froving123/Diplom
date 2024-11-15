@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "work": "concurrently \"npm run dev\" \"node server.js\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -13,11 +14,17 @@
     "@fullcalendar/interaction": "^6.1.11",
     "@fullcalendar/react": "^6.1.11",
     "@fullcalendar/timegrid": "^6.1.11",
+    "axios": "^1.7.7",
+    "cors": "^2.8.5",
     "express": "^4.21.1",
     "fullcalendar": "^6.1.11",
+    "mysql": "^2.18.1",
     "next": "14.1.0",
     "react": "^18",
     "react-dom": "^18",
     "vue-flatpickr-component": "^11.0.5"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
   }
 }

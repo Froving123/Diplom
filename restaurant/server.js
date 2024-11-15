@@ -1,8 +1,13 @@
 const express = require("express");
-const server = express();
+const mysql = require("mysql");
+const cors = require("cors");
 
-server.listen(5000, () => {
-  console.log("Server started on port 5000");
+
+const server = express();
+server.use(cors());
+
+server.listen(3005, () => {
+  console.log("Server started on port 3005");
 });
 
 server.get('/', (req, res) => {
