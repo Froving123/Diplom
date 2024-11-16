@@ -11,7 +11,7 @@ const conn = mysql.createConnection({
   host: "MySQL-8.0",
   user: "root",
   password: "",
-  batabase: "restaurant",
+  database: "restaurant",
 });
 
 conn.connect((err) => {
