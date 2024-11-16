@@ -2,17 +2,36 @@ const express = require("express");
 const mysql = require("mysql");
 const cors = require("cors");
 
-
 const server = express();
 server.use(cors());
 
-server.listen(3005, () => {
-  console.log("Server started on port 3005");
+const conn = mysql.createConnection({
+  host: "php.local",
+  user: "root",
+  password: "",
+  batabase: "restaurant",
 });
 
-server.get('/', (req, res) => {
-    res.send('Server working')
-})
+conn.connect((err) => {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log("db connected");
+  }
+});
+
+server.listen(5000, () => {
+  console.log("app started");
+});
+
+let dbData;
+conn.query("SELECT * FROM restaurant", (err, result, field) => {
+  dbData = result;
+});
+
+server.get("/", (req, res) => {
+  res.send(dbData);
+});
 
 //authForm
 //import { auth } from "@/app/firebase";
