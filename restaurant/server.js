@@ -1,12 +1,14 @@
 const express = require("express");
 const mysql = require("mysql");
 const cors = require("cors");
+const bodyParser = require('body-parser');
 
 const server = express();
 server.use(cors());
+server.use(bodyParser.json());
 
 const conn = mysql.createConnection({
-  host: "php.local",
+  host: "MySQL-8.0",
   user: "root",
   password: "",
   batabase: "restaurant",
@@ -25,12 +27,19 @@ server.listen(5000, () => {
 });
 
 let dbData;
-conn.query("SELECT * FROM restaurant", (err, result, field) => {
+conn.query("SELECT * FROM Пользователь", (err, result, field) => {
   dbData = result;
 });
 
 server.get("/", (req, res) => {
   res.send(dbData);
+});
+
+server.post("/", (req, res) => {
+ let data = [req.body.id, req.body.Email]//дополнить
+ conn.query('INSERT INTO `Пользователь`(`ID`, `Email`,) VALUES (?,?)', data, (err, results, fields) => {
+  !err ? res.json(results) : res.json(err)
+ })
 });
 
 //authForm
