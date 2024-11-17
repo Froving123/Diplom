@@ -151,7 +151,8 @@ export const DeliveryForm = (props) => {
 
   return (
     <form className={Styles["form"]}>
-      <h2 className={Styles["form__title"]}>Доставка</h2>
+      <h2 className={Styles["form__title"]}>Оформление</h2>
+      <p className={Styles["form__title"]}>Доставка осуществляется в пределах КАД</p>
       <div className={Styles["form__fields"]}>
         <label className={Styles["form__field"]}>
           <span className={Styles["form__field-title"]}>Улица</span>
