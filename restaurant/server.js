@@ -1,22 +1,31 @@
-require('dotenv').config(); 
-const express = require('express');
-const sequelize = require('./db')
-
-const PORT = process.env.PORT || 5000;
+const express = require("express");
+const mysql = require("mysql");
+const cors = require("cors");
+const bodyParser = require('body-parser');
 
 const server = express();
+const PORT = 5000;
+server.use(cors());
+server.use(bodyParser.json());
 
-const start = async() => {
-  try{
-    await sequelize.authenticate()
-    await sequelize.sync()
-    server.listen(PORT, () => console.log(`Started server port: ${PORT}`));
-  } catch (e) {
-    console.log(e)
+const conn = mysql.createConnection({
+  host: "MySQL-8.0",
+  user: "root",
+  password: "",
+  database: "Best-Rest",
+});
+
+conn.connect((err) => {
+  if (err) {
+    console.log(err);
+  } else {
+    console.log("db connected");
   }
-}
+});
 
-start()
+server.listen(PORT, () => {
+  console.log("app started");
+});
 
 //authForm
 //import { auth } from "@/app/firebase";
