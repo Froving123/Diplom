@@ -53,6 +53,7 @@ export const Delivery_menu = () => {
       console.error("Ошибка при добавлении документа: ", error);
     }
   };
+
   return (
     <div className={Styles.delivery_menu}>
       <h2 className={Styles.delivery_h}>Закажите домой</h2>

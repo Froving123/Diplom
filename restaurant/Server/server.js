@@ -1,46 +1,11 @@
-const express = require("express");
-const mysql = require("mysql");
-const cors = require("cors");
-const bodyParser = require('body-parser');
+require('dotenv').config()
+const express = require('express')
 
-const server = express();
-server.use(cors());
-server.use(bodyParser.json());
+const PORT = process.env.PORT || 5000
 
-const conn = mysql.createConnection({
-  host: "MySQL-8.0",
-  user: "root",
-  password: "",
-  database: "restaurant",
-});
+const server = express()
 
-conn.connect((err) => {
-  if (err) {
-    console.log(err);
-  } else {
-    console.log("db connected");
-  }
-});
-
-server.listen(5000, () => {
-  console.log("app started");
-});
-
-let dbData;
-conn.query("SELECT * FROM Пользователь", (err, result, field) => {
-  dbData = result;
-});
-
-server.get("/", (req, res) => {
-  res.send(dbData);
-});
-
-server.post("/", (req, res) => {
- let data = [req.body.id, req.body.Email]//дополнить
- conn.query('INSERT INTO `Пользователь`(`ID`, `Email`,) VALUES (?,?)', data, (err, results, fields) => {
-  !err ? res.json(results) : res.json(err)
- })
-});
+server.listen(PORT, () => console.log(`Started server port:${PORT}`))
 
 //authForm
 //import { auth } from "@/app/firebase";
