@@ -1,11 +1,22 @@
-require('dotenv').config()
-const express = require('express')
+require('dotenv').config(); 
+const express = require('express');
+const sequelize = require('./db')
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5000;
 
-const server = express()
+const server = express();
 
-server.listen(PORT, () => console.log(`Started server port:${PORT}`))
+const start = async() => {
+  try{
+    await sequelize.authenticate()
+    await sequelize.sync()
+    server.listen(PORT, () => console.log(`Started server port: ${PORT}`));
+  } catch (e) {
+    console.log(e)
+  }
+}
+
+start()
 
 //authForm
 //import { auth } from "@/app/firebase";
