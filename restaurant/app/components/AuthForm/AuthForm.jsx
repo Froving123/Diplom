@@ -8,7 +8,7 @@ export const AuthForm = (props) => {
   const [last, setLast] = useState("");
   const [name, setName] = useState("");
   const [fat, setFat] = useState("");
-  const [number, setNumber] = useState("");
+  const [tel, setTel] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [copyPassword, setCopyPassword] = useState("");
@@ -29,7 +29,7 @@ export const AuthForm = (props) => {
       !last ||
       !name ||
       !fat ||
-      !number
+      !tel
     ) {
       setError("Пожалуйста, заполните все поля");
       setTimeout(() => {
@@ -92,7 +92,7 @@ export const AuthForm = (props) => {
     setLast("");
     setName("");
     setFat("");
-    setNumber("");
+    setTel("");
   };
 
   const handleRussianInput = (setter) => (e) => {
@@ -185,9 +185,9 @@ export const AuthForm = (props) => {
               </span>
               <input
                 className={Styles["form__field-input"]}
-                type="number"
+                type="tel"
                 placeholder="80000000000"
-                value={number}
+                value={tel}
                 onChange={(e) => setNumber(e.target.value)}
               />
             </label>

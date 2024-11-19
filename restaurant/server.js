@@ -29,6 +29,9 @@ server.listen(PORT, () => {
   console.log("app started");
 });
 
+module.exports = conn;
+
+
 //authForm
 //import { auth } from "@/app/firebase";
 //import { signInWithEmailAndPassword } from "firebase/auth";

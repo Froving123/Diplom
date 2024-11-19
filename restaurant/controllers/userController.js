@@ -1,55 +1,70 @@
+const conn = require("@/server");
 const bcrypt = require("bcrypt");
-
-/*server.get('/users', (req, res) => {
-    conn.query("SELECT * FROM Пользователь", (err, result, fields) => {
-      if (err) {
-        return res.status(500).json({ error: err });
-      }
-      res.json(result);
-    });
-  });*/
 
 class UserController {
   async registration(req, res) {
-    const { email, password, copyPassword, number, last, name, fat } = req.body;
-    if (
-      !email ||
-      !password ||
-      !copyPassword ||
-      !last ||
-      !name ||
-      !fat ||
-      !number
-    ) {
-      setError("Пожалуйста, заполните все поля");
-      setTimeout(() => {
-        setError("");
-      }, 5000);
-    } else {
-      if (copyPassword !== password) {
-        setError("пароли не совпадают");
-        setTimeout(() => {
-          setError("");
-        }, 5000);
+    try {
+      const { last, name, fat, tel, email, password } = req.body;
+
+      // Проверка, существует ли пользователь
+      const checkUserSql = `SELECT * FROM Пользователь WHERE Email = ? OR Номер телефона = ?`;
+      conn.query(checkUserSql, [last, name, fat, tel, email, password], (err, results) => {
+        if (err) {
+          console.error("Ошибка при проверке пользователя:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при регистрации пользователя",
+          });
+        }
+
+        if (results.length > 0) {
+          return res.status(400).json({
+            success: false,
+            message: "Пользователь с таким email или телефоном уже существует",
+          });
+        }
+
+        // Хеширование пароля
+        bcrypt.hash(password, 10, (hashErr, hashedPassword) => {
+          if (hashErr) {
+            console.error("Ошибка при хешировании пароля:", hashErr);
+            return res.status(500).json({
+              success: false,
+              message: "Ошибка при обработке пароля",
+            });
+          }
+
+             // Добавление пользователя в базу данных
+             const addUserSql = `INSERT INTO user (email, phone, password) VALUES (?, ?, ?)`;
+             conn.query(
+               addUserSql,
+               [email, phone, hashedPassword],
+               (addErr, result) => {
+                 if (addErr) {
+                   console.error("Ошибка при добавлении пользователя:", addErr);
+                   return res.status(500).json({
+                     success: false,
+                     message: "Ошибка при регистрации пользователя",
+                   });
+                 }
+   
+                 return res.json({
+                   success: true,
+                   message: "Пользователь успешно зарегистрирован",
+                   userId: result.insertId, // Возвращаем ID нового пользователя
+                 });
+               }
+             );
+            });
+          });
+        } catch (error) {
+          console.error("Ошибка при обработке запроса:", error);
+          return res.status(500).json({
+            success: false,
+            message: "Произошла ошибка на сервере",
+          });
+        }
       }
-      const candidate = await dbData.findOne({ where: { email, number } });
-      if (candidate) {
-        setError("Такой пользователь уже существует");
-        setTimeout(() => {
-          setError("");
-        }, 5000);
-      }
-      const hashPassword = await bcrypt.hash(password, 5);
-      const user = await dbData.create({
-        email,
-        password: hashPassword,
-        number,
-        last,
-        name,
-        fat,
-      });
-    }
-  }
 
   async login(req, res) {}
 
