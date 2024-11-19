@@ -193,8 +193,8 @@ export const AuthForm = (props) => {
                 className={Styles["form__field-input"]}
                 type="text"
                 placeholder="Иванов"
-                value={last}
-                onChange={handleRussianInput(setLast)}
+                value={last_name}
+                onChange={handleRussianInput(setLast_name)}
               />
             </label>
             <label className={Styles["form__field"]}>
@@ -213,8 +213,8 @@ export const AuthForm = (props) => {
                 className={Styles["form__field-input"]}
                 type="text"
                 placeholder="Иванович"
-                value={fat}
-                onChange={handleRussianInput(setFat)}
+                value={surname}
+                onChange={handleRussianInput(setSurname)}
               />
             </label>
             <label className={Styles["form__field"]}>
@@ -225,8 +225,8 @@ export const AuthForm = (props) => {
                 className={Styles["form__field-input"]}
                 type="tel"
                 placeholder="80000000000"
-                value={tel}
-                onChange={(e) => setTel(e.target.value)}
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
               />
             </label>
             <label className={Styles["form__field"]}>
