@@ -3,8 +3,8 @@ const router = new Router();
 const userController = require("../controllers/userController");
 
 router.post("/registration", (req, res) => {
-    userController.registration(req, res);
-    });
+  userController.registration(req, res);
+});
 router.post("/login", userController.login);
 router.get("/auth", userController.check);
 

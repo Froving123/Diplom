@@ -1,22 +1,35 @@
-const conn = require("../server");
+const mysql = require("mysql");
 const bcrypt = require("bcrypt");
 
+const conn = mysql.createConnection({
+  host: "MySQL-8.0",
+  user: "root",
+  password: "",
+  database: "Best-Rest",
+});
+
 class UserController {
+  // Метод для регистрации
   async registration(req, res) {
     try {
-      const { last, name, fat, tel, email, password } = req.body;
+      const { last_name, name, surname, phone, email, password } = req.body;
 
-      // Проверка, существует ли пользователь
-      const checkUserSql = `SELECT * FROM Пользователь WHERE Номер телефона = ? OR Email = ?`;
-      conn.query(checkUserSql, [tel, email], (err, results) => {
+      // Проверка, существует ли пользователь с таким email или телефоном
+      const checkUserSql = `
+SELECT * FROM Пользователь
+WHERE Номер_телефона = ? OR Email = ?
+`;
+
+      conn.query(checkUserSql, [phone, email], (err, results) => {
         if (err) {
           console.error("Ошибка при проверке пользователя:", err);
           return res.status(500).json({
             success: false,
-            message: "Ошибка при регистрации пользователя",
+            message: "Ошибка при проверке пользователя",
           });
         }
 
+        // Если пользователь найден, возвращаем сообщение
         if (results.length > 0) {
           return res.status(400).json({
             success: false,
@@ -34,11 +47,16 @@ class UserController {
             });
           }
 
-          // Добавление пользователя в базу данных
-          const addUserSql = `INSERT INTO Пользователь (Email, Пароль, Номер телефона, Фамилия, Имя, Отчество) VALUES (?, ?, ?, ?, ?, ?)`;
+          // SQL-запрос для добавления нового пользователя
+          const addUserSql = `
+INSERT INTO Пользователь
+(Фамилия, Имя, Отчество, Номер_телефона, Email, Пароль(hash))
+VALUES (?, ?, ?, ?, ?, ?)
+`;
+
           conn.query(
             addUserSql,
-            [email, hashedPassword, tel, last, name, fat],
+            [last_name, name, surname, phone, email, hashedPassword],
             (addErr, result) => {
               if (addErr) {
                 console.error("Ошибка при добавлении пользователя:", addErr);
@@ -48,7 +66,7 @@ class UserController {
                 });
               }
 
-              return res.json({
+              return res.status(201).json({
                 success: true,
                 message: "Пользователь успешно зарегистрирован",
                 userId: result.insertId, // Возвращаем ID нового пользователя

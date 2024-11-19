@@ -5,10 +5,10 @@ import Styles from "./AuthForm.module.css";
 
 export const AuthForm = (props) => {
   const [isLoginForm, setIsLoginForm] = useState(true);
-  const [last, setLast] = useState("");
+  const [last_name, setLast_name] = useState("");
   const [name, setName] = useState("");
-  const [fat, setFat] = useState("");
-  const [tel, setTel] = useState("");
+  const [surname, setSurname] = useState("");
+  const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [copyPassword, setCopyPassword] = useState("");
@@ -28,10 +28,10 @@ export const AuthForm = (props) => {
       !email ||
       !password ||
       !copyPassword ||
-      !last ||
+      !last_name ||
       !name ||
-      !fat ||
-      !tel
+      !surname ||
+      !phone
     ) {
       setError("Пожалуйста, заполните все поля");
       setTimeout(() => {
@@ -56,10 +56,10 @@ export const AuthForm = (props) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        last, // Фамилия пользователя
+        last_name, // Фамилия пользователя
         name, // Имя пользователя
-        fat, // Отчество пользователя
-        tel, // Номер телефона пользователя
+        surname, // Отчество пользователя
+        phone, // Номер телефона пользователя
         email, // Email пользователя
         password, // Пароль пользователя
       }),
@@ -67,7 +67,6 @@ export const AuthForm = (props) => {
       .then((response) => response.json())
       .then((result) => {
         if (!result.success) {
-          // Сервер вернул ошибку
           setError(result.message || "Ошибка при регистрации");
           setTimeout(() => {
             setError("");
@@ -75,11 +74,14 @@ export const AuthForm = (props) => {
           return;
         }
 
-        // Успешная регистрация
         setError("");
         setEmail("");
         setCopyPassword("");
         setPassword("");
+        setLast_name("");
+        setName("");
+        setSurname("");
+        setPhone("");
         alert("Пользователь успешно зарегистрирован!");
         props.close();
       })
@@ -123,17 +125,17 @@ export const AuthForm = (props) => {
     setEmail("");
     setPassword("");
     setCopyPassword("");
-    setLast("");
+    setLast_name("");
     setName("");
-    setFat("");
-    setTel("");
+    setSurname("");
+    setPhone("");
   };
 
   const handleRussianInput = (setter) => (e) => {
-    const value = e.target.value.replace(/[^А-Яа-яЁё\s]/g, ""); // Удаляет все, кроме русских букв и пробелов
+    const value = e.target.value.replace(/[^А-Яа-яЁё\s]/g, "");
     const formattedValue = value.replace(/(^|\s)([А-Яа-яЁё])/g, (match) =>
       match.toUpperCase()
-    ); // Преобразует первую букву каждого слова в верхний регистр
+    );
     setter(formattedValue);
   };
 
