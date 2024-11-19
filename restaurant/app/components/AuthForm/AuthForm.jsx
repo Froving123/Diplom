@@ -22,6 +22,8 @@ export const AuthForm = (props) => {
 
   const register = (e) => {
     e.preventDefault();
+
+    // Проверка на заполнение всех полей
     if (
       !email ||
       !password ||
@@ -35,27 +37,59 @@ export const AuthForm = (props) => {
       setTimeout(() => {
         setError("");
       }, 5000);
-    } else {
-      e.preventDefault();
-      if (copyPassword !== password) {
-        setError("пароли не совпадают");
+      return;
+    }
+
+    // Проверка на совпадение паролей
+    if (copyPassword !== password) {
+      setError("Пароли не совпадают");
+      setTimeout(() => {
+        setError("");
+      }, 5000);
+      return;
+    }
+
+    // Отправка данных на сервер
+    fetch("http://localhost:3005/api/user/registration", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        last, // Фамилия пользователя
+        name, // Имя пользователя
+        fat, // Отчество пользователя
+        tel, // Номер телефона пользователя
+        email, // Email пользователя
+        password, // Пароль пользователя
+      }),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (!result.success) {
+          // Сервер вернул ошибку
+          setError(result.message || "Ошибка при регистрации");
+          setTimeout(() => {
+            setError("");
+          }, 5000);
+          return;
+        }
+
+        // Успешная регистрация
+        setError("");
+        setEmail("");
+        setCopyPassword("");
+        setPassword("");
+        alert("Пользователь успешно зарегистрирован!");
+        props.close();
+      })
+      .catch((error) => {
+        console.error("Ошибка при отправке данных на сервер:", error);
+        setError("Ошибка при регистрации");
         setTimeout(() => {
           setError("");
         }, 5000);
-        return;
-      }
-      createUserWithEmailAndPassword(auth, email, password)
-        .then((user) => {
-          console.log(user);
-          setError("");
-          setEmail("");
-          setCopyPassword("");
-          setPassword("");
-          props.close();
-          alert("Пользователь успешно авторизован!");
-        })
-        .catch((error) => console.log(error));
-    }
+      });
   };
 
   const logIn = (e) => {
@@ -96,8 +130,10 @@ export const AuthForm = (props) => {
   };
 
   const handleRussianInput = (setter) => (e) => {
-    const value = e.target.value.replace(/[^А-Яа-яЁё\s]/g, ''); // Удаляет все, кроме русских букв и пробелов
-    const formattedValue = value.replace(/(^|\s)([А-Яа-яЁё])/g, (match) => match.toUpperCase()); // Преобразует первую букву каждого слова в верхний регистр
+    const value = e.target.value.replace(/[^А-Яа-яЁё\s]/g, ""); // Удаляет все, кроме русских букв и пробелов
+    const formattedValue = value.replace(/(^|\s)([А-Яа-яЁё])/g, (match) =>
+      match.toUpperCase()
+    ); // Преобразует первую букву каждого слова в верхний регистр
     setter(formattedValue);
   };
 
@@ -174,7 +210,7 @@ export const AuthForm = (props) => {
               <input
                 className={Styles["form__field-input"]}
                 type="text"
-                placeholder="Иванов"
+                placeholder="Иванович"
                 value={fat}
                 onChange={handleRussianInput(setFat)}
               />
@@ -188,7 +224,7 @@ export const AuthForm = (props) => {
                 type="tel"
                 placeholder="80000000000"
                 value={tel}
-                onChange={(e) => setNumber(e.target.value)}
+                onChange={(e) => setTel(e.target.value)}
               />
             </label>
             <label className={Styles["form__field"]}>

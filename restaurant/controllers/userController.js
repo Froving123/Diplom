@@ -1,4 +1,4 @@
-const conn = require("@/server");
+const conn = require("../server");
 const bcrypt = require("bcrypt");
 
 class UserController {
@@ -7,8 +7,8 @@ class UserController {
       const { last, name, fat, tel, email, password } = req.body;
 
       // Проверка, существует ли пользователь
-      const checkUserSql = `SELECT * FROM Пользователь WHERE Email = ? OR Номер телефона = ?`;
-      conn.query(checkUserSql, [last, name, fat, tel, email, password], (err, results) => {
+      const checkUserSql = `SELECT * FROM Пользователь WHERE Номер телефона = ? OR Email = ?`;
+      conn.query(checkUserSql, [tel, email], (err, results) => {
         if (err) {
           console.error("Ошибка при проверке пользователя:", err);
           return res.status(500).json({
@@ -34,37 +34,37 @@ class UserController {
             });
           }
 
-             // Добавление пользователя в базу данных
-             const addUserSql = `INSERT INTO user (email, phone, password) VALUES (?, ?, ?)`;
-             conn.query(
-               addUserSql,
-               [email, phone, hashedPassword],
-               (addErr, result) => {
-                 if (addErr) {
-                   console.error("Ошибка при добавлении пользователя:", addErr);
-                   return res.status(500).json({
-                     success: false,
-                     message: "Ошибка при регистрации пользователя",
-                   });
-                 }
-   
-                 return res.json({
-                   success: true,
-                   message: "Пользователь успешно зарегистрирован",
-                   userId: result.insertId, // Возвращаем ID нового пользователя
-                 });
-               }
-             );
-            });
-          });
-        } catch (error) {
-          console.error("Ошибка при обработке запроса:", error);
-          return res.status(500).json({
-            success: false,
-            message: "Произошла ошибка на сервере",
-          });
-        }
-      }
+          // Добавление пользователя в базу данных
+          const addUserSql = `INSERT INTO Пользователь (Email, Пароль(hash), Номер телефона, Фамилия, Имя, Отчество) VALUES (?, ?, ?, ?, ?, ?)`;
+          conn.query(
+            addUserSql,
+            [email, hashedPassword, tel, last, name, fat],
+            (addErr, result) => {
+              if (addErr) {
+                console.error("Ошибка при добавлении пользователя:", addErr);
+                return res.status(500).json({
+                  success: false,
+                  message: "Ошибка при регистрации пользователя",
+                });
+              }
+
+              return res.json({
+                success: true,
+                message: "Пользователь успешно зарегистрирован",
+                userId: result.insertId, // Возвращаем ID нового пользователя
+              });
+            }
+          );
+        });
+      });
+    } catch (error) {
+      console.error("Ошибка при обработке запроса:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Произошла ошибка на сервере",
+      });
+    }
+  }
 
   async login(req, res) {}
 

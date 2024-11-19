@@ -3,9 +3,10 @@ const mysql = require("mysql");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const router = require("./routes/index");
+const registration = require('./controllers/userController')
 
 const server = express();
-const PORT = 5000;
+const PORT = 3005;
 server.use(cors());
 server.use(bodyParser.json());
 server.use("/api", router);
@@ -25,12 +26,15 @@ conn.connect((err) => {
   }
 });
 
+server.post("/api/user/registration", async (req, res) => {
+  await registration.registration(req, res);
+});
+
 server.listen(PORT, () => {
-  console.log("app started");
+  console.log("server started");
 });
 
 module.exports = conn;
-
 
 //authForm
 //import { auth } from "@/app/firebase";
