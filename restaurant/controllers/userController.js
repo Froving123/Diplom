@@ -35,7 +35,7 @@ class UserController {
           }
 
           // Добавление пользователя в базу данных
-          const addUserSql = `INSERT INTO Пользователь (Email, Пароль(hash), Номер телефона, Фамилия, Имя, Отчество) VALUES (?, ?, ?, ?, ?, ?)`;
+          const addUserSql = `INSERT INTO Пользователь (Email, Пароль, Номер телефона, Фамилия, Имя, Отчество) VALUES (?, ?, ?, ?, ?, ?)`;
           conn.query(
             addUserSql,
             [email, hashedPassword, tel, last, name, fat],

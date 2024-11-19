@@ -3,7 +3,6 @@ const mysql = require("mysql");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const router = require("./routes/index");
-const registration = require('./controllers/userController')
 
 const server = express();
 const PORT = 3005;
@@ -24,10 +23,6 @@ conn.connect((err) => {
   } else {
     console.log("db connected");
   }
-});
-
-server.post("/api/user/registration", async (req, res) => {
-  await registration.registration(req, res);
 });
 
 server.listen(PORT, () => {
