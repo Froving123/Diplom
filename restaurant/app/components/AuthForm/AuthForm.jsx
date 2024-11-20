@@ -50,7 +50,7 @@ export const AuthForm = (props) => {
     }
 
     // Отправка данных на сервер
-    fetch("http://localhost:3005/api/user/registration", {
+    fetch("http://localhost:5000/api/user/registration", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

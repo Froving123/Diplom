@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const router = require("./routes/index");
 
 const server = express();
-const PORT = 3005;
+const PORT = 5000;
 server.use(cors());
 server.use(bodyParser.json());
 server.use("/api", router);
@@ -13,7 +13,7 @@ server.use("/api", router);
 const conn = mysql.createConnection({
   host: "MySQL-8.0",
   user: "root",
-  password: "",
+  password: "Sasha228",
   database: "Best-Rest",
 });
 
