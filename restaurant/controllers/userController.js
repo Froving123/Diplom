@@ -1,8 +1,5 @@
 const mysql = require("mysql");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-
-const JWT_SECRET = "Ref.26qwerip";
 
 const conn = mysql.createConnection({
   host: "MySQL-8.0",
@@ -69,17 +66,10 @@ VALUES (?, ?, ?, ?, ?, ?)
                 });
               }
 
-              // Создание JWT-токена
-              const tokenPayload = { id: result.insertId, email };
-              const token = jwt.sign(tokenPayload, JWT_SECRET, {
-                expiresIn: "2h", // Срок действия токена
-              });
-
               return res.status(201).json({
                 success: true,
                 message: "Пользователь успешно зарегистрирован",
                 userId: result.insertId, // Возвращаем ID нового пользователя
-                token, // Возвращаем JWT-токен
               });
             }
           );

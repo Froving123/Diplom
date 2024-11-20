@@ -13,19 +13,6 @@ export const Header = () => {
   const pathname = usePathname();
   const [authUser, setAuthUser] = useState(null);
 
-  /*useEffect(() => {
-    const listen = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setAuthUser(user);
-      } else {
-        setAuthUser(null);
-      }
-    });
-    return () => {
-      listen();
-    };
-  }, []);*/
-
   const openPopup = () => {
     setPopupIsOpened(true);
   };
