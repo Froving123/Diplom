@@ -49,7 +49,46 @@ export const Header = () => {
       )}
       <nav>
         <ul className={Styles.ul_header}>
-          {/* Другие пункты меню */}
+          <li className={Styles.nav_p}>
+            <Link
+              href="/AboutUs"
+              className={`${Styles.nav_link} ${
+                pathname === "/AboutUs" ? Styles.nav_link_active : ""
+              }`}
+            >
+              О нас
+            </Link>
+          </li>
+          <li className={Styles.nav_p}>
+            <Link
+              href="/Menu"
+              className={`${Styles.nav_link} ${
+                pathname === "/Menu" ? Styles.nav_link_active : ""
+              }`}
+            >
+              Меню
+            </Link>
+          </li>
+          <li className={Styles.nav_p}>
+            <Link
+              href="/Delivery"
+              className={`${Styles.nav_link} ${
+                pathname === "/Delivery" ? Styles.nav_link_active : ""
+              }`}
+            >
+              Доставка
+            </Link>
+          </li>
+          <li className={Styles.nav_p}>
+            <Link
+              href="/Cart"
+              className={`${Styles.nav_link} ${
+                pathname === "/Cart" ? Styles.nav_link_active : ""
+              }`}
+            >
+              Корзина
+            </Link>
+          </li>
           <li className={Styles.nav_p}>
             {authUser ? (
               <>
