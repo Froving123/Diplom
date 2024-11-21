@@ -74,6 +74,13 @@ export const AuthForm = (props) => {
           return;
         }
 
+        // Сохраняем токен в localStorage
+        localStorage.setItem("authToken", result.token);
+
+        // Обновляем состояние в Header
+        props.updateAuthUser({ token: result.token });
+
+        // Очищаем формы
         setError("");
         setEmail("");
         setCopyPassword("");
@@ -82,6 +89,7 @@ export const AuthForm = (props) => {
         setName("");
         setSurname("");
         setPhone("");
+
         alert("Пользователь успешно зарегистрирован!");
         props.close();
       })
@@ -121,7 +129,13 @@ export const AuthForm = (props) => {
             }, 5000);
             return;
           }
-  
+
+          // Сохраняем токен в localStorage
+          localStorage.setItem("authToken", result.token);
+
+          // Обновляем состояние в Header
+          props.updateAuthUser({ token: result.token });
+
           setError("");
           setEmail("");
           setPassword("");
@@ -135,7 +149,7 @@ export const AuthForm = (props) => {
             setError("");
           }, 5000);
         });
-    };
+    }
   };
 
   const handleClear = () => {

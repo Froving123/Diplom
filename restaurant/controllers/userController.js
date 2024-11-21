@@ -1,5 +1,8 @@
 const mysql = require("mysql");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+
+const jwtSecret = "key";
 
 const conn = mysql.createConnection({
   host: "MySQL-8.0",
@@ -16,9 +19,9 @@ class UserController {
 
       // Проверка, существует ли пользователь с таким email или телефоном
       const checkUserSql = `
-SELECT * FROM Пользователь
-WHERE Номер_телефона = ? OR Email = ?
-`;
+        SELECT * FROM Пользователь
+        WHERE Номер_телефона = ? OR Email = ?
+      `;
 
       conn.query(checkUserSql, [phone, email], (err, results) => {
         if (err) {
@@ -49,10 +52,10 @@ WHERE Номер_телефона = ? OR Email = ?
 
           // SQL-запрос для добавления нового пользователя
           const addUserSql = `
-INSERT INTO Пользователь
-(Фамилия, Имя, Отчество, Номер_телефона, Email, Пароль)
-VALUES (?, ?, ?, ?, ?, ?)
-`;
+            INSERT INTO Пользователь
+            (Фамилия, Имя, Отчество, Номер_телефона, Email, Пароль)
+            VALUES (?, ?, ?, ?, ?, ?)
+          `;
 
           conn.query(
             addUserSql,
@@ -66,10 +69,17 @@ VALUES (?, ?, ?, ?, ?, ?)
                 });
               }
 
+              // Создание JWT токена
+              const token = jwt.sign(
+                { userId: result.insertId, email },
+                jwtSecret,
+                { expiresIn: "1h" } // Срок действия токена 1 час
+              );
+
               return res.status(201).json({
                 success: true,
                 message: "Пользователь успешно зарегистрирован",
-                userId: result.insertId, // Возвращаем ID нового пользователя
+                token, // Возвращаем токен
               });
             }
           );
@@ -87,13 +97,13 @@ VALUES (?, ?, ?, ?, ?, ?)
   async login(req, res) {
     try {
       const { email, password } = req.body;
-    
-      // Проверка, существует ли пользователь с таким email или телефоном
+
+      // Проверка, существует ли пользователь с таким email
       const checkUserSql = `
         SELECT * FROM Пользователь
         WHERE Email = ?
       `;
-    
+
       conn.query(checkUserSql, [email], (err, results) => {
         if (err) {
           console.error("Ошибка при проверке пользователя:", err);
@@ -102,7 +112,7 @@ VALUES (?, ?, ?, ?, ?, ?)
             message: "Ошибка при проверке пользователя",
           });
         }
-    
+
         // Если пользователь не найден
         if (results.length === 0) {
           return res.status(404).json({
@@ -110,9 +120,9 @@ VALUES (?, ?, ?, ?, ?, ?)
             message: "Пользователь с таким email не найден",
           });
         }
-    
+
         const user = results[0]; // Полагаем, что пользователь найден (первый из результатов)
-    
+
         // Сравниваем введённый пароль с хешем пароля, который хранится в базе
         bcrypt.compare(password, user.Пароль, (compareErr, isMatch) => {
           if (compareErr) {
@@ -122,7 +132,7 @@ VALUES (?, ?, ?, ?, ?, ?)
               message: "Ошибка при проверке пароля",
             });
           }
-    
+
           // Если пароли не совпадают
           if (!isMatch) {
             return res.status(401).json({
@@ -130,12 +140,18 @@ VALUES (?, ?, ?, ?, ?, ?)
               message: "Неверный пароль",
             });
           }
-    
-          // Если пароль правильный, возвращаем успешный ответ с информацией о пользователе
+
+          // Создание JWT токена
+          const token = jwt.sign(
+            { userId: user.ID, email: user.Email },
+            jwtSecret,
+            { expiresIn: "1h" } // Срок действия токена 1 час
+          );
+
           return res.status(200).json({
             success: true,
             message: "Авторизация успешна",
-            userId: user.ID, // Возвращаем ID пользователя
+            token, // Возвращаем токен
           });
         });
       });
