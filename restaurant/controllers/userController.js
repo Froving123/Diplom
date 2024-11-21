@@ -84,7 +84,69 @@ VALUES (?, ?, ?, ?, ?, ?)
     }
   }
 
-  async login(req, res) {}
+  async login(req, res) {
+    try {
+      const { email, password } = req.body;
+    
+      // Проверка, существует ли пользователь с таким email или телефоном
+      const checkUserSql = `
+        SELECT * FROM Пользователь
+        WHERE Email = ?
+      `;
+    
+      conn.query(checkUserSql, [email], (err, results) => {
+        if (err) {
+          console.error("Ошибка при проверке пользователя:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при проверке пользователя",
+          });
+        }
+    
+        // Если пользователь не найден
+        if (results.length === 0) {
+          return res.status(404).json({
+            success: false,
+            message: "Пользователь с таким email не найден",
+          });
+        }
+    
+        const user = results[0]; // Полагаем, что пользователь найден (первый из результатов)
+    
+        // Сравниваем введённый пароль с хешем пароля, который хранится в базе
+        bcrypt.compare(password, user.Пароль, (compareErr, isMatch) => {
+          if (compareErr) {
+            console.error("Ошибка при проверке пароля:", compareErr);
+            return res.status(500).json({
+              success: false,
+              message: "Ошибка при проверке пароля",
+            });
+          }
+    
+          // Если пароли не совпадают
+          if (!isMatch) {
+            return res.status(401).json({
+              success: false,
+              message: "Неверный пароль",
+            });
+          }
+    
+          // Если пароль правильный, возвращаем успешный ответ с информацией о пользователе
+          return res.status(200).json({
+            success: true,
+            message: "Авторизация успешна",
+            userId: user.ID, // Возвращаем ID пользователя
+          });
+        });
+      });
+    } catch (error) {
+      console.error("Ошибка при обработке запроса:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Произошла ошибка на сервере",
+      });
+    }
+  }
 
   async check(req, res) {}
 }

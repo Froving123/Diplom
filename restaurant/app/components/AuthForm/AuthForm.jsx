@@ -102,23 +102,40 @@ export const AuthForm = (props) => {
         setError("");
       }, 5000);
     } else {
-      signInWithEmailAndPassword(auth, email, password)
-        .then((user) => {
-          console.log(user);
+      fetch("http://localhost:5000/api/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email, // Email пользователя
+          password, // Пароль пользователя
+        }),
+      })
+        .then((response) => response.json())
+        .then((result) => {
+          if (!result.success) {
+            setError(result.message || "Ошибка при авторизации");
+            setTimeout(() => {
+              setError("");
+            }, 5000);
+            return;
+          }
+  
           setError("");
           setEmail("");
           setPassword("");
-          props.close();
           alert("Пользователь успешно авторизован!");
+          props.close();
         })
         .catch((error) => {
-          console.log(error);
-          setError("Неправильная почта или пароль");
+          console.error("Ошибка при отправке данных на сервер:", error);
+          setError("Ошибка при авторизации");
           setTimeout(() => {
             setError("");
           }, 5000);
         });
-    }
+    };
   };
 
   const handleClear = () => {
