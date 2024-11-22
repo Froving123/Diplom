@@ -4,17 +4,17 @@ import Styles from "./Forma_feedback.module.css";
 import { Overlay } from "../Overlay/Overlay";
 import { Popup } from "../Popup/Popup";
 import { AuthForm } from "../AuthForm/AuthForm";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export const Forma_feedback = () => {
   const [popupIsOpened, setPopupIsOpened] = useState(false);
   const [authUser, setAuthUser] = useState(null);
-  const [newItem, setNewItem] = useState({ name: "", text: "" });
+  const [newItem, setNewItem] = useState({ name: "", text: "", score: "" });
   const [error, setError] = useState("");
 
   const feedback = async (e) => {
     e.preventDefault();
-    if (!newItem.name || !newItem.text) {
+    if (!newItem.name || !newItem.text || !newItem.score) {
       setError("Пожалуйста, заполните все поля");
       setTimeout(() => {
         setError("");
@@ -30,32 +30,20 @@ export const Forma_feedback = () => {
           const newItemData = {
             name: newItem.name,
             text: newItem.text,
+            score: newItem.score,
             userId: user.uid, // Сохраняем идентификатор пользователя
           };
           // Записываем данные по новому ключу
           await set(ref(db, `feedback/${newItemKey}`), newItemData);
-          setNewItem({ name: "", text: "" });
+          setNewItem({ name: "", text: "", score: "" });
           setError("");
-          alert("Ваша отзыв принят");
+          alert("Ваш отзыв принят");
         }
       } catch (error) {
         console.error("Ошибка при добавлении документа: ", error);
       }
     }
   };
-
-  /*useEffect(() => {
-    const listen = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setAuthUser(user);
-      } else {
-        setAuthUser(null);
-      }
-    });
-    return () => {
-      listen();
-    };
-  }, []);*/
 
   const openedPopup = () => {
     setPopupIsOpened(true);
@@ -72,7 +60,7 @@ export const Forma_feedback = () => {
           Форма обратной <br /> связи
         </h2>
         <p className={Styles.form_p}>
-          Оставляйте ваши отзывы и пожилания <br /> они очень важны для нас.{" "}
+          Оставляйте ваши отзывы и пожелания <br /> они очень важны для нас.{" "}
         </p>
       </div>
       <div className={Styles.right_form}>
@@ -83,21 +71,20 @@ export const Forma_feedback = () => {
             value={newItem.score}
             onChange={(e) => setNewItem({ ...newItem, score: e.target.value })}
           >
-            <option disabled selected>
+            <option value="" disabled>
               Выберите оценку от 1 до 5
             </option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
           </select>
         </label>
         <label className={Styles.form_i}>
           <span className={Styles.form_i}>Ваш отзыв</span>
           <textarea
             className={Styles.input_massage}
-            type="text"
             value={newItem.text}
             onChange={(e) => setNewItem({ ...newItem, text: e.target.value })}
           ></textarea>

@@ -4,12 +4,17 @@ import React, { useState } from "react";
 import Styles from "./ReservForm.module.css";
 
 export const ReservForm = (props) => {
-  const [newItem, setNewItem] = useState({ date: "", time: "" });
+  const [newItem, setNewItem] = useState({
+    date: "",
+    time: "",
+    people: "",
+    number: "",
+  });
   const [error, setError] = useState("");
 
   const reserv = async (e) => {
     e.preventDefault();
-    if (!newItem.date || !newItem.time) {
+    if (!newItem.date || !newItem.time || !newItem.people || !newItem.number) {
       setError("Пожалуйста, заполните все поля");
       setTimeout(() => {
         setError("");
@@ -29,7 +34,7 @@ export const ReservForm = (props) => {
           };
           // Записываем данные по новому ключу
           await set(ref(db, `reserv/${newItemKey}`), newItemData);
-          setNewItem({ date: "", time: "" });
+          setNewItem({ date: "", time: "", people: "", number: "" });
           setError("");
           props.close();
           alert("Ваша бронь принята");
@@ -41,7 +46,7 @@ export const ReservForm = (props) => {
   };
 
   const handleClear = () => {
-    setNewItem({ date: "", time: "" });
+    setNewItem({ date: "", time: "", people: "", number: "" });
   };
 
   return (
@@ -72,27 +77,25 @@ export const ReservForm = (props) => {
           </span>
           <select
             className={Styles["form__field-input"]}
-            value={newItem.people}
-            onChange={(e) => setNewItem({ ...newItem, people: e.target.value })}
+            value={newItem.people} // Устанавливаем значение из состояния
+            onChange={(e) => setNewItem({ ...newItem, people: e.target.value })} // Обновляем значение
           >
-            <option disabled selected>
-              Сколько будет человек
-            </option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-            <option>7</option>
-            <option>8</option>
-            <option>9</option>
-            <option>10</option>
-            <option>11</option>
-            <option>12</option>
-            <option>13</option>
-            <option>14</option>
-            <option>15</option>
+            <option value="">Сколько будет человек</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
+            <option value="11">11</option>
+            <option value="12">12</option>
+            <option value="13">13</option>
+            <option value="14">14</option>
+            <option value="15">15</option>
           </select>
         </label>
         <label className={Styles["form__field"]}>
@@ -102,19 +105,17 @@ export const ReservForm = (props) => {
             value={newItem.number}
             onChange={(e) => setNewItem({ ...newItem, number: e.target.value })}
           >
-            <option disabled selected>
-              Выберите стол
-            </option>
-            <option>1</option>
-            <option>2</option>
-            <option>3</option>
-            <option>4</option>
-            <option>5</option>
-            <option>6</option>
-            <option>7</option>
-            <option>8</option>
-            <option>9</option>
-            <option>10</option>
+            <option value="">Выберите стол</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+            <option value="10">10</option>
           </select>
         </label>
       </div>
