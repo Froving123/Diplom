@@ -2,8 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 import Styles from "./AuthDetails.module.css";
-import Reservations from "../Reservations/Reservations";
-import Delivery_user from "../Delivery_user/Delivery_user";
+import {UserReservations} from "../Reservations/Reservations";
+import {Delivery_user} from "../Delivery_user/Delivery_user";
 
  export const AuthDetails = () => {
   const [authUser, setAuthUser] = useState(null);
@@ -48,7 +48,7 @@ import Delivery_user from "../Delivery_user/Delivery_user";
           <p className={Styles.user}>{`Здравствуйте, ${
             authUser.name || authUser.email
           }`}</p>
-          <Reservations />
+          <UserReservations />
           <Delivery_user />
           <Link href="/">
             <button className={Styles.button_logOut} onClick={userSignOut}>

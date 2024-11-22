@@ -73,7 +73,7 @@ class UserController {
               const token = jwt.sign(
                 { userId: result.insertId },
                 jwtSecret,
-                { expiresIn: "1h" } // Срок действия токена 1 час
+                { expiresIn: "3h" } // Срок действия токена 1 час
               );
 
               return res.status(201).json({
@@ -145,7 +145,7 @@ class UserController {
           const token = jwt.sign(
             { userId: user.ID },
             jwtSecret,
-            { expiresIn: "1h" } // Срок действия токена 1 час
+            { expiresIn: "3h" } // Срок действия токена 1 час
           );
 
           return res.status(200).json({
