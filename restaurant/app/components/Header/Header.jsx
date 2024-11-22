@@ -32,12 +32,6 @@ export const Header = () => {
     setPopupIsOpened(false);
   };
 
-  const logout = () => {
-    // Удаляем токен и обновляем состояние
-    localStorage.removeItem("authToken");
-    setAuthUser(null);
-  };
-
   return (
     <header className={Styles.header}>
       {pathname === "/" ? (
@@ -91,19 +85,14 @@ export const Header = () => {
           </li>
           <li className={Styles.nav_p}>
             {authUser ? (
-              <>
-                <Link
-                  href="/Profile"
-                  className={`${Styles.nav_link} ${
-                    pathname === "/Profile" ? Styles.nav_link_active : ""
-                  }`}
-                >
-                  Профиль
-                </Link>
-                <button onClick={logout} className={Styles.button_profile}>
-                  Выйти
-                </button>
-              </>
+              <Link
+                href="/Profile"
+                className={`${Styles.nav_link} ${
+                  pathname === "/Profile" ? Styles.nav_link_active : ""
+                }`}
+              >
+                Профиль
+              </Link>
             ) : (
               <button className={Styles.button_profile} onClick={openPopup}>
                 Войти

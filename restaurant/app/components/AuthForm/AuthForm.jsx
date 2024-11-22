@@ -20,9 +20,20 @@ export const AuthForm = (props) => {
     setError("");
   };
 
+  const validateEmail = (email) =>
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email);
+  const validatePhone = (phone) => /^\d{11}$/.test(phone); // Пример для номера телефона
+  const validatePassword = (password) => password.length >= 6; // Пример для пароля
+  const russianInput = (input) => (e) => {
+    const value = e.target.value.replace(/[^А-Яа-яЁё]/g, "");
+    const formattedValue = value.replace(/(^)([а-яё])/g, (match) =>
+      match.toUpperCase()
+    );
+    input(formattedValue);
+  };
+
   const register = (e) => {
     e.preventDefault();
-
     // Проверка на заполнение всех полей
     if (
       !email ||
@@ -36,7 +47,34 @@ export const AuthForm = (props) => {
       setError("Пожалуйста, заполните все поля");
       setTimeout(() => {
         setError("");
-      }, 5000);
+      }, 3000);
+      return;
+    }
+
+    // проверка на корректность поля email
+    if (!validateEmail(email)) {
+      setError("Неверный формат email");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+      return;
+    }
+
+    // проверка на корректность поля phone
+    if (!validatePhone(phone)) {
+      setError("Неверный формат телефона");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+      return;
+    }
+
+    // проверка на корректность поля password
+    if (!validatePassword(password)) {
+      setError("Пароль должен быть не менее 6 символов");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
       return;
     }
 
@@ -45,7 +83,7 @@ export const AuthForm = (props) => {
       setError("Пароли не совпадают");
       setTimeout(() => {
         setError("");
-      }, 5000);
+      }, 3000);
       return;
     }
 
@@ -56,12 +94,12 @@ export const AuthForm = (props) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        last_name, // Фамилия пользователя
-        name, // Имя пользователя
-        surname, // Отчество пользователя
-        phone, // Номер телефона пользователя
-        email, // Email пользователя
-        password, // Пароль пользователя
+        last_name,
+        name,
+        surname,
+        phone,
+        email,
+        password,
       }),
     })
       .then((response) => response.json())
@@ -70,7 +108,7 @@ export const AuthForm = (props) => {
           setError(result.message || "Ошибка при регистрации");
           setTimeout(() => {
             setError("");
-          }, 5000);
+          }, 3000);
           return;
         }
 
@@ -89,8 +127,7 @@ export const AuthForm = (props) => {
         setName("");
         setSurname("");
         setPhone("");
-
-        alert("Пользователь успешно зарегистрирован!");
+        alert("Пользователь успешно зарегистрирован");
         props.close();
       })
       .catch((error) => {
@@ -98,17 +135,18 @@ export const AuthForm = (props) => {
         setError("Ошибка при регистрации");
         setTimeout(() => {
           setError("");
-        }, 5000);
+        }, 3000);
       });
   };
 
   const logIn = (e) => {
     e.preventDefault();
+    // Проверка на заполнение всех полей
     if (!email || !password) {
       setError("Пожалуйста, заполните все поля");
       setTimeout(() => {
         setError("");
-      }, 5000);
+      }, 3000);
     } else {
       fetch("http://localhost:5000/api/user/login", {
         method: "POST",
@@ -116,8 +154,8 @@ export const AuthForm = (props) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email, // Email пользователя
-          password, // Пароль пользователя
+          email,
+          password,
         }),
       })
         .then((response) => response.json())
@@ -126,7 +164,7 @@ export const AuthForm = (props) => {
             setError(result.message || "Ошибка при авторизации");
             setTimeout(() => {
               setError("");
-            }, 5000);
+            }, 3000);
             return;
           }
 
@@ -136,10 +174,11 @@ export const AuthForm = (props) => {
           // Обновляем состояние в Header
           props.updateAuthUser({ token: result.token });
 
+          // Очищаем формы
           setError("");
           setEmail("");
           setPassword("");
-          alert("Пользователь успешно авторизован!");
+          alert("Пользователь успешно авторизован");
           props.close();
         })
         .catch((error) => {
@@ -147,7 +186,7 @@ export const AuthForm = (props) => {
           setError("Ошибка при авторизации");
           setTimeout(() => {
             setError("");
-          }, 5000);
+          }, 3000);
         });
     }
   };
@@ -160,14 +199,6 @@ export const AuthForm = (props) => {
     setName("");
     setSurname("");
     setPhone("");
-  };
-
-  const handleRussianInput = (setter) => (e) => {
-    const value = e.target.value.replace(/[^А-Яа-яЁё\s]/g, "");
-    const formattedValue = value.replace(/(^|\s)([А-Яа-яЁё])/g, (match) =>
-      match.toUpperCase()
-    );
-    setter(formattedValue);
   };
 
   return (
@@ -191,7 +222,7 @@ export const AuthForm = (props) => {
               <input
                 className={Styles["form__field-input"]}
                 type="password"
-                placeholder="***********"
+                placeholder="******"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -225,7 +256,7 @@ export const AuthForm = (props) => {
                 type="text"
                 placeholder="Иванов"
                 value={last_name}
-                onChange={handleRussianInput(setLast_name)}
+                onChange={russianInput(setLast_name)}
               />
             </label>
             <label className={Styles["form__field"]}>
@@ -235,7 +266,7 @@ export const AuthForm = (props) => {
                 type="text"
                 placeholder="Иван"
                 value={name}
-                onChange={handleRussianInput(setName)}
+                onChange={russianInput(setName)}
               />
             </label>
             <label className={Styles["form__field"]}>
@@ -245,7 +276,7 @@ export const AuthForm = (props) => {
                 type="text"
                 placeholder="Иванович"
                 value={surname}
-                onChange={handleRussianInput(setSurname)}
+                onChange={russianInput(setSurname)}
               />
             </label>
             <label className={Styles["form__field"]}>
@@ -275,7 +306,7 @@ export const AuthForm = (props) => {
               <input
                 className={Styles["form__field-input"]}
                 type="password"
-                placeholder="***********"
+                placeholder="******"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -287,7 +318,7 @@ export const AuthForm = (props) => {
               <input
                 className={Styles["form__field-input"]}
                 type="password"
-                placeholder="***********"
+                placeholder="******"
                 value={copyPassword}
                 onChange={(e) => setCopyPassword(e.target.value)}
               />

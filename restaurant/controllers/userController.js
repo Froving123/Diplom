@@ -71,7 +71,7 @@ class UserController {
 
               // Создание JWT токена
               const token = jwt.sign(
-                { userId: result.insertId, email },
+                { userId: result.insertId },
                 jwtSecret,
                 { expiresIn: "1h" } // Срок действия токена 1 час
               );
@@ -143,7 +143,7 @@ class UserController {
 
           // Создание JWT токена
           const token = jwt.sign(
-            { userId: user.ID, email: user.Email },
+            { userId: user.ID },
             jwtSecret,
             { expiresIn: "1h" } // Срок действия токена 1 час
           );
@@ -163,7 +163,53 @@ class UserController {
       });
     }
   }
-  //async check(req, res) {}
+
+  async profile(req, res) {
+    try {
+      // Получение токена из заголовка Authorization
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res
+          .status(401)
+          .json({ success: false, message: "Токен отсутствует" });
+      }
+
+      const token = authHeader.split(" ")[1];
+
+      // Проверка токена
+      let decodedToken;
+      try {
+        decodedToken = jwt.verify(token, jwtSecret); // Расшифровка токена
+      } catch (err) {
+        return res
+          .status(401)
+          .json({ success: false, message: "Неверный токен" });
+      }
+
+      // Извлечение информации о пользователе
+      const user = await User.findById(decodedToken.id); // Поиск пользователя по ID из токена
+      if (!user) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Пользователь не найден" });
+      }
+
+      // Возврат данных пользователя
+      return res.status(200).json({
+        success: true,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+        },
+      });
+    } catch (err) {
+      console.error("Ошибка в profile:", err);
+      return res
+        .status(500)
+        .json({ success: false, message: "Ошибка сервера" });
+    }
+  }
 }
 
 module.exports = new UserController();
