@@ -170,7 +170,9 @@ class UserController {
 
       // Проверка наличия токена
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({ success: false, message: "Токен отсутствует" });
+        return res
+          .status(401)
+          .json({ success: false, message: "Токен отсутствует" });
       }
 
       const token = authHeader.split(" ")[1];
@@ -180,7 +182,9 @@ class UserController {
       try {
         decodedToken = jwt.verify(token, jwtSecret);
       } catch (err) {
-        return res.status(401).json({ success: false, message: "Неверный токен" });
+        return res
+          .status(401)
+          .json({ success: false, message: "Неверный токен" });
       }
 
       const userId = decodedToken.userId;
@@ -191,11 +195,15 @@ class UserController {
       conn.query(getUserSql, [userId], (err, results) => {
         if (err) {
           console.error("Ошибка при запросе данных пользователя:", err);
-          return res.status(500).json({ success: false, message: "Ошибка сервера" });
+          return res
+            .status(500)
+            .json({ success: false, message: "Ошибка сервера" });
         }
 
         if (results.length === 0) {
-          return res.status(404).json({ success: false, message: "Пользователь не найден" });
+          return res
+            .status(404)
+            .json({ success: false, message: "Пользователь не найден" });
         }
 
         const user = results[0];
@@ -213,7 +221,9 @@ class UserController {
       });
     } catch (error) {
       console.error("Ошибка в функции profile:", error);
-      return res.status(500).json({ success: false, message: "Ошибка сервера" });
+      return res
+        .status(500)
+        .json({ success: false, message: "Ошибка сервера" });
     }
   }
 }
