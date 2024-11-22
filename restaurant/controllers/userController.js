@@ -166,48 +166,54 @@ class UserController {
 
   async profile(req, res) {
     try {
-      // Получение токена из заголовка Authorization
       const authHeader = req.headers.authorization;
+
+      // Проверка наличия токена
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Токен отсутствует" });
+        return res.status(401).json({ success: false, message: "Токен отсутствует" });
       }
 
       const token = authHeader.split(" ")[1];
 
-      // Проверка токена
+      // Расшифровка токена и извлечение ID пользователя
       let decodedToken;
       try {
-        decodedToken = jwt.verify(token, jwtSecret); // Расшифровка токена
+        decodedToken = jwt.verify(token, jwtSecret);
       } catch (err) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Неверный токен" });
+        return res.status(401).json({ success: false, message: "Неверный токен" });
       }
 
-      // Извлечение информации о пользователе
-      const user = await User.findById(decodedToken.id); // Поиск пользователя по ID из токена
-      if (!user) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Пользователь не найден" });
-      }
+      const userId = decodedToken.userId;
 
-      // Возврат данных пользователя
-      return res.status(200).json({
-        success: true,
-        user: {
-          id: user._id,
-          name: user.name,
-          email: user.email,
-        },
+      // Запрос на получение данных пользователя из базы данных
+      const getUserSql = `SELECT * FROM Пользователь WHERE ID = ?`;
+
+      conn.query(getUserSql, [userId], (err, results) => {
+        if (err) {
+          console.error("Ошибка при запросе данных пользователя:", err);
+          return res.status(500).json({ success: false, message: "Ошибка сервера" });
+        }
+
+        if (results.length === 0) {
+          return res.status(404).json({ success: false, message: "Пользователь не найден" });
+        }
+
+        const user = results[0];
+
+        return res.status(200).json({
+          success: true,
+          user: {
+            id: user.ID,
+            name: user.Имя,
+            lastName: user.Фамилия,
+            email: user.Email,
+            phone: user.Номер_телефона,
+          },
+        });
       });
-    } catch (err) {
-      console.error("Ошибка в profile:", err);
-      return res
-        .status(500)
-        .json({ success: false, message: "Ошибка сервера" });
+    } catch (error) {
+      console.error("Ошибка в функции profile:", error);
+      return res.status(500).json({ success: false, message: "Ошибка сервера" });
     }
   }
 }
