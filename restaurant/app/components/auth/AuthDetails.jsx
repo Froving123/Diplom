@@ -50,9 +50,7 @@ export const AuthDetails = () => {
     <div className={Styles.str_profile}>
       {authUser ? (
         <div className={Styles.profile}>
-          <p className={Styles.user}>{`Здравствуйте, ${
-            authUser.name || authUser.email
-          }`}</p>
+          <p className={Styles.user}>{`Здравствуйте, ${authUser.name}`}</p>
           <UserReservations />
           <Delivery_user />
           <Link href="/">

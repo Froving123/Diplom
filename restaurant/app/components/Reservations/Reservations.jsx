@@ -6,40 +6,6 @@ import Styles from "./Reservations.module.css";
 export const UserReservations = () => {
   const [userReservations, setUserReservations] = useState([]);
 
-  useEffect(() => {
-    const fetchUserReservations = async () => {
-      const user = auth.currentUser;
-      if (user) {
-        const reservationsRef = ref(db, "reserv");
-        const userReservationsQuery = query(
-          reservationsRef,
-          orderByChild("userId"),
-          equalTo(user.uid)
-        );
-
-        try {
-          const snapshot = await get(userReservationsQuery);
-          if (snapshot.exists()) {
-            const reservations = [];
-            snapshot.forEach((childSnapshot) => {
-              reservations.push({
-                id: childSnapshot.key,
-                ...childSnapshot.val(),
-              });
-            });
-            setUserReservations(reservations);
-          } else {
-            console.log("Данные не найдены");
-          }
-        } catch (error) {
-          console.error("Ошибка при получении данных: ", error);
-        }
-      }
-    };
-
-    fetchUserReservations();
-  }, []);
-
   return (
     <div className={Styles.reservation}>
       <h2 className={Styles.title_reserv}>Ваше бронирование</h2>
