@@ -19,30 +19,46 @@ export const ReservForm = (props) => {
       setTimeout(() => {
         setError("");
       }, 5000);
-    } else {
-      try {
-        const user = auth.currentUser; // Получаем текущего пользователя
-        if (user) {
-          // Генерируем новый ключ
-          const newItemRef = push(ref(db, "reserv"));
-          const newItemKey = newItemRef.key;
-          // Создаем объект с данными для записи
-          const newItemData = {
-            date: newItem.date,
-            time: newItem.time,
-            userId: user.uid, // Сохраняем идентификатор пользователя
-          };
-          // Записываем данные по новому ключу
-          await set(ref(db, `reserv/${newItemKey}`), newItemData);
-          setNewItem({ date: "", time: "", people: "", number: "" });
-          setError("");
-          props.close();
-          alert("Ваша бронь принята");
-        }
-      } catch (error) {
-        console.error("Ошибка при добавлении документа: ", error);
-      }
+      return; // Не продолжаем выполнение, если поля не заполнены
     }
+
+    const token = localStorage.getItem("authToken"); // Получаем токен из localStorage
+   
+    fetch("http://localhost:5000/api/reservation/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Добавляем токен в заголовок
+      },
+      body: JSON.stringify({
+        date: newItem.date,
+        time: newItem.time,
+        people: newItem.people,
+        number: newItem.number,
+      }),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (!result.success) {
+          setError(result.message || "Ошибка при бронировании");
+          setTimeout(() => {
+            setError("");
+          }, 3000);
+          return;
+        }
+
+        // Очищаем формы
+        setNewItem({ date: "", time: "", people: "", number: "" });
+        alert("Бронирование успешно создано");
+        props.close();
+      })
+      .catch((error) => {
+        console.error("Ошибка при отправке данных на сервер:", error);
+        setError("Ошибка при бронировании");
+        setTimeout(() => {
+          setError("");
+        }, 3000);
+      });
   };
 
   const handleClear = () => {
