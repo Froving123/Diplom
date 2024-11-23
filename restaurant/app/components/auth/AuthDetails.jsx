@@ -60,7 +60,7 @@ export const AuthDetails = () => {
           </Link>
         </div>
       ) : (
-        <p>Вы не авторизованы.</p>
+        ""
       )}
     </div>
   );

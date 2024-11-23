@@ -12,7 +12,16 @@ export const Welcome = () => {
   const [popupIsOpen, setPopupIsOpen] = useState(false);
   const [authUser, setAuthUser] = useState(null);
 
-
+  useEffect(() => {
+    // Проверка наличия токена в localStorage
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      // Если токен есть, устанавливаем пользователя как авторизованного
+      setAuthUser({ token });
+    } else {
+      setAuthUser(null);
+    }
+  }, []);
 
   const openPopup = () => {
     setPopupIsOpened(true);
@@ -53,7 +62,7 @@ export const Welcome = () => {
       </div>
       <Overlay isOpened={popupIsOpened} close={closePopup} />
       <Popup isOpened={popupIsOpened} close={closePopup}>
-        <AuthForm close={closePopup}/>
+        <AuthForm close={closePopup} />
       </Popup>
       <Overlay isOpened={popupIsOpen} close={closedPopup} />
       <Popup isOpened={popupIsOpen} close={closedPopup}>
