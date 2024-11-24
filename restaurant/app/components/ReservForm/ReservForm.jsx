@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Styles from "./ReservForm.module.css";
 
 export const ReservForm = (props) => {
@@ -8,13 +8,47 @@ export const ReservForm = (props) => {
     date: "",
     time: "",
     people: "",
-    number: "",
+    table: "", 
   });
+  const [availableTables, setAvailableTables] = useState([]); // Массив доступных столов
   const [error, setError] = useState("");
+
+  // Получение доступных столов с сервера при загрузке компонента
+  useEffect(() => {
+    const fetchAvailableTables = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/reservation/table", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const result = await response.json();
+        if (response.ok) {
+          setAvailableTables(result.tables); // Сохраняем доступные столы в состоянии
+        } else {
+          setError(result.message || "Ошибка при получении столов");
+          setTimeout(() => {
+            setError("");
+          }, 3000);
+        }
+      } catch (error) {
+        console.error("Ошибка при получении столов:", error);
+        setError("Ошибка при получении столов");
+        setTimeout(() => {
+          setError("");
+        }, 3000);
+      }
+    };
+
+    fetchAvailableTables();
+  }, []); // Запрос только при монтировании компонента
 
   const reserv = async (e) => {
     e.preventDefault();
-    if (!newItem.date || !newItem.time || !newItem.people || !newItem.number) {
+
+    if (!newItem.date || !newItem.time || !newItem.people || !newItem.table) {
       setError("Пожалуйста, заполните все поля");
       setTimeout(() => {
         setError("");
@@ -22,19 +56,20 @@ export const ReservForm = (props) => {
       return; // Не продолжаем выполнение, если поля не заполнены
     }
 
-    const token = localStorage.getItem("authToken"); // Получаем токен из localStorage
-   
+    const token = localStorage.getItem("authToken");
+
+    // Отправляем данные на сервер для создания бронирования
     fetch("http://localhost:5000/api/reservation/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // Добавляем токен в заголовок
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
         date: newItem.date,
         time: newItem.time,
         people: newItem.people,
-        number: newItem.number,
+        table: newItem.table, // Отправляем ID стола
       }),
     })
       .then((response) => response.json())
@@ -48,7 +83,7 @@ export const ReservForm = (props) => {
         }
 
         // Очищаем формы
-        setNewItem({ date: "", time: "", people: "", number: "" });
+        setNewItem({ date: "", time: "", people: "", table: "" });
         alert("Бронирование успешно создано");
         props.close();
       })
@@ -62,7 +97,7 @@ export const ReservForm = (props) => {
   };
 
   const handleClear = () => {
-    setNewItem({ date: "", time: "", people: "", number: "" });
+    setNewItem({ date: "", time: "", people: "", table: "" });
   };
 
   return (
@@ -93,8 +128,8 @@ export const ReservForm = (props) => {
           </span>
           <select
             className={Styles["form__field-input"]}
-            value={newItem.people} // Устанавливаем значение из состояния
-            onChange={(e) => setNewItem({ ...newItem, people: e.target.value })} // Обновляем значение
+            value={newItem.people}
+            onChange={(e) => setNewItem({ ...newItem, people: e.target.value })}
           >
             <option value="">Сколько будет человек</option>
             <option value="1">1</option>
@@ -103,35 +138,21 @@ export const ReservForm = (props) => {
             <option value="4">4</option>
             <option value="5">5</option>
             <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
-            <option value="11">11</option>
-            <option value="12">12</option>
-            <option value="13">13</option>
-            <option value="14">14</option>
-            <option value="15">15</option>
           </select>
         </label>
         <label className={Styles["form__field"]}>
-          <span className={Styles["form__field-title"]}>Номер стола</span>
+          <span className={Styles["form__field-title"]}>Выберите стол</span>
           <select
             className={Styles["form__field-input"]}
-            value={newItem.number}
-            onChange={(e) => setNewItem({ ...newItem, number: e.target.value })}
+            disabled={availableTables.length === 0} // Отключаем выпадающий список, если столы не загружены
+            onChange={(e) => setNewItem({ ...newItem, table: e.target.value })}
           >
             <option value="">Выберите стол</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-            <option value="7">7</option>
-            <option value="8">8</option>
-            <option value="9">9</option>
-            <option value="10">10</option>
+            {availableTables.map((table) => (
+              <option key={table.ID} value={table.ID}>
+                {table.Наименование}
+              </option>
+            ))}
           </select>
         </label>
       </div>
