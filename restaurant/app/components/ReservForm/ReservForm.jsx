@@ -8,7 +8,7 @@ export const ReservForm = (props) => {
     date: "",
     time: "",
     people: "",
-    table: "", 
+    table: "",
   });
   const [availableTables, setAvailableTables] = useState([]); // Массив доступных столов
   const [error, setError] = useState("");
@@ -17,12 +17,15 @@ export const ReservForm = (props) => {
   useEffect(() => {
     const fetchAvailableTables = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/reservation/table", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+        const response = await fetch(
+          "http://localhost:5000/api/reservation/table",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
         const result = await response.json();
         if (response.ok) {
