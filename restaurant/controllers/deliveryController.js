@@ -11,7 +11,34 @@ const conn = mysql.createConnection({
 });
 
 class DeliveryController {
-  async menuDelivery(req, res) {}
+  async menuDelivery(req, res) {
+    try {
+      // SQL-запрос для получения всех столов
+      const query = `SELECT * FROM Блюда`;
+
+      conn.query(query, (err, results) => {
+        if (err) {
+          console.error("Ошибка при получении блюд:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при получении блюд",
+          });
+        }
+
+        // Возвращаем список столов
+        res.status(200).json({
+          success: true,
+          tables: results, // Список столов с их ID и названиями
+        });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({
+        success: false,
+        message: "Произошла ошибка на сервере",
+      });
+    }
+  }
 
   async createBucket(req, res) {}
 
