@@ -11,9 +11,73 @@ const conn = mysql.createConnection({
 });
 
 class DeliveryController {
-  async createOrder(req, res) {}
-
   async menuDelivery(req, res) {}
+
+  async createBucket(req, res) {}
+
+  async createFootDelivery(req, res) {}
+
+  async createOrder(req, res) {
+    try {
+      const authHeader = req.headers.authorization;
+
+      // Проверка наличия токена
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res
+          .status(401)
+          .json({ success: false, message: "Токен отсутствует" });
+      }
+
+      const token = authHeader.split(" ")[1];
+
+      // Расшифровка токена и извлечение ID пользователя
+      let decodedToken;
+      try {
+        decodedToken = jwt.verify(token, jwtSecret);
+      } catch (err) {
+        return res
+          .status(401)
+          .json({ success: false, message: "Неверный токен" });
+      }
+
+      const userId = decodedToken.userId;
+
+      // Получаем данные для бронирования из тела запроса
+      const { table, people, date, time } = req.body;
+
+      // SQL-запрос для создания бронирования
+      const reservationQuery = `
+          INSERT INTO Бронирование (ID_стола, Количество_человек, Дата, Время, ID_пользователя)
+          VALUES (?, ?, ?, ?, ?)
+        `;
+
+      conn.query(
+        reservationQuery,
+        [table, people, date, time, userId],
+        (err, result) => {
+          if (err) {
+            console.error("Ошибка при создании бронирования:", err);
+            return res.status(500).json({
+              success: false,
+              message: "Ошибка при создании бронирования",
+            });
+          }
+
+          // Бронирование успешно создано
+          return res.status(201).json({
+            success: true,
+            message: "Бронирование успешно создано",
+          });
+        }
+      );
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Произошла ошибка на сервере",
+      });
+    }
+  }
 
   async userDelivery(req, res) {}
 }

@@ -30,7 +30,7 @@ export const Delivery_user = () => {
               <input className={Styles.delivery_box} type="checkbox"></input>
             </li>
           ))}
-        </ul>
+        </ul>  
       ) : (
         <ul className={Styles.ul_delivery}>
           <li className={Styles.li_delivery}>
