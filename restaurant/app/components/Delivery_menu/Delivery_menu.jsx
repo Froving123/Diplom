@@ -1,280 +1,136 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Styles from "./Delivery_menu.module.css";
-import { useEffect, useState } from "react";
 import { Overlay } from "../Overlay/Overlay";
 import { Popup } from "../Popup/Popup";
 import { AuthForm } from "../AuthForm/AuthForm";
 
-export const Delivery_menu = () => {
-  const [popupIsOpened, setPopupIsOpened] = useState(false);
+export const DeliveryMenu = () => {
+  const [categories, setCategories] = useState([]);
+  const [dishes, setDishes] = useState([]);
+  const [popupIsOpen, setPopupIsOpen] = useState(false);
   const [authUser, setAuthUser] = useState(null);
 
-  /*useEffect(() => {
-    const listen = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setAuthUser(user);
-      } else {
-        setAuthUser(null);
+  useEffect(() => {
+    // Fetching categories
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/delivery/categories");
+        const data = await response.json();
+        if (data.success) {
+          setCategories(data.categories);
+        } else {
+          console.error("Ошибка загрузки категорий:", data.message);
+        }
+      } catch (error) {
+        console.error("Ошибка при загрузке категорий:", error);
       }
-    });
-    return () => {
-      listen();
     };
-  }, []);*/
 
-  const openPopup = () => {
-    setPopupIsOpened(true);
-  };
-
-  const closePopup = () => {
-    setPopupIsOpened(false);
-  };
-
-  const addProductToCart = async (name, price) => {
-    try {
-      const user = auth.currentUser; // Получаем текущего пользователя
-      if (user) {
-        // Генерируем новый ключ
-        const newItemRef = push(ref(db, "product"));
-        const newItemKey = newItemRef.key;
-        // Создаем объект с данными для записи
-        const newItemData = {
-          name: name,
-          price: price,
-          userId: user.uid, // Сохраняем идентификатор пользователя
-        };
-        // Записываем данные по новому ключу
-        await set(ref(db, `product/${newItemKey}`), newItemData);
-        alert("Товар добавлен в корзину");
+    // Fetching dishes
+    const fetchDishes = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/delivery/menu");
+        const data = await response.json();
+        if (response.ok) {
+          setDishes(data.menu);
+        } else {
+          console.error("Ошибка при получении блюд:", data.message);
+        }
+      } catch (error) {
+        console.error("Ошибка при загрузке блюд:", error);
       }
-    } catch (error) {
-      console.error("Ошибка при добавлении документа: ", error);
+    };
+
+    // Checking user authorization
+    const token = localStorage.getItem("authToken");
+    setAuthUser(token ? { token } : null);
+
+    fetchCategories();
+    fetchDishes();
+  }, []);
+
+  const handleAddToCart = async (dishId) => {
+    if (!authUser) {
+      setPopupIsOpen(true);
+      return;
+    }
+
+    try {
+      // Check if the user's cart exists
+      const createBucketResponse = await fetch(
+        "http://localhost:5000/api/delivery/bucket",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${authUser.token}`,
+          },
+          body: JSON.stringify({}),
+        }
+      );
+
+      const bucketResult = await createBucketResponse.json();
+      if (!createBucketResponse.ok) {
+        alert(bucketResult.message || "Ошибка при создании корзины");
+        return;
+      }
+
+      // Add the dish to the cart
+      const response = await fetch("http://localhost:5000/api/delivery/foot", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authUser.token}`,
+        },
+        body: JSON.stringify({ foodId: dishId }),
+      });
+
+      const result = await response.json();
+      if (response.ok) {
+        alert(result.message || "Блюдо добавлено в корзину");
+      } else {
+        alert(result.message || "Ошибка при добавлении блюда в корзину");
+      }
+    } catch (err) {
+      console.error("Ошибка при добавлении в корзину:", err);
     }
   };
 
   return (
     <div className={Styles.delivery_menu}>
       <h2 className={Styles.delivery_h}>Закажите домой</h2>
-      <div className={Styles.foods}>
-        <div className={Styles.category}>
-          <h2 className={Styles.category_h}>Горячие блюда</h2>
+      {categories.map((category) => (
+        <div key={category.id} className={Styles.category}>
+          <h2 className={Styles.category_h}>{category.Наименование}</h2>
           <hr className={Styles.hr_name} />
           <div className={Styles.foods_category}>
-            <div className={Styles.food}>
-              <img className={Styles.img_food} src="images/pancakes.png" />
-              <h3 className={Styles.food_h}>Блины</h3>
-              <p className={Styles.price_menu}>1500₽</p>
-              {authUser ? (
-                <button
-                  className={Styles.button_menu_delivery}
-                  onClick={() => addProductToCart("Блины", "1500₽")}
-                >
-                  Добавить в корзину
-                </button>
-              ) : (
-                <button
-                  className={Styles.button_menu_delivery}
-                  onClick={openPopup}
-                >
-                  Добавить в корзину
-                </button>
-              )}
-            </div>
-            <div className={Styles.food}>
-              <img className={Styles.img_food} src="images/meat_delivery.png" />
-              <h3 className={Styles.food_h}>Стейк</h3>
-              <p className={Styles.price_menu}>1500₽</p>
-              {authUser ? (
-                <button
-                  className={Styles.button_menu_delivery}
-                  onClick={() => addProductToCart("Стейк", "1500₽")}
-                >
-                  Добавить в корзину
-                </button>
-              ) : (
-                <button
-                  className={Styles.button_menu_delivery}
-                  onClick={openPopup}
-                >
-                  Добавить в корзину
-                </button>
-              )}
-            </div>
+            {dishes
+              .filter((dish) => dish.Категория === category.Наименование)
+              .map((dish) => (
+                <div key={dish.ID} className={Styles.food}>
+                  <img
+                    className={Styles.img_food}
+                    src={dish.Фото || "/placeholder.png"}
+                    alt={dish.Название}
+                  />
+                  <h3 className={Styles.food_h}>{dish.Название}</h3>
+                  <p className={Styles.price_menu}>{dish.Цена} ₽</p>
+                  <button
+                    className={Styles.button_menu_delivery}
+                    onClick={() => handleAddToCart(dish.ID)}
+                  >
+                    Добавить в корзину
+                  </button>
+                </div>
+              ))}
           </div>
         </div>
-        <div className={Styles.category}>
-          <h2 className={Styles.category_h}>Завтраки</h2>
-          <hr className={Styles.hr_name} />
-          <div className={Styles.foods_category}>
-            <div className={Styles.food}>
-              <img className={Styles.img_food} src="images/eggs_bacon.png" />
-              <h3 className={Styles.food_h}>
-                Яйца с ветчиной <br />и беконом
-              </h3>
-              <div className={Styles.lowprice_div}>
-                <p className={Styles.price_menu}>
-                  <strike className="strike">1000₽</strike>
-                </p>
-                <p className={Styles.lowprice_menu}>
-                  <sub>500₽</sub>
-                </p>
-              </div>
-              {authUser ? (
-                <button
-                  className={Styles.button_menu_delivery}
-                  onClick={() =>
-                    addProductToCart("Яйца с ветчиной и беконом", "500₽")
-                  }
-                >
-                  Добавить в корзину
-                </button>
-              ) : (
-                <button
-                  className={Styles.button_menu_delivery}
-                  onClick={openPopup}
-                >
-                  Добавить в корзину
-                </button>
-              )}
-            </div>
-            <div className={Styles.food}>
-              <img className={Styles.img_food} src="images/eggs_tomato.png" />
-              <h3 className={Styles.food_h}>
-                Омлет с помидором <br />и сыром фета
-              </h3>
-              <div className={Styles.lowprice_div}>
-                <p className={Styles.price_menu}>
-                  <strike className="strike">1000₽</strike>
-                </p>
-                <p className={Styles.lowprice_menu}>
-                  <sub>500₽</sub>
-                </p>
-              </div>
-              {authUser ? (
-                <button
-                  className={Styles.button_menu_delivery}
-                  onClick={() =>
-                    addProductToCart("Омлет с помидором и сыром фета", "500₽")
-                  }
-                >
-                  Добавить в корзину
-                </button>
-              ) : (
-                <button
-                  className={Styles.button_menu_delivery}
-                  onClick={openPopup}
-                >
-                  Добавить в корзину
-                </button>
-              )}
-            </div>
-            <div className={Styles.food}>
-              <img className={Styles.img_food} src="images/burrito.png" />
-              <h3 className={Styles.food_h}>Буррито</h3>
-              <div className={Styles.lowprice_div}>
-                <p className={Styles.price_menu}>
-                  <strike>1000₽</strike>
-                </p>
-                <p className={Styles.lowprice_menu}>
-                  <sub>500₽</sub>
-                </p>
-              </div>
-              {authUser ? (
-                <button
-                  className={Styles.button_menu_delivery}
-                  onClick={() => addProductToCart("Буррито", "500₽")}
-                >
-                  Добавить в корзину
-                </button>
-              ) : (
-                <button
-                  className={Styles.button_menu_delivery}
-                  onClick={openPopup}
-                >
-                  Добавить в корзину
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-        <div className={Styles.category}>
-          <h2 className={Styles.category_h}>Напитки</h2>
-          <hr className={Styles.hr_name} />
-          <div className={Styles.foods_category}>
-            <div className={Styles.food}>
-              <img
-                className={Styles.img_food}
-                src="images/milkShake_delivery.png"
-              />
-              <h3 className={Styles.food_h}>Молочный коктель</h3>
-              <p className={Styles.price_menu}>180₽</p>
-              {authUser ? (
-                <button
-                  className={Styles.button_menu_delivery}
-                  onClick={() => addProductToCart("Молочный коктель", "180₽")}
-                >
-                  Добавить в корзину
-                </button>
-              ) : (
-                <button
-                  className={Styles.button_menu_delivery}
-                  onClick={openPopup}
-                >
-                  Добавить в корзину
-                </button>
-              )}
-            </div>
-            <div className={Styles.food}>
-              <img
-                className={Styles.img_food}
-                src="images/coffee_delivery.png"
-              />
-              <h3 className={Styles.food_h}>Кофе</h3>
-              <p className={Styles.price_menu}>180₽</p>
-              {authUser ? (
-                <button
-                  className={Styles.button_menu_delivery}
-                  onClick={() => addProductToCart("Кофе", "180₽")}
-                >
-                  Добавить в корзину
-                </button>
-              ) : (
-                <button
-                  className={Styles.button_menu_delivery}
-                  onClick={openPopup}
-                >
-                  Добавить в корзину
-                </button>
-              )}
-            </div>
-            <div className={Styles.food}>
-              <img className={Styles.img_food} src="images/juice.png" />
-              <h3 className={Styles.food_h}>Сок</h3>
-              <p className={Styles.price_menu}>180₽</p>
-              {authUser ? (
-                <button
-                  className={Styles.button_menu_delivery}
-                  onClick={() => addProductToCart("Сок", "180₽")}
-                >
-                  Добавить в корзину
-                </button>
-              ) : (
-                <button
-                  className={Styles.button_menu_delivery}
-                  onClick={openPopup}
-                >
-                  Добавить в корзину
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-      <Overlay isOpened={popupIsOpened} close={closePopup} />
-      <Popup isOpened={popupIsOpened} close={closePopup}>
-        <AuthForm close={closePopup} />
+      ))}
+      <Overlay isOpened={popupIsOpen} close={() => setPopupIsOpen(false)} />
+      <Popup isOpened={popupIsOpen} close={() => setPopupIsOpen(false)}>
+        <AuthForm close={() => setPopupIsOpen(false)} />
       </Popup>
     </div>
   );

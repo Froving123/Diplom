@@ -1,7 +1,7 @@
 const mysql = require("mysql");
-const jwt = require("jsonwebtoken");
+//const jwt = require("jsonwebtoken");
 
-const jwtSecret = "Best-Rest";
+//const jwtSecret = "Best-Rest";
 
 const conn = mysql.createConnection({
   host: "MySQL-8.0",
@@ -11,102 +11,155 @@ const conn = mysql.createConnection({
 });
 
 class DeliveryController {
-  async menuDelivery(req, res) {
+  async getCategories(req, res) {
     try {
-      // SQL-запрос для получения всех столов
-      const query = `SELECT * FROM Блюда`;
+      const query = "SELECT ID, Наименование FROM Категория_блюда ORDER BY ID;";
 
       conn.query(query, (err, results) => {
         if (err) {
-          console.error("Ошибка при получении блюд:", err);
-          return res.status(500).json({
-            success: false,
-            message: "Ошибка при получении блюд",
-          });
+          console.error("Ошибка при получении категорий блюд:", err);
+          return res.status(500).json({ success: false, message: "Ошибка при получении категорий" });
         }
 
-        // Возвращаем список столов
-        res.status(200).json({
-          success: true,
-          tables: results, // Список столов с их ID и названиями
+        res.status(200).json({ success: true, categories: results });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
+  async menuDelivery(req, res) {
+    try {
+      const query = `
+        SELECT 
+          Блюда.ID, 
+          Блюда.Название, 
+          Блюда.Фото, 
+          Категория_блюда.Наименование AS Категория,
+          Прайс_лист.Цена
+        FROM 
+          Блюда
+        JOIN 
+          Категория_блюда ON Блюда.ID_категории = Категория_блюда.ID
+        JOIN 
+          Прайс_лист ON Блюда.ID = Прайс_лист.ID_блюда
+        ORDER BY 
+          Категория_блюда.ID, Блюда.ID;
+      `;
+
+      conn.query(query, (err, results) => {
+        if (err) {
+          console.error("Ошибка при получении меню:", err);
+          return res.status(500).json({ success: false, message: "Ошибка при получении меню" });
+        }
+
+        res.status(200).json({ success: true, menu: results });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
+  async createBucket(req, res) {
+    try {
+      const { userId } = req.body;
+
+      const checkQuery = `SELECT ID FROM Корзина WHERE ID_пользователя = ?`;
+      conn.query(checkQuery, [userId], (err, results) => {
+        if (err) {
+          console.error("Ошибка при проверке корзины:", err);
+          return res.status(500).json({ success: false, message: "Ошибка при создании корзины" });
+        }
+
+        if (results.length > 0) {
+          return res.status(200).json({ success: true, message: "Корзина уже существует" });
+        }
+
+        const insertQuery = `INSERT INTO Корзина (ID_пользователя) VALUES (?)`;
+        conn.query(insertQuery, [userId], (err) => {
+          if (err) {
+            console.error("Ошибка при создании корзины:", err);
+            return res.status(500).json({ success: false, message: "Ошибка при создании корзины" });
+          }
+
+          res.status(201).json({ success: true, message: "Корзина успешно создана" });
         });
       });
     } catch (error) {
       console.error("Ошибка на сервере:", error);
-      res.status(500).json({
-        success: false,
-        message: "Произошла ошибка на сервере",
-      });
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
     }
   }
 
-  async createBucket(req, res) {}
-
-  async createFootDelivery(req, res) {}
-
-  async createOrder(req, res) {
+  async createFootDelivery(req, res) {
     try {
-      const authHeader = req.headers.authorization;
+      const { userId, foodId } = req.body;
 
-      // Проверка наличия токена
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Токен отсутствует" });
-      }
+      const findBucketQuery = `SELECT ID FROM Корзина WHERE ID_пользователя = ?`;
+      conn.query(findBucketQuery, [userId], (err, results) => {
+        if (err || results.length === 0) {
+          console.error("Ошибка при получении корзины:", err);
+          return res.status(404).json({ success: false, message: "Корзина не найдена" });
+        }
 
-      const token = authHeader.split(" ")[1];
+        const bucketId = results[0].ID;
 
-      // Расшифровка токена и извлечение ID пользователя
-      let decodedToken;
-      try {
-        decodedToken = jwt.verify(token, jwtSecret);
-      } catch (err) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Неверный токен" });
-      }
-
-      const userId = decodedToken.userId;
-
-      // Получаем данные для бронирования из тела запроса
-      const { table, people, date, time } = req.body;
-
-      // SQL-запрос для создания бронирования
-      const reservationQuery = `
-          INSERT INTO Бронирование (ID_стола, Количество_человек, Дата, Время, ID_пользователя)
-          VALUES (?, ?, ?, ?, ?)
+        const insertQuery = `
+          INSERT INTO Блюда_в_корзине (ID_блюда, ID_корзины)
+          VALUES (?, ?)
         `;
 
-      conn.query(
-        reservationQuery,
-        [table, people, date, time, userId],
-        (err, result) => {
+        conn.query(insertQuery, [bucketId, foodId], (err) => {
           if (err) {
-            console.error("Ошибка при создании бронирования:", err);
-            return res.status(500).json({
-              success: false,
-              message: "Ошибка при создании бронирования",
-            });
+            console.error("Ошибка при добавлении блюда в корзину:", err);
+            return res.status(500).json({ success: false, message: "Ошибка при добавлении блюда" });
           }
 
-          // Бронирование успешно создано
-          return res.status(201).json({
-            success: true,
-            message: "Бронирование успешно создано",
-          });
-        }
-      );
+          res.status(201).json({ success: true, message: "Блюдо добавлено в корзину" });
+        });
+      });
     } catch (error) {
       console.error("Ошибка на сервере:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Произошла ошибка на сервере",
-      });
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
     }
   }
 
-  async userDelivery(req, res) {}
+  async createOrder(req, res) {
+    
+  }
+
+  async userDelivery(req, res) {
+    
+  }
+
+  async getPriceList(req, res) {
+    try {
+      const query = `
+        SELECT 
+          Прайс_лист.ID, 
+          Прайс_лист.ID_блюда, 
+          Прайс_лист.Цена
+        FROM 
+          Прайс_лист
+        ORDER BY 
+          Прайс_лист.ID_блюда;
+      `;
+
+      conn.query(query, (err, results) => {
+        if (err) {
+          console.error("Ошибка при получении данных из таблицы Прайс_лист:", err);
+          return res.status(500).json({ success: false, message: "Ошибка при получении данных" });
+        }
+
+        res.status(200).json({ success: true, priceList: results });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
 }
 
 module.exports = new DeliveryController();
