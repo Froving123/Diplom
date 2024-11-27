@@ -38,6 +38,7 @@
 .form_i {
   display: flex;
   flex-direction: column;
+  font-family: "Merri";
   font-size: 30px;
   margin: 5px;
   color: rgb(82, 82, 82);

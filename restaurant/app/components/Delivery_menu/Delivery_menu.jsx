@@ -6,7 +6,7 @@ import { Overlay } from "../Overlay/Overlay";
 import { Popup } from "../Popup/Popup";
 import { AuthForm } from "../AuthForm/AuthForm";
 
-export const DeliveryMenu = () => {
+export const Delivery_menu = () => {
   const [categories, setCategories] = useState([]);
   const [dishes, setDishes] = useState([]);
   const [popupIsOpen, setPopupIsOpen] = useState(false);
@@ -16,7 +16,9 @@ export const DeliveryMenu = () => {
     // Fetching categories
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/delivery/categories");
+        const response = await fetch(
+          "http://localhost:5000/api/delivery/categories"
+        );
         const data = await response.json();
         if (data.success) {
           setCategories(data.categories);
@@ -60,7 +62,7 @@ export const DeliveryMenu = () => {
     try {
       // Check if the user's cart exists
       const createBucketResponse = await fetch(
-        "http://localhost:5000/api/delivery/bucket",
+        "http://localhost:5000/api/bucket/create",
         {
           method: "POST",
           headers: {
@@ -78,7 +80,7 @@ export const DeliveryMenu = () => {
       }
 
       // Add the dish to the cart
-      const response = await fetch("http://localhost:5000/api/delivery/foot", {
+      const response = await fetch("http://localhost:5000/api/bucket/foot", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -101,33 +103,35 @@ export const DeliveryMenu = () => {
   return (
     <div className={Styles.delivery_menu}>
       <h2 className={Styles.delivery_h}>Закажите домой</h2>
-      {categories.map((category) => (
-        <div key={category.id} className={Styles.category}>
-          <h2 className={Styles.category_h}>{category.Наименование}</h2>
-          <hr className={Styles.hr_name} />
-          <div className={Styles.foods_category}>
-            {dishes
-              .filter((dish) => dish.Категория === category.Наименование)
-              .map((dish) => (
-                <div key={dish.ID} className={Styles.food}>
-                  <img
-                    className={Styles.img_food}
-                    src={dish.Фото || "/placeholder.png"}
-                    alt={dish.Название}
-                  />
-                  <h3 className={Styles.food_h}>{dish.Название}</h3>
-                  <p className={Styles.price_menu}>{dish.Цена} ₽</p>
-                  <button
-                    className={Styles.button_menu_delivery}
-                    onClick={() => handleAddToCart(dish.ID)}
-                  >
-                    Добавить в корзину
-                  </button>
-                </div>
-              ))}
+      <div className={Styles.foods}>
+        {categories.map((category) => (
+          <div key={category.ID} className={Styles.category}>
+            <h2 className={Styles.category_h}>{category.Наименование}</h2>
+            <hr className={Styles.hr_name} />
+            <div className={Styles.foods_category}>
+              {dishes
+                .filter((dish) => dish.Категория === category.Наименование)
+                .map((dish) => (
+                  <div key={dish.ID} className={Styles.food}>
+                    <img
+                      className={Styles.img_food}
+                      src={dish.Фото}
+                      alt={dish.Название}
+                    />
+                    <h3 className={Styles.food_h}>{dish.Название}</h3>
+                    <p className={Styles.price_menu}>{dish.Цена} ₽</p>
+                    <button
+                      className={Styles.button_menu_delivery}
+                      onClick={() => handleAddToCart(dish.ID)}
+                    >
+                      Добавить в корзину
+                    </button>
+                  </div>
+                ))}
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
       <Overlay isOpened={popupIsOpen} close={() => setPopupIsOpen(false)} />
       <Popup isOpened={popupIsOpen} close={() => setPopupIsOpen(false)}>
         <AuthForm close={() => setPopupIsOpen(false)} />

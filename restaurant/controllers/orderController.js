@@ -11,94 +11,6 @@ const conn = mysql.createConnection({
 });
 
 class DeliveryController {
-  async getCategories(req, res) {
-    try {
-      const query = `SELECT ID, Наименование FROM Категория_блюда ORDER BY ID`;
-
-      conn.query(query, (err, results) => {
-        if (err) {
-          console.error("Ошибка при получении категорий блюд:", err);
-          return res.status(500).json({
-            success: false,
-            message: "Ошибка при получении категорий",
-          });
-        }
-
-        res.status(200).json({ success: true, categories: results });
-      });
-    } catch (error) {
-      console.error("Ошибка на сервере:", error);
-      res.status(500).json({ success: false, message: "Ошибка на сервере" });
-    }
-  }
-
-  async getPriceList(req, res) {
-    try {
-      const query = `
-        SELECT 
-          Прайс_лист.ID, 
-          Прайс_лист.ID_блюда, 
-          Прайс_лист.Цена
-        FROM 
-          Прайс_лист
-        ORDER BY 
-          Прайс_лист.ID_блюда;
-      `;
-
-      conn.query(query, (err, results) => {
-        if (err) {
-          console.error(
-            "Ошибка при получении данных из таблицы Прайс_лист:",
-            err
-          );
-          return res
-            .status(500)
-            .json({ success: false, message: "Ошибка при получении данных" });
-        }
-
-        res.status(200).json({ success: true, priceList: results });
-      });
-    } catch (error) {
-      console.error("Ошибка на сервере:", error);
-      res.status(500).json({ success: false, message: "Ошибка на сервере" });
-    }
-  }
-
-  async menuDelivery(req, res) {
-    try {
-      const query = `
-        SELECT 
-          Блюда.ID, 
-          Блюда.Название, 
-          Блюда.Фото, 
-          Категория_блюда.Наименование AS Категория,
-          Прайс_лист.Цена
-        FROM 
-          Блюда
-        JOIN 
-          Категория_блюда ON Блюда.ID_категории = Категория_блюда.ID
-        JOIN 
-          Прайс_лист ON Блюда.ID = Прайс_лист.ID_блюда
-        ORDER BY 
-          Категория_блюда.ID, Блюда.ID;
-      `;
-
-      conn.query(query, (err, results) => {
-        if (err) {
-          console.error("Ошибка при получении меню:", err);
-          return res
-            .status(500)
-            .json({ success: false, message: "Ошибка при получении меню" });
-        }
-
-        res.status(200).json({ success: true, menu: results });
-      });
-    } catch (error) {
-      console.error("Ошибка на сервере:", error);
-      res.status(500).json({ success: false, message: "Ошибка на сервере" });
-    }
-  }
-
   async createOrder(req, res) {
     try {
       const { userId, orderDetails } = req.body;
@@ -145,7 +57,7 @@ class DeliveryController {
     }
   }
 
-  async userDelivery(req, res) {
+  async userOrder(req, res) {
     try {
       const { userId } = req.query;
 

@@ -23,7 +23,7 @@
 .foods {
   margin-top: 30px;
   display: flex;
-  width: 80%;
+  width: 90%;
   justify-content: left;
   align-items: center;
   flex-wrap: wrap;
@@ -69,6 +69,7 @@
   border-radius: 10px;
   gap: 15px;
   padding: 15px 35px;
+  width: 250px;
 }
 
 .img_food {
