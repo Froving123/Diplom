@@ -15,7 +15,6 @@ class BucketController {
     try {
       const authHeader = req.headers.authorization;
 
-      // Проверка наличия токена
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res
           .status(401)
@@ -24,7 +23,6 @@ class BucketController {
 
       const token = authHeader.split(" ")[1];
 
-      // Расшифровка токена и извлечение ID пользователя
       let decodedToken;
       try {
         decodedToken = jwt.verify(token, jwtSecret);
@@ -36,7 +34,6 @@ class BucketController {
 
       const userId = decodedToken.userId;
 
-      // Проверка, есть ли записи в таблице "Корзина"
       const tableCheckQuery = `SELECT COUNT(*) AS count FROM Корзина`;
       conn.query(tableCheckQuery, (err, results) => {
         if (err) {
@@ -49,9 +46,10 @@ class BucketController {
         const recordCount = results[0]?.count || 0;
 
         if (recordCount === 0) {
-          // Если таблица пуста, создаём запись для пользователя
-          const insertQuery = `INSERT INTO Корзина (ID_пользователя, Общая_цена	
-) VALUES (?, 1000)`;
+          const insertQuery = `
+            INSERT INTO Корзина (ID_пользователя, Общая_цена) 
+            VALUES (?, 0)
+          `;
           conn.query(insertQuery, [userId], (err) => {
             if (err) {
               console.error("Ошибка при создании корзины:", err);
@@ -66,7 +64,6 @@ class BucketController {
               .json({ success: true, message: "Корзина успешно создана" });
           });
         } else {
-          // Если таблица не пуста, проверяем корзину конкретного пользователя
           const checkQuery = `SELECT ID FROM Корзина WHERE ID_пользователя = ?`;
           conn.query(checkQuery, [userId], (err, results) => {
             if (err) {
@@ -83,8 +80,10 @@ class BucketController {
                 .json({ success: true, message: "Корзина уже существует" });
             }
 
-            // Если корзины для пользователя нет, создаём её
-            const insertQuery = `INSERT INTO Корзина (ID_пользователя) VALUES (?)`;
+            const insertQuery = `
+              INSERT INTO Корзина (ID_пользователя, Общая_цена) 
+              VALUES (?, 0)
+            `;
             conn.query(insertQuery, [userId], (err) => {
               if (err) {
                 console.error("Ошибка при создании корзины:", err);
@@ -110,15 +109,15 @@ class BucketController {
   async createFootDelivery(req, res) {
     try {
       const authHeader = req.headers.authorization;
-
+  
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res
           .status(401)
           .json({ success: false, message: "Токен отсутствует" });
       }
-
+  
       const token = authHeader.split(" ")[1];
-
+  
       let decodedToken;
       try {
         decodedToken = jwt.verify(token, jwtSecret);
@@ -127,10 +126,10 @@ class BucketController {
           .status(401)
           .json({ success: false, message: "Неверный токен" });
       }
-
+  
       const userId = decodedToken.userId;
       const { foodId } = req.body;
-
+  
       const findBucketQuery = `SELECT ID FROM Корзина WHERE ID_пользователя = ?`;
       conn.query(findBucketQuery, [userId], (err, results) => {
         if (err || results.length === 0) {
@@ -139,25 +138,110 @@ class BucketController {
             .status(404)
             .json({ success: false, message: "Корзина не найдена" });
         }
-
+  
         const bucketId = results[0].ID;
-
-        const insertQuery = `
-          INSERT INTO Блюда_в_корзине (ID_блюда, ID_корзины, Количество)
-          VALUES (?, ?, 50)
+  
+        const checkFoodQuery = `
+          SELECT ID, Количество 
+          FROM Блюда_в_корзине 
+          WHERE ID_блюда = ? AND ID_корзины = ?
         `;
-
-        conn.query(insertQuery, [foodId, bucketId], (err) => {
+  
+        conn.query(checkFoodQuery, [foodId, bucketId], (err, foodResults) => {
           if (err) {
-            console.error("Ошибка при добавлении блюда в корзину:", err);
-            return res
-              .status(500)
-              .json({ success: false, message: "Ошибка при добавлении блюда" });
+            console.error("Ошибка при проверке блюда:", err);
+            return res.status(500).json({
+              success: false,
+              message: "Ошибка при проверке блюда",
+            });
           }
-
-          res
-            .status(201)
-            .json({ success: true, message: "Блюдо добавлено в корзину" });
+  
+          // Запрос для получения цены блюда
+          const getFoodPriceQuery = `SELECT Цена FROM Прайс_лист WHERE ID = ?`;
+          conn.query(getFoodPriceQuery, [foodId], (err, foodPriceResults) => {
+            if (err || foodPriceResults.length === 0) {
+              console.error("Ошибка при получении цены блюда:", err);
+              return res.status(500).json({
+                success: false,
+                message: "Ошибка при получении цены блюда",
+              });
+            }
+  
+            const foodPrice = foodPriceResults[0].Цена; // Цена блюда
+  
+            if (foodResults.length > 0) {
+              // Блюдо уже есть в корзине, увеличиваем количество
+              const updateFoodQuery = `
+                UPDATE Блюда_в_корзине 
+                SET Количество = Количество + 1 
+                WHERE ID = ?
+              `;
+              conn.query(updateFoodQuery, [foodResults[0].ID], (err) => {
+                if (err) {
+                  console.error("Ошибка при обновлении количества:", err);
+                  return res.status(500).json({
+                    success: false,
+                    message: "Ошибка при обновлении количества",
+                  });
+                }
+  
+                // Пересчитываем общую цену корзины
+                const updateTotalPriceQuery = `
+                  UPDATE Корзина 
+                  SET Общая_цена = Общая_цена + ? 
+                  WHERE ID = ?
+                `;
+                conn.query(updateTotalPriceQuery, [foodPrice, bucketId], (err) => {
+                  if (err) {
+                    console.error("Ошибка при обновлении общей цены корзины:", err);
+                    return res.status(500).json({
+                      success: false,
+                      message: "Ошибка при обновлении общей цены корзины",
+                    });
+                  }
+  
+                  res
+                    .status(201)
+                    .json({ success: true, message: "Блюдо добавлено в корзину" });
+                });
+              });
+            } else {
+              // Блюда нет в корзине, добавляем с количеством 1
+              const insertFoodQuery = `
+                INSERT INTO Блюда_в_корзине (ID_блюда, ID_корзины, Количество) 
+                VALUES (?, ?, 1)
+              `;
+              conn.query(insertFoodQuery, [foodId, bucketId], (err) => {
+                if (err) {
+                  console.error("Ошибка при добавлении блюда:", err);
+                  return res.status(500).json({
+                    success: false,
+                    message: "Ошибка при добавлении блюда",
+                  });
+                }
+  
+                // Пересчитываем общую цену корзины
+                const updateTotalPriceQuery = `
+                  UPDATE Корзина 
+                  SET Общая_цена = Общая_цена + ? 
+                  WHERE ID = ?
+                `;
+                conn.query(updateTotalPriceQuery, [foodPrice, bucketId], (err) => {
+                  if (err) {
+                    console.error("Ошибка при обновлении общей цены корзины:", err);
+                    return res.status(500).json({
+                      success: false,
+                      message: "Ошибка при обновлении общей цены корзины",
+                    });
+                  }
+  
+                  res
+                    .status(201)
+                    .json({ success: true, message: "Блюдо добавлено в корзину" });
+                });
+              });
+            }
+          });
         });
       });
     } catch (error) {
@@ -166,9 +250,7 @@ class BucketController {
     }
   }
 
-  async userBucket(req, res) {
-
-  }
+  async userBucket(req, res) {}
 }
 
 module.exports = new BucketController();

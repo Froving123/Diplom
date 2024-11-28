@@ -13,6 +13,7 @@ export const Delivery_menu = () => {
   const [authUser, setAuthUser] = useState(null);
 
   useEffect(() => {
+    // Функция для загрузки категорий
     const fetchCategories = async () => {
       try {
         const response = await fetch(
@@ -29,6 +30,7 @@ export const Delivery_menu = () => {
       }
     };
 
+    // Функция для загрузки блюд
     const fetchDishes = async () => {
       try {
         const response = await fetch("http://localhost:5000/api/delivery/menu");
@@ -43,6 +45,7 @@ export const Delivery_menu = () => {
       }
     };
 
+    // Проверяем, авторизован ли пользователь
     const token = localStorage.getItem("authToken");
     setAuthUser(token ? { token } : null);
 
@@ -50,13 +53,15 @@ export const Delivery_menu = () => {
     fetchDishes();
   }, []);
 
+  // Обработчик добавления блюда в корзину
   const handleAddToCart = async (dishId) => {
     if (!authUser) {
-      setPopupIsOpen(true);
+      setPopupIsOpen(true); // Открываем форму авторизации, если пользователь не авторизован
       return;
     }
 
     try {
+      // Создаём корзину, если она ещё не создана
       const createBucketResponse = await fetch(
         "http://localhost:5000/api/bucket/create",
         {
@@ -65,7 +70,6 @@ export const Delivery_menu = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${authUser.token}`,
           },
-          body: JSON.stringify({}),
         }
       );
 
@@ -75,6 +79,7 @@ export const Delivery_menu = () => {
         return;
       }
 
+      // Добавляем блюдо в корзину
       const response = await fetch("http://localhost:5000/api/bucket/foot", {
         method: "POST",
         headers: {
@@ -95,6 +100,7 @@ export const Delivery_menu = () => {
     }
   };
 
+  // Отображение интерфейса
   return (
     <div className={Styles.delivery_menu}>
       <h2 className={Styles.delivery_h}>Закажите домой</h2>
