@@ -40,7 +40,6 @@ export const UserReservations = () => {
     }
   };
 
-  // Загружаем бронирования при монтировании компонента
   useEffect(() => {
     fetchUserReservations();
   }, []);

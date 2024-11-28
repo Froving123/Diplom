@@ -28,7 +28,7 @@ export const Feedback = () => {
 
   useEffect(() => {
     rollSlider();
-  }, [sliderCount, sliderWidth]); // Trigger rollSlider whenever sliderCount or sliderWidth changes
+  }, [sliderCount, sliderWidth]);
 
   const rollSlider = () => {
     if (sliderLineRef.current) {

@@ -21,19 +21,16 @@ export const Forma_feedback = () => {
       }, 5000);
     } else {
       try {
-        const user = auth.currentUser; // Получаем текущего пользователя
+        const user = auth.currentUser;
         if (user) {
-          // Генерируем новый ключ
           const newItemRef = push(ref(db, "feedback"));
           const newItemKey = newItemRef.key;
-          // Создаем объект с данными для записи
           const newItemData = {
             name: newItem.name,
             text: newItem.text,
             score: newItem.score,
-            userId: user.uid, // Сохраняем идентификатор пользователя
+            userId: user.uid,
           };
-          // Записываем данные по новому ключу
           await set(ref(db, `feedback/${newItemKey}`), newItemData);
           setNewItem({ name: "", text: "", score: "" });
           setError("");

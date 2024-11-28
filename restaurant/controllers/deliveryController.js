@@ -1,7 +1,4 @@
 const mysql = require("mysql");
-//const jwt = require("jsonwebtoken");
-
-//const jwtSecret = "Best-Rest";
 
 const conn = mysql.createConnection({
   host: "MySQL-8.0",

@@ -78,7 +78,6 @@ class BucketController {
             }
 
             if (results.length > 0) {
-              // Корзина для пользователя уже существует
               return res
                 .status(200)
                 .json({ success: true, message: "Корзина уже существует" });
@@ -112,7 +111,6 @@ class BucketController {
     try {
       const authHeader = req.headers.authorization;
 
-      // Проверка наличия токена
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res
           .status(401)
@@ -121,7 +119,6 @@ class BucketController {
 
       const token = authHeader.split(" ")[1];
 
-      // Расшифровка токена и извлечение ID пользователя
       let decodedToken;
       try {
         decodedToken = jwt.verify(token, jwtSecret);
@@ -167,6 +164,10 @@ class BucketController {
       console.error("Ошибка на сервере:", error);
       res.status(500).json({ success: false, message: "Ошибка на сервере" });
     }
+  }
+
+  async userBucket(req, res) {
+
   }
 }
 

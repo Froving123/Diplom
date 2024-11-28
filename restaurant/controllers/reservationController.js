@@ -57,7 +57,6 @@ class ReservationController {
             });
           }
 
-          // Бронирование успешно создано
           return res.status(201).json({
             success: true,
             message: "Бронирование успешно создано",
@@ -87,10 +86,9 @@ class ReservationController {
           });
         }
 
-        // Возвращаем список столов
         res.status(200).json({
           success: true,
-          tables: results, // Список столов с их ID и названиями
+          tables: results, 
         });
       });
     } catch (error) {
@@ -104,7 +102,6 @@ class ReservationController {
 
   async userReservation(req, res) {
     try {
-      // Извлекаем токен из заголовков авторизации
       const authHeader = req.headers.authorization;
 
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -121,9 +118,9 @@ class ReservationController {
       // Расшифровываем токен
       try {
         const decoded = jwt.verify(token, jwtSecret);
-        userId = decoded.userId; // Получаем ID пользователя из токена
+        userId = decoded.userId; 
       } catch (err) {
-        console.error("Ошибка расшифровки токена:", err); // Логируем ошибку, если токен неверный
+        console.error("Ошибка расшифровки токена:", err); 
         return res.status(403).json({
           success: false,
           message: "Неверный или истекший токен",
@@ -148,24 +145,22 @@ class ReservationController {
           Бронирование.ID_пользователя = ?
       `;
 
-      // Выполняем запрос к базе данных
       conn.query(query, [userId], (err, results) => {
         if (err) {
-          console.error("Ошибка при получении записей бронирования:", err); // Логируем ошибку SQL
+          console.error("Ошибка при получении записей бронирования:", err);
           return res.status(500).json({
             success: false,
             message: "Ошибка при получении записей бронирования",
           });
         }
 
-        // Возвращаем записи бронирования
         return res.status(200).json({
           success: true,
           reservations: results,
         });
       });
     } catch (error) {
-      console.error("Ошибка на сервере:", error); // Логируем общую ошибку
+      console.error("Ошибка на сервере:", error);
       return res.status(500).json({
         success: false,
         message: "Произошла ошибка на сервере",

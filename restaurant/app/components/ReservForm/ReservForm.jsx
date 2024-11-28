@@ -10,10 +10,10 @@ export const ReservForm = (props) => {
     people: "",
     table: "",
   });
-  const [availableTables, setAvailableTables] = useState([]); // Массив доступных столов
+  const [availableTables, setAvailableTables] = useState([]);
   const [error, setError] = useState("");
 
-  // Получение доступных столов с сервера при загрузке компонента
+  // Получение столов с сервера при загрузке компонента
   useEffect(() => {
     const fetchAvailableTables = async () => {
       try {
@@ -29,7 +29,7 @@ export const ReservForm = (props) => {
 
         const result = await response.json();
         if (response.ok) {
-          setAvailableTables(result.tables); // Сохраняем доступные столы в состоянии
+          setAvailableTables(result.tables);
         } else {
           setError(result.message || "Ошибка при получении столов");
           setTimeout(() => {
@@ -46,7 +46,7 @@ export const ReservForm = (props) => {
     };
 
     fetchAvailableTables();
-  }, []); // Запрос только при монтировании компонента
+  }, []);
 
   const reserv = async (e) => {
     e.preventDefault();
@@ -72,7 +72,7 @@ export const ReservForm = (props) => {
         date: newItem.date,
         time: newItem.time,
         people: newItem.people,
-        table: newItem.table, // Отправляем ID стола
+        table: newItem.table,
       }),
     })
       .then((response) => response.json())
@@ -147,7 +147,7 @@ export const ReservForm = (props) => {
           <span className={Styles["form__field-title"]}>Выберите стол</span>
           <select
             className={Styles["form__field-input"]}
-            disabled={availableTables.length === 0} // Отключаем выпадающий список, если столы не загружены
+            disabled={availableTables.length === 0}
             onChange={(e) => setNewItem({ ...newItem, table: e.target.value })}
           >
             <option value="">Выберите стол</option>

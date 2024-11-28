@@ -57,10 +57,8 @@ export const Shopping_cart = () => {
 
   const deleteItem = async (id) => {
     try {
-      // Удаляем товар из базы данных
       await remove(ref(db, `product/${id}`));
 
-      // Обновляем состояние userProduct, удаляя товар с заданным id
       const updatedProducts = userProduct.filter(
         (product) => product.id !== id
       );
@@ -73,10 +71,8 @@ export const Shopping_cart = () => {
 
   const updateQuantity = async (id, quantity) => {
     try {
-      // Обновляем количество товара в базе данных
       await update(ref(db, `product/${id}`), { quantity });
 
-      // Обновляем состояние userProduct
       const updatedProducts = userProduct.map((product) =>
         product.id === id ? { ...product, quantity } : product
       );

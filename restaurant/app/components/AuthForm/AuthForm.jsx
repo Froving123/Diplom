@@ -21,7 +21,7 @@ export const AuthForm = (props) => {
   };
 
   const validateEmail = (email) =>
-    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email);
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email); // пароль для почты
   const validatePhone = (phone) => /^\d{11}$/.test(phone); // Пример для номера телефона
   const validatePassword = (password) => password.length >= 6; // Пример для пароля
   const russianInput = (input) => (e) => {
@@ -87,7 +87,6 @@ export const AuthForm = (props) => {
       return;
     }
 
-    // Отправка данных на сервер
     fetch("http://localhost:5000/api/user/registration", {
       method: "POST",
       headers: {

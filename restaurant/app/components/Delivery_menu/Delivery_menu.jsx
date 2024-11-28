@@ -13,7 +13,6 @@ export const Delivery_menu = () => {
   const [authUser, setAuthUser] = useState(null);
 
   useEffect(() => {
-    // Fetching categories
     const fetchCategories = async () => {
       try {
         const response = await fetch(
@@ -30,7 +29,6 @@ export const Delivery_menu = () => {
       }
     };
 
-    // Fetching dishes
     const fetchDishes = async () => {
       try {
         const response = await fetch("http://localhost:5000/api/delivery/menu");
@@ -45,7 +43,6 @@ export const Delivery_menu = () => {
       }
     };
 
-    // Checking user authorization
     const token = localStorage.getItem("authToken");
     setAuthUser(token ? { token } : null);
 
@@ -60,7 +57,6 @@ export const Delivery_menu = () => {
     }
 
     try {
-      // Check if the user's cart exists
       const createBucketResponse = await fetch(
         "http://localhost:5000/api/bucket/create",
         {
@@ -79,7 +75,6 @@ export const Delivery_menu = () => {
         return;
       }
 
-      // Add the dish to the cart
       const response = await fetch("http://localhost:5000/api/bucket/foot", {
         method: "POST",
         headers: {

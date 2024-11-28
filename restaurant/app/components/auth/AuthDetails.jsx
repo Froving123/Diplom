@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import Styles from "./AuthDetails.module.css";
 import { UserReservations } from "../Reservations/Reservations";
 import { Delivery_user } from "../Delivery_user/Delivery_user";
-import Link from "next/link"; // Добавим Link для переходов
+import Link from "next/link";
 
 export const AuthDetails = () => {
   const [authUser, setAuthUser] = useState(null);
@@ -27,7 +27,7 @@ export const AuthDetails = () => {
             setAuthUser(data.user); // Устанавливаем информацию о пользователе
           } else {
             setAuthUser(null);
-            localStorage.removeItem("authToken"); // Убираем невалидный токен
+            localStorage.removeItem("authToken");
           }
         })
         .catch((err) => {
@@ -38,12 +38,12 @@ export const AuthDetails = () => {
     } else {
       setAuthUser(null); // Если токен отсутствует, сбрасываем состояние
     }
-  }, []); // useEffect запускается только один раз, при монтировании компонента
+  }, []);
 
   const userSignOut = () => {
     localStorage.removeItem("authToken"); // Удаляем токен из localStorage
     setAuthUser(null); // Обновляем состояние
-    window.location.href = "/"; // Перенаправляем на главную страницу
+    window.location.href = "/";
   };
 
   return (

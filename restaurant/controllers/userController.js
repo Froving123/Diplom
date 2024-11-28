@@ -73,13 +73,13 @@ class UserController {
               const token = jwt.sign(
                 { userId: result.insertId },
                 jwtSecret,
-                { expiresIn: "3h" } // Срок действия токена 1 час
+                { expiresIn: "3h" } // Срок действия токена 3 часа
               );
 
               return res.status(201).json({
                 success: true,
                 message: "Пользователь успешно зарегистрирован",
-                token, // Возвращаем токен
+                token,
               });
             }
           );
@@ -113,7 +113,6 @@ class UserController {
           });
         }
 
-        // Если пользователь не найден
         if (results.length === 0) {
           return res.status(404).json({
             success: false,
@@ -121,7 +120,7 @@ class UserController {
           });
         }
 
-        const user = results[0]; // Полагаем, что пользователь найден (первый из результатов)
+        const user = results[0];
 
         // Сравниваем введённый пароль с хешем пароля, который хранится в базе
         bcrypt.compare(password, user.Пароль, (compareErr, isMatch) => {
@@ -133,7 +132,6 @@ class UserController {
             });
           }
 
-          // Если пароли не совпадают
           if (!isMatch) {
             return res.status(401).json({
               success: false,
@@ -145,13 +143,13 @@ class UserController {
           const token = jwt.sign(
             { userId: user.ID },
             jwtSecret,
-            { expiresIn: "3h" } // Срок действия токена 1 час
+            { expiresIn: "3h" } // Срок действия токена 3 часа
           );
 
           return res.status(200).json({
             success: true,
             message: "Авторизация успешна",
-            token, // Возвращаем токен
+            token,
           });
         });
       });
