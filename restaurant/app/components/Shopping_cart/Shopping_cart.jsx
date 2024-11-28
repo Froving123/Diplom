@@ -2,108 +2,116 @@
 
 import React, { useState, useEffect } from "react";
 import Styles from "./Shopping_cart.module.css";
+import axios from "axios"; // Используем axios для HTTP-запросов
 
 export const Shopping_cart = () => {
   const [userProduct, setUserProduct] = useState([]);
-  const [totalPrice, setTotalPrice] = useState(0);
 
-  /*useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        fetchUserProduct(user.uid);
+  // Получение данных о корзине с сервера
+  const fetchUserProduct = async () => {
+    const token = localStorage.getItem("authToken"); // Получаем токен пользователя (например, из localStorage)
+
+    if (!token) {
+      console.log("Токен не найден");
+      return;
+    }
+
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/bucket/user",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        const products = response.data.data;
+        setUserProduct(products);
       } else {
-        setUserProduct([]);
-        setTotalPrice(0);
+        console.log("Ошибка при получении корзины");
       }
-    });
+    } catch (error) {
+      console.error("Ошибка при получении данных о корзине:", error);
+    }
+  };
 
-    return () => unsubscribe();
-  }, []);*/
+  // Удаление товара из корзины
+  const deleteItem = async (ID) => {
+    const token = localStorage.getItem("authToken");
 
-  const fetchUserProduct = async (uid) => {
-    const productRef = ref(db, "product");
-    const userProductQuery = query(
-      productRef,
-      orderByChild("userId"),
-      equalTo(uid)
-    );
+    if (!token) {
+      console.log("Токен не найден");
+      return;
+    }
 
     try {
-      await new Promise((resolve) => {
-        onValue(userProductQuery, (snapshot) => {
-          if (snapshot.exists()) {
-            const product = [];
-            snapshot.forEach((childSnapshot) => {
-              product.push({
-                id: childSnapshot.key,
-                ...childSnapshot.val(),
-                quantity: childSnapshot.val().quantity || 1,
-              });
-            });
-            setUserProduct(product);
-            calculateTotalPrice(product);
-            resolve();
-          } else {
-            console.log("Данные не найдены");
-            setTotalPrice(0);
-            resolve();
-          }
-        });
+      await axios.delete(`http://localhost:5000/api/bucket/user/${ID}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-    } catch (error) {
-      console.error("Ошибка при получении данных: ", error);
-    }
-  };
 
-  const deleteItem = async (id) => {
-    try {
-      await remove(ref(db, `product/${id}`));
-
+      // Обновляем корзину после удаления
       const updatedProducts = userProduct.filter(
-        (product) => product.id !== id
+        (product) => product.ID !== ID
       );
       setUserProduct(updatedProducts);
-      calculateTotalPrice(updatedProducts);
     } catch (error) {
-      console.error("Ошибка при удалении товара: ", error);
+      console.error("Ошибка при удалении товара:", error);
     }
   };
 
-  const updateQuantity = async (id, quantity) => {
+  // Обновление количества товара в корзине
+  const updateQuantity = async (ID, Количество) => {
+    const token = localStorage.getItem("authToken");
+
+    if (!token) {
+      console.log("Токен не найден");
+      return;
+    }
+
     try {
-      await update(ref(db, `product/${id}`), { quantity });
+      await axios.put(
+        `http://localhost:5000/api/bucket/user/${ID}`,
+        { Количество },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
+      // Обновляем список продуктов после изменения количества
       const updatedProducts = userProduct.map((product) =>
-        product.id === id ? { ...product, quantity } : product
+        product.ID === ID ? { ...product, Количество } : product
       );
       setUserProduct(updatedProducts);
-      calculateTotalPrice(updatedProducts);
     } catch (error) {
-      console.error("Ошибка при обновлении количества товара: ", error);
+      console.error("Ошибка при обновлении количества товара:", error);
     }
   };
 
-  const calculateTotalPrice = (products) => {
-    const total = products.reduce((acc, product) => {
-      return acc + product.price * product.quantity;
-    }, 0);
-    setTotalPrice(total);
-  };
+  // Используем useEffect для получения данных о корзине при монтировании компонента
+  useEffect(() => {
+    fetchUserProduct();
+  }, []);
 
   return (
     <div className={Styles.shopping_cart}>
       {userProduct.length > 0 ? (
         <div className={Styles.ul_product}>
           {userProduct.map((product) => (
-            <div key={product.id} className={Styles.product}>
+            <div key={product.ID} className={Styles.product}>
               <div className={Styles.product_content}>
                 <p className={Styles.product_description}>
-                  {product.name} x {product.quantity}
+                  {product.Название} x {product.Количество}
                 </p>
                 <div className={Styles.quantity_controls}>
                   <p className={Styles.product_description}>
-                    {parseInt(product.price) * product.quantity
-                      ? (parseInt(product.price) * product.quantity).toFixed(
+                    {parseInt(product.Цена) * product.Количество
+                      ? (parseInt(product.Цена) * product.Количество).toFixed(
                           0
                         ) + "₽"
                       : ""}
@@ -112,7 +120,7 @@ export const Shopping_cart = () => {
                     <button
                       className={Styles.button_quantity}
                       onClick={() =>
-                        updateQuantity(product.id, product.quantity + 1)
+                        updateQuantity(product.ID, product.Количество + 1)
                       }
                     >
                       +
@@ -120,9 +128,9 @@ export const Shopping_cart = () => {
                     <button
                       className={Styles.button_quantity}
                       onClick={() =>
-                        updateQuantity(product.id, product.quantity - 1)
+                        updateQuantity(product.ID, product.Количество - 1)
                       }
-                      disabled={product.quantity <= 1}
+                      disabled={product.Количество <= 1}
                     >
                       -
                     </button>
@@ -130,7 +138,7 @@ export const Shopping_cart = () => {
                 </div>
               </div>
               <button
-                onClick={() => deleteItem(product.id)}
+                onClick={() => deleteItem(product.ID)}
                 className={Styles.button_remove}
               >
                 <p className={Styles.remove_text}>Удалить</p>

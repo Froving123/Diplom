@@ -4,117 +4,11 @@ import React, { useEffect, useState } from "react";
 import Styles from "./DeliveryForm.module.css";
 
 export const DeliveryForm = (props) => {
-  const [newItem, setNewItem] = useState({ address: "" });
+  const [newItem, setNewItem] = useState({ address: "", payment: "" });
   const [error, setError] = useState("");
   const [userProduct, setUserProduct] = useState([]);
   const [total, setTotal] = useState(0);
-
-  /*useEffect(() => {
-    const unsubscribeAuth = auth.onAuthStateChanged((user) => {
-      if (user) {
-        fetchUserProduct(user.uid);
-      } else {
-        setUserProduct([]);
-        setTotal(0);
-      }
-    });
-
-    const unsubscribeProduct = onValue(ref(db, "product"), () => {
-      const user = auth.currentUser;
-      if (user) {
-        fetchUserProduct(user.uid);
-      }
-    });
-
-    return () => {
-      unsubscribeAuth();
-      unsubscribeProduct();
-    };
-  }, []);*/
-
-  const fetchUserProduct = async (uid) => {
-    try {
-      const productRef = ref(db, "product");
-      const userProductQuery = query(
-        productRef,
-        orderByChild("userId"),
-        equalTo(uid)
-      );
-
-      await new Promise((resolve) => {
-        onValue(userProductQuery, (snapshot) => {
-          if (snapshot.exists()) {
-            const product = [];
-            snapshot.forEach((childSnapshot) => {
-              const price = parseInt(childSnapshot.val().price) || 0;
-              const quantity = parseInt(childSnapshot.val().quantity) || 1;
-              product.push({
-                id: childSnapshot.key,
-                ...childSnapshot.val(),
-                price: price,
-                quantity: quantity,
-              });
-            });
-            setUserProduct(product);
-            calculateTotal(product);
-            resolve();
-          } else {
-            setUserProduct([]);
-            setTotal(0);
-            console.log("Данные не найдены");
-            resolve();
-          }
-        });
-      });
-    } catch (error) {
-      console.error("Ошибка при получении данных: ", error);
-    }
-  };
-
-  const calculateTotal = (products) => {
-    const totalPrice = products.reduce(
-      (sum, item) => sum + parseInt(item.price) * item.quantity,
-      0
-    );
-    setTotal(totalPrice);
-  };
-
-  const removeAllProducts = async () => {
-    try {
-      const user = auth.currentUser;
-      if (user) {
-        const productRef = ref(db, "product");
-        const userProductQuery = query(
-          productRef,
-          orderByChild("userId"),
-          equalTo(user.uid)
-        );
-
-        await new Promise((resolve) => {
-          onValue(userProductQuery, (snapshot) => {
-            if (snapshot.exists()) {
-              const updates = {};
-              snapshot.forEach((childSnapshot) => {
-                updates[`product/${childSnapshot.key}`] = null;
-              });
-              const updatesRef = ref(db);
-              update(updatesRef, updates).then(() => {
-                console.log(
-                  "Все записи пользователя из базы данных 'product' удалены"
-                );
-                resolve();
-              });
-            } else {
-              console.log("Данные не найдены");
-              resolve();
-            }
-          });
-        });
-      }
-    } catch (error) {
-      console.error("Ошибка при удалении записей: ", error);
-    }
-  };
+  const [deliveryPrice, setDeliveryPrice] = useState(0); // переименовали переменную
 
   const delivery = async (e) => {
     e.preventDefault();
@@ -152,7 +46,9 @@ export const DeliveryForm = (props) => {
   return (
     <form className={Styles["form"]}>
       <h2 className={Styles["form__title"]}>Оформление</h2>
-      <p className={Styles["form__title"]}>Доставка осуществляется в пределах КАД</p>
+      <p className={Styles["form__title"]}>
+        Доставка осуществляется в пределах КАД
+      </p>
       <div className={Styles["form__fields"]}>
         <label className={Styles["form__field"]}>
           <span className={Styles["form__field-title"]}>Улица</span>
@@ -193,16 +89,19 @@ export const DeliveryForm = (props) => {
               setNewItem({ ...newItem, payment: e.target.value })
             }
           >
-            <option disabled selected>
+            <option value="" disabled>
               Выберите способ оплаты
             </option>
-            <option>Наличными при получении</option>
-            <option>Картой при получении</option>
+            <option value="Наличными при получении">
+              Наличными при получении
+            </option>
+            <option value="Картой при получении">Картой при получении</option>
           </select>
         </label>
         <div className={Styles.order}>
           <p className={Styles.order_content}>Стоимость доставки</p>
-          <p className={Styles.order_content}>{delivery}₽</p>
+          <p className={Styles.order_content}>{deliveryPrice}₽</p>{" "}
+          {/* используем deliveryPrice */}
         </div>
         <div className={Styles.order}>
           <p className={Styles.order_content}>Стоимость заказа</p>
@@ -211,7 +110,7 @@ export const DeliveryForm = (props) => {
       </div>
       {error && <p className={Styles.error_message}>{error}</p>}
       <div className={Styles["form__actions"]}>
-        <button onClick={delivery} className={Styles["form__submit"]}>
+        <button type="submit" className={Styles["form__submit"]}>
           Заказать
         </button>
       </div>
