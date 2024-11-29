@@ -96,7 +96,7 @@ class DeliveryController {
     }
   }
 
-  async createOrder(req, res) {
+ /* async createOrder(req, res) {
     try {
       const { userId, orderDetails } = req.body;
 
@@ -140,7 +140,7 @@ class DeliveryController {
       console.error("Ошибка на сервере:", error);
       res.status(500).json({ success: false, message: "Ошибка на сервере" });
     }
-  }
+  }*/
 
   async userDelivery(req, res) {
     try {
