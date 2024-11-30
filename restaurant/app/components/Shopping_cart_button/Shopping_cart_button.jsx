@@ -7,88 +7,68 @@ import { Popup } from "../Popup/Popup";
 import { DeliveryForm } from "../DeliveryForm/DeliveryForm";
 
 export const Shopping_cart_button = () => {
-  const [userProduct, setUserProduct] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [popupIsOpened, setPopupIsOpened] = useState(false);
-
-  /*useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        fetchUserProduct(user.uid);
-      } else {
-        setUserProduct([]);
-        setTotal(0);
-      }
-    });
-
-    return () => unsubscribe();
-  }, []);*/
-
-  const fetchUserProduct = async (uid) => {
-    const productRef = ref(db, "product");
-    const userProductQuery = query(
-      productRef,
-      orderByChild("userId"),
-      equalTo(uid)
-    );
-
-    try {
-      onValue(userProductQuery, (snapshot) => {
-        if (snapshot.exists()) {
-          const product = [];
-          snapshot.forEach((childSnapshot) => {
-            const price = parseInt(childSnapshot.val().price) || 0;
-            const quantity = parseInt(childSnapshot.val().quantity) || 1;
-            product.push({
-              id: childSnapshot.key,
-              ...childSnapshot.val(),
-              price: price,
-              quantity: quantity,
-            });
-          });
-          setUserProduct(product);
-          calculateTotal(product);
+    const [popupIsOpen, setPopupIsOpen] = useState(false);
+    const [total, setTotal] = useState(0);
+    const [hasItems, setHasItems] = useState(false);
+  
+    // Проверка наличия записей в корзине
+    const fetchCartData = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/bucket/check-items", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("authToken")}`,
+          },
+        });
+  
+        if (response.ok) {
+          const result = await response.json();
+          if (result.success) {
+            setHasItems(result.hasItems);
+            setTotal(result.totalPrice); // Устанавливаем общую цену
+          } else {
+            console.error("Ошибка при проверке корзины:", result.message);
+          }
         } else {
-          setUserProduct([]);
-          setTotal(0);
+          console.error("Ошибка при запросе данных корзины:", response.status);
         }
-      });
-    } catch (error) {
-      console.error("Ошибка при получении данных: ", error);
-    }
+      } catch (err) {
+        console.error("Ошибка при получении данных корзины:", err);
+      }
+    };
+  
+    // Получаем данные корзины при монтировании
+    useEffect(() => {
+      fetchCartData();
+    }, []);
+  
+    const handleOrderClick = () => {
+      if (hasItems) {
+        setPopupIsOpen(true); // Открываем форму доставки
+      }
+    };
+  
+    return (
+      <div className={Styles.shopping_cart_button}>
+        {hasItems ? (
+          <button
+            className={Styles.order_button}
+            onClick={handleOrderClick}
+          >
+            <p className={Styles.order_content}>Заказать</p>
+            <p className={Styles.order_content}>{total.toFixed(0)}₽</p>
+          </button>
+        ) : (
+          ""
+        )}
+        {popupIsOpen && (
+          <>
+            <Overlay isOpened={popupIsOpen} close={() => setPopupIsOpen(false)} />
+            <Popup isOpened={popupIsOpen} close={() => setPopupIsOpen(false)}>
+              <DeliveryForm close={() => setPopupIsOpen(false)} />
+            </Popup>
+          </>
+        )}
+      </div>
+    );
   };
-
-  const calculateTotal = (products) => {
-    const totalPrice = products.reduce((sum, item) => {
-      const price = parseInt(item.price) || 0;
-      const quantity = parseInt(item.quantity) || 1;
-      return sum + price * quantity;
-    }, 0);
-    setTotal(totalPrice);
-  };
-
-  const openPopup = () => {
-    setPopupIsOpened(true);
-  };
-
-  const closePopup = () => {
-    setPopupIsOpened(false);
-  };
-
-  return (
-    <div className={Styles.shopping_cart_button}>
-      {userProduct.length > 0 ? (
-        <button className={Styles.order_button} onClick={openPopup}>
-          <p className={Styles.order_content}>Заказать</p>
-          <p className={Styles.order_content}>{total.toFixed(0)}₽</p>
-        </button>
-      ) : (
-        ""
-      )}
-      <Overlay isOpened={popupIsOpened} close={closePopup} />
-      <Popup isOpened={popupIsOpened} close={closePopup}>
-        <DeliveryForm close={closePopup} />
-      </Popup>
-    </div>
-  );
-};

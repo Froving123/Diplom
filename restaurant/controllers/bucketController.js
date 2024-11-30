@@ -735,9 +735,46 @@ class BucketController {
     }
   }
 
-  async userPriceBucket(req, res) {
-    
+  async checkCartItems(req, res) {
+    try {
+      const authHeader = req.headers.authorization;
+  
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res.status(401).json({ success: false, message: "Токен отсутствует" });
+      }
+  
+      const token = authHeader.split(" ")[1];
+      let decodedToken;
+      try {
+        decodedToken = jwt.verify(token, jwtSecret);
+      } catch (err) {
+        return res.status(401).json({ success: false, message: "Неверный токен" });
+      }
+  
+      const userId = decodedToken.userId;
+  
+      // Находим корзину пользователя и получаем общую цену
+      const findBucketQuery = `SELECT ID, Общая_цена FROM Корзина WHERE ID_пользователя = ?`;
+      conn.query(findBucketQuery, [userId], (err, bucketResults) => {
+        if (err || bucketResults.length === 0) {
+          return res.status(404).json({ success: false, message: "Корзина не найдена" });
+        }
+  
+        const totalPrice = bucketResults[0].Общая_цена || 0;
+        const hasItems = totalPrice > 0;
+  
+        res.status(200).json({
+          success: true,
+          hasItems,
+          totalPrice,
+        });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
   }
+  
 }
 
 module.exports = new BucketController();
