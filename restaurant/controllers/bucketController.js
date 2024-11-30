@@ -547,14 +547,14 @@ class BucketController {
             // Увеличиваем количество блюда
             const updateQuantityQuery = `
               UPDATE Блюда_в_корзине 
-              SET Количество = Количество + 1 
+              SET Количество = Количество - 1 
               WHERE ID = ?
             `;
             conn.query(updateQuantityQuery, [foodInCartId], (err) => {
               if (err) {
                 return res.status(500).json({
                   success: false,
-                  message: "Ошибка при увеличении количества блюда",
+                  message: "Ошибка при уменьшении количества блюда",
                 });
               }
               const getFoodPriceQuery = `SELECT Цена FROM Прайс_лист WHERE ID = ?`;
@@ -575,7 +575,7 @@ class BucketController {
                   // Обновляем общую цену корзины
                   const updateTotalPriceQuery = `
                 UPDATE Корзина 
-                SET Общая_цена = Общая_цена + ? 
+                SET Общая_цена = Общая_цена - ? 
                 WHERE ID = ?
               `;
                   conn.query(

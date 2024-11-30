@@ -24,7 +24,6 @@ export const Shopping_cart = () => {
 
       const result = await response.json();
       if (result.success) {
-        console.log("Данные о корзине:", result.data);
         setUserProduct(result.data); // Обновляем состояние с данными корзины
       } else {
         console.error(result.message);
@@ -56,8 +55,6 @@ export const Shopping_cart = () => {
 
       const result = await response.json();
       if (result.success) {
-        console.log(result.message);
-
         fetchUserProduct(); // обновляет данные о корзине
       } else {
         console.error(result.message);
@@ -89,8 +86,6 @@ export const Shopping_cart = () => {
 
       const result = await response.json();
       if (result.success) {
-        console.log(result.message);
-
         fetchUserProduct(); // обновляет данные о корзине
       } else {
         console.error(result.message);
