@@ -266,79 +266,6 @@ class BucketController {
     }
   }
 
-  async userBucket(req, res) {
-    try {
-      // Извлекаем авторизационный заголовок из запроса
-      const authHeader = req.headers.authorization;
-
-      // Проверка наличия токена в заголовке
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Токен отсутствует" });
-      }
-
-      // Извлекаем сам токен из заголовка
-      const token = authHeader.split(" ")[1];
-
-      // Декодируем токен
-      let decodedToken;
-      try {
-        decodedToken = jwt.verify(token, jwtSecret);
-      } catch (err) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Неверный токен" });
-      }
-
-      // Получаем userId из декодированного токена
-      const userId = decodedToken.userId;
-
-      // Находим корзину пользователя по userId
-      const findBucketQuery = `SELECT ID FROM Корзина WHERE ID_пользователя = ?`;
-      conn.query(findBucketQuery, [userId], (err, results) => {
-        if (err || results.length === 0) {
-          // Если ошибка или корзина не найдена, возвращаем ошибку
-          console.error("Ошибка при получении корзины:", err);
-          return res
-            .status(404)
-            .json({ success: false, message: "Корзина не найдена" });
-        }
-
-        // Если корзина найдена, получаем её ID
-        const bucketId = results[0].ID;
-
-        // Теперь получаем блюда из этой корзины
-        const getFoodsQuery = `
-            SELECT Блюда_в_корзине.ID, Блюда_в_корзине.Количество, Блюда.Название, Блюда_в_корзине.ID_блюда, Прайс_лист.Цена, Блюда_в_корзине.ID_корзины
-            FROM Блюда_в_корзине
-            INNER JOIN Блюда ON Блюда_в_корзине.ID_блюда = Блюда.ID
-            INNER JOIN Прайс_лист ON Блюда.ID = Прайс_лист.ID_блюда
-            WHERE Блюда_в_корзине.ID_корзины = ?
-          `;
-
-        conn.query(getFoodsQuery, [bucketId], (err, foods) => {
-          if (err) {
-            console.error("Ошибка при получении блюд из корзины:", err);
-            return res.status(500).json({
-              success: false,
-              message: "Ошибка при получении блюд из корзины",
-            });
-          }
-
-          // Возвращаем блюда, которые находятся в корзине пользователя
-          res.status(200).json({
-            success: true,
-            message: "Блюда успешно получены из корзины",
-            data: foods,
-          });
-        });
-      });
-    } catch (error) {
-      console.error("Ошибка на сервере:", error);
-      res.status(500).json({ success: false, message: "Ошибка на сервере" });
-    }
-  }
   async incrementProductQuantity(req, res) {
     try {
       const { foodName } = req.body;
@@ -400,12 +327,10 @@ class BucketController {
           `;
           conn.query(checkFoodQuery, [foodId, bucketId], (err, foodResults) => {
             if (err || foodResults.length === 0) {
-              return res
-                .status(404)
-                .json({
-                  success: false,
-                  message: "Блюдо не найдено в корзине",
-                });
+              return res.status(404).json({
+                success: false,
+                message: "Блюдо не найдено в корзине",
+              });
             }
 
             const foodInCartId = foodResults[0].ID;
@@ -534,12 +459,10 @@ class BucketController {
           `;
           conn.query(checkFoodQuery, [foodId, bucketId], (err, foodResults) => {
             if (err || foodResults.length === 0) {
-              return res
-                .status(404)
-                .json({
-                  success: false,
-                  message: "Блюдо не найдено в корзине",
-                });
+              return res.status(404).json({
+                success: false,
+                message: "Блюдо не найдено в корзине",
+              });
             }
 
             const foodInCartId = foodResults[0].ID;
@@ -605,6 +528,215 @@ class BucketController {
       console.error("Ошибка на сервере:", error);
       res.status(500).json({ success: false, message: "Ошибка на сервере" });
     }
+  }
+
+  async removeProduct(req, res) {
+    try {
+      const { foodName } = req.body;
+
+      if (!foodName) {
+        return res.status(400).json({
+          success: false,
+          message: "Не передано название блюда",
+        });
+      }
+
+      const authHeader = req.headers.authorization;
+
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res
+          .status(401)
+          .json({ success: false, message: "Токен отсутствует" });
+      }
+
+      const token = authHeader.split(" ")[1];
+      let decodedToken;
+      try {
+        decodedToken = jwt.verify(token, jwtSecret);
+      } catch (err) {
+        return res
+          .status(401)
+          .json({ success: false, message: "Неверный токен" });
+      }
+
+      const userId = decodedToken.userId;
+
+      // Находим корзину пользователя
+      const findBucketQuery = `SELECT ID FROM Корзина WHERE ID_пользователя = ?`;
+      conn.query(findBucketQuery, [userId], (err, bucketResults) => {
+        if (err || bucketResults.length === 0) {
+          return res
+            .status(404)
+            .json({ success: false, message: "Корзина не найдена" });
+        }
+
+        const bucketId = bucketResults[0].ID;
+
+        const getFoodIdQuery = `SELECT ID FROM Блюда WHERE Название = ?`;
+        conn.query(getFoodIdQuery, [foodName], (err, foodIdResults) => {
+          if (err || foodIdResults.length === 0) {
+            return res
+              .status(404)
+              .json({ success: false, message: "Блюдо не найдено" });
+          }
+
+          const foodId = foodIdResults[0].ID;
+
+          // Проверяем, есть ли блюдо в корзине
+          const checkFoodQuery = `
+        SELECT ID, ID_блюда, Количество
+        FROM Блюда_в_корзине 
+        WHERE ID_блюда = ? AND ID_корзины = ?
+      `;
+          conn.query(checkFoodQuery, [foodId, bucketId], (err, foodResults) => {
+            if (err || foodResults.length === 0) {
+              return res.status(404).json({
+                success: false,
+                message: "Блюдо не найдено в корзине",
+              });
+            }
+
+            const foodQuantity = foodResults[0].Количество;
+
+            // Удаляем блюдо из корзины
+            const deleteFoodQuery = `
+          DELETE FROM Блюда_в_корзине 
+          WHERE ID_блюда = ?
+        `;
+            conn.query(deleteFoodQuery, [foodId], (err) => {
+              if (err) {
+                return res.status(500).json({
+                  success: false,
+                  message: "Ошибка при удалении блюда из корзины",
+                });
+              }
+
+              const getFoodPriceQuery = `SELECT Цена FROM Прайс_лист WHERE ID = ?`;
+              conn.query(
+                getFoodPriceQuery,
+                [foodId],
+                (err, foodPriceResults) => {
+                  if (err || foodPriceResults.length === 0) {
+                    console.error("Ошибка при получении цены блюда:", err);
+                    return res.status(500).json({
+                      success: false,
+                      message: "Ошибка при получении цены блюда",
+                    });
+                  }
+
+                  const foodPrice = foodPriceResults[0].Цена;
+
+                  // Обновляем общую цену корзины
+                  const updateTotalPriceQuery = `
+            UPDATE Корзина 
+            SET Общая_цена = Общая_цена - (? * ?) 
+            WHERE ID = ?
+          `;
+                  conn.query(
+                    updateTotalPriceQuery,
+                    [foodPrice, foodQuantity, bucketId],
+                    (err) => {
+                      if (err) {
+                        return res.status(500).json({
+                          success: false,
+                          message: "Ошибка при обновлении общей цены корзины",
+                        });
+                      }
+
+                      res.status(200).json({
+                        success: true,
+                        message: "Блюдо удалено из корзины",
+                      });
+                    }
+                  );
+                }
+              );
+            });
+          });
+        });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
+  async userBucket(req, res) {
+    try {
+      // Извлекаем авторизационный заголовок из запроса
+      const authHeader = req.headers.authorization;
+
+      // Проверка наличия токена в заголовке
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res
+          .status(401)
+          .json({ success: false, message: "Токен отсутствует" });
+      }
+
+      // Извлекаем сам токен из заголовка
+      const token = authHeader.split(" ")[1];
+
+      // Декодируем токен
+      let decodedToken;
+      try {
+        decodedToken = jwt.verify(token, jwtSecret);
+      } catch (err) {
+        return res
+          .status(401)
+          .json({ success: false, message: "Неверный токен" });
+      }
+
+      // Получаем userId из декодированного токена
+      const userId = decodedToken.userId;
+
+      // Находим корзину пользователя по userId
+      const findBucketQuery = `SELECT ID FROM Корзина WHERE ID_пользователя = ?`;
+      conn.query(findBucketQuery, [userId], (err, results) => {
+        if (err || results.length === 0) {
+          // Если ошибка или корзина не найдена, возвращаем ошибку
+          console.error("Ошибка при получении корзины:", err);
+          return res
+            .status(404)
+            .json({ success: false, message: "Корзина не найдена" });
+        }
+
+        // Если корзина найдена, получаем её ID
+        const bucketId = results[0].ID;
+
+        // Теперь получаем блюда из этой корзины
+        const getFoodsQuery = `
+            SELECT Блюда_в_корзине.ID, Блюда_в_корзине.Количество, Блюда.Название, Блюда_в_корзине.ID_блюда, Прайс_лист.Цена, Блюда_в_корзине.ID_корзины
+            FROM Блюда_в_корзине
+            INNER JOIN Блюда ON Блюда_в_корзине.ID_блюда = Блюда.ID
+            INNER JOIN Прайс_лист ON Блюда.ID = Прайс_лист.ID_блюда
+            WHERE Блюда_в_корзине.ID_корзины = ?
+          `;
+
+        conn.query(getFoodsQuery, [bucketId], (err, foods) => {
+          if (err) {
+            console.error("Ошибка при получении блюд из корзины:", err);
+            return res.status(500).json({
+              success: false,
+              message: "Ошибка при получении блюд из корзины",
+            });
+          }
+
+          // Возвращаем блюда, которые находятся в корзине пользователя
+          res.status(200).json({
+            success: true,
+            message: "Блюда успешно получены из корзины",
+            data: foods,
+          });
+        });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
+  async userPriceBucket(req, res) {
+    
   }
 }
 

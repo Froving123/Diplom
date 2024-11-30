@@ -96,30 +96,34 @@ export const Shopping_cart = () => {
   };
 
   // Удаление товара из корзины
-  /*const deleteItem = async (ID) => {
+  const removeProduct = async (foodName) => {
     const token = localStorage.getItem("authToken");
-
     if (!token) {
       console.log("Токен не найден");
       return;
     }
 
     try {
-      await axios.delete(`http://localhost:5000/api/bucket/user/${ID}`, {
+      const response = await fetch("http://localhost:5000/api/bucket/remove", {
+        method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify({ foodName }), // Отправляем название блюда
       });
 
-      // Обновляем корзину после удаления
-      const updatedProducts = userProduct.filter(
-        (product) => product.ID !== ID
-      );
-      setUserProduct(updatedProducts);
-    } catch (error) {
-      console.error("Ошибка при удалении товара:", error);
+      const result = await response.json();
+      if (result.success) {
+        // Повторный запрос данных корзины
+        fetchUserProduct(); // обновляет данные о корзине
+      } else {
+        console.error(result.message);
+      }
+    } catch (err) {
+      console.error("Ошибка при удалении блюда:", err);
     }
-  };*/
+  };
 
   // Используем useEffect для получения данных о корзине при монтировании компонента
   useEffect(() => {
@@ -158,8 +162,8 @@ export const Shopping_cart = () => {
                 </div>
               </div>
               <button
-                onClick={() => deleteItem(product.ID_блюда)}
                 className={Styles.button_remove}
+                onClick={() => removeProduct(product.Название)}
               >
                 <p className={Styles.remove_text}>Удалить</p>
               </button>
