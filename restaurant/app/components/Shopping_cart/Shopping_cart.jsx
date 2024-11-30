@@ -2,43 +2,106 @@
 
 import React, { useState, useEffect } from "react";
 import Styles from "./Shopping_cart.module.css";
-import axios from "axios"; // Используем axios для HTTP-запросов
 
 export const Shopping_cart = () => {
   const [userProduct, setUserProduct] = useState([]);
 
   // Получение данных о корзине с сервера
   const fetchUserProduct = async () => {
-    const token = localStorage.getItem("authToken"); // Получаем токен пользователя (например, из localStorage)
-
+    const token = localStorage.getItem("authToken");
     if (!token) {
       console.log("Токен не найден");
       return;
     }
 
     try {
-      const response = await axios.get(
-        "http://localhost:5000/api/bucket/user",
+      const response = await fetch("http://localhost:5000/api/bucket/user", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        console.log("Данные о корзине:", result.data);
+        setUserProduct(result.data); // Обновляем состояние с данными корзины
+      } else {
+        console.error(result.message);
+      }
+    } catch (err) {
+      console.error("Ошибка при получении данных корзины:", err);
+    }
+  };
+
+  const incrementProductQuantity = async (foodName) => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.log("Токен не найден");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/bucket/increment",
         {
+          method: "POST",
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
+          body: JSON.stringify({ foodName }), // Отправляем название блюда
         }
       );
 
-      if (response.data.success) {
-        const products = response.data.data;
-        setUserProduct(products);
+      const result = await response.json();
+      if (result.success) {
+        console.log(result.message);
+
+        fetchUserProduct(); // обновляет данные о корзине
       } else {
-        console.log("Ошибка при получении корзины");
+        console.error(result.message);
       }
-    } catch (error) {
-      console.error("Ошибка при получении данных о корзине:", error);
+    } catch (err) {
+      console.error("Ошибка при увеличении количества:", err);
+    }
+  };
+
+  const decrementProductQuantity = async (foodName) => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.log("Токен не найден");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/bucket/decrement",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ foodName }), // Отправляем название блюда
+        }
+      );
+
+      const result = await response.json();
+      if (result.success) {
+        console.log(result.message);
+
+        fetchUserProduct(); // обновляет данные о корзине
+      } else {
+        console.error(result.message);
+      }
+    } catch (err) {
+      console.error("Ошибка при уменьшении количества:", err);
     }
   };
 
   // Удаление товара из корзины
-  const deleteItem = async (ID) => {
+  /*const deleteItem = async (ID) => {
     const token = localStorage.getItem("authToken");
 
     if (!token) {
@@ -61,37 +124,7 @@ export const Shopping_cart = () => {
     } catch (error) {
       console.error("Ошибка при удалении товара:", error);
     }
-  };
-
-  // Обновление количества товара в корзине
-  const updateQuantity = async (ID, Количество) => {
-    const token = localStorage.getItem("authToken");
-
-    if (!token) {
-      console.log("Токен не найден");
-      return;
-    }
-
-    try {
-      await axios.put(
-        `http://localhost:5000/api/bucket/user/${ID}`,
-        { Количество },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      // Обновляем список продуктов после изменения количества
-      const updatedProducts = userProduct.map((product) =>
-        product.ID === ID ? { ...product, Количество } : product
-      );
-      setUserProduct(updatedProducts);
-    } catch (error) {
-      console.error("Ошибка при обновлении количества товара:", error);
-    }
-  };
+  };*/
 
   // Используем useEffect для получения данных о корзине при монтировании компонента
   useEffect(() => {
@@ -110,26 +143,18 @@ export const Shopping_cart = () => {
                 </p>
                 <div className={Styles.quantity_controls}>
                   <p className={Styles.product_description}>
-                    {parseInt(product.Цена) * product.Количество
-                      ? (parseInt(product.Цена) * product.Количество).toFixed(
-                          0
-                        ) + "₽"
-                      : ""}
+                    {(parseInt(product.Цена) * product.Количество).toFixed(0)}₽
                   </p>
                   <div className={Styles.quantity_buttons}>
                     <button
                       className={Styles.button_quantity}
-                      onClick={() =>
-                        updateQuantity(product.ID, product.Количество + 1)
-                      }
+                      onClick={() => incrementProductQuantity(product.Название)}
                     >
                       +
                     </button>
                     <button
                       className={Styles.button_quantity}
-                      onClick={() =>
-                        updateQuantity(product.ID, product.Количество - 1)
-                      }
+                      onClick={() => decrementProductQuantity(product.Название)}
                       disabled={product.Количество <= 1}
                     >
                       -
@@ -138,7 +163,7 @@ export const Shopping_cart = () => {
                 </div>
               </div>
               <button
-                onClick={() => deleteItem(product.ID)}
+                onClick={() => deleteItem(product.ID_блюда)}
                 className={Styles.button_remove}
               >
                 <p className={Styles.remove_text}>Удалить</p>
