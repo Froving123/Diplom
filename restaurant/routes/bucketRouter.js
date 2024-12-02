@@ -8,6 +8,6 @@ router.post("/increment", bucketController.incrementProductQuantity);
 router.post("/decrement", bucketController.decrementProductQuantity);
 router.post("/remove", bucketController.removeProduct);
 router.get("/user", bucketController.userBucket);
-router.get("/check-items", bucketController.checkCartItems);
+router.get("/total-price", bucketController.getTotalPrice);
 
 module.exports = router;

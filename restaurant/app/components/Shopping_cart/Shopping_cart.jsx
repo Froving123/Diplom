@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import Styles from "./Shopping_cart.module.css";
+import { useCart } from "@/CartContext"; // Импорт контекста корзины
 
 export const Shopping_cart = () => {
   const [userProduct, setUserProduct] = useState([]);
+  const { updateCart } = useCart(); 
 
   // Получение данных о корзине с сервера
   const fetchUserProduct = async () => {
@@ -33,6 +35,7 @@ export const Shopping_cart = () => {
     }
   };
 
+  // Увеличение количества
   const incrementProductQuantity = async (foodName) => {
     const token = localStorage.getItem("authToken");
     if (!token) {
@@ -49,13 +52,14 @@ export const Shopping_cart = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ foodName }), // Отправляем название блюда
+          body: JSON.stringify({ foodName }),
         }
       );
 
       const result = await response.json();
       if (result.success) {
-        fetchUserProduct(); // обновляет данные о корзине
+        await fetchUserProduct(); 
+        updateCart();
       } else {
         console.error(result.message);
       }
@@ -64,6 +68,7 @@ export const Shopping_cart = () => {
     }
   };
 
+  // Уменьшение количества
   const decrementProductQuantity = async (foodName) => {
     const token = localStorage.getItem("authToken");
     if (!token) {
@@ -80,13 +85,14 @@ export const Shopping_cart = () => {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ foodName }), // Отправляем название блюда
+          body: JSON.stringify({ foodName }),
         }
       );
 
       const result = await response.json();
       if (result.success) {
-        fetchUserProduct(); // обновляет данные о корзине
+        await fetchUserProduct();
+        updateCart(); 
       } else {
         console.error(result.message);
       }
@@ -110,13 +116,13 @@ export const Shopping_cart = () => {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ foodName }), // Отправляем название блюда
+        body: JSON.stringify({ foodName }),
       });
 
       const result = await response.json();
       if (result.success) {
-        // Повторный запрос данных корзины
-        fetchUserProduct(); // обновляет данные о корзине
+        await fetchUserProduct(); 
+        updateCart(); 
       } else {
         console.error(result.message);
       }

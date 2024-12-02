@@ -735,7 +735,7 @@ class BucketController {
     }
   }
 
-  async checkCartItems(req, res) {
+  async getTotalPrice(req, res) {
     try {
       const authHeader = req.headers.authorization;
 
