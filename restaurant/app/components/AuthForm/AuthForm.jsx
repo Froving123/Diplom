@@ -128,6 +128,7 @@ export const AuthForm = (props) => {
         setPhone("");
         alert("Пользователь успешно зарегистрирован");
         props.close();
+        window.location.reload();
       })
       .catch((error) => {
         console.error("Ошибка при отправке данных на сервер:", error);
@@ -140,7 +141,7 @@ export const AuthForm = (props) => {
 
   const logIn = (e) => {
     e.preventDefault();
-    // Проверка на заполнение всех полей
+
     if (!email || !password) {
       setError("Пожалуйста, заполните все поля");
       setTimeout(() => {
@@ -179,6 +180,7 @@ export const AuthForm = (props) => {
           setPassword("");
           alert("Пользователь успешно авторизован");
           props.close();
+          window.location.reload();
         })
         .catch((error) => {
           console.error("Ошибка при отправке данных на сервер:", error);

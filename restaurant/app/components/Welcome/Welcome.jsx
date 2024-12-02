@@ -62,7 +62,7 @@ export const Welcome = () => {
       </div>
       <Overlay isOpened={popupIsOpened} close={closePopup} />
       <Popup isOpened={popupIsOpened} close={closePopup}>
-        <AuthForm close={closePopup} />
+        <AuthForm close={closePopup} updateAuthUser={setAuthUser} />
       </Popup>
       <Overlay isOpened={popupIsOpen} close={closedPopup} />
       <Popup isOpened={popupIsOpen} close={closedPopup}>
