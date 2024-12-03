@@ -135,7 +135,10 @@ export const Delivery_menu = () => {
       </div>
       <Overlay isOpened={popupIsOpen} close={() => setPopupIsOpen(false)} />
       <Popup isOpened={popupIsOpen} close={() => setPopupIsOpen(false)}>
-        <AuthForm close={() => setPopupIsOpen(false)} />
+        <AuthForm
+          close={() => setPopupIsOpen(false)}
+          updateAuthUser={setAuthUser}
+        />
       </Popup>
     </div>
   );

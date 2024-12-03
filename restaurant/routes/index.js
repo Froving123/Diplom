@@ -5,11 +5,13 @@ const reservationRouter = require("./reservationRouter");
 const deliveryRouter = require("./deliveryRouter");
 const bucketRouter = require("./bucketRouter");
 const orderRouter = require("./orderRouter");
+const backRouter = require("./backRouter");
 
 router.use("/user", userRouter);
 router.use("/reservation", reservationRouter);
 router.use("/delivery", deliveryRouter);
 router.use("/bucket", bucketRouter);
 router.use("/order", orderRouter);
- 
+router.use("/feedback", backRouter);
+
 module.exports = router;

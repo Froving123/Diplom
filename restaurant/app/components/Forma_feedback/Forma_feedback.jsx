@@ -4,45 +4,78 @@ import Styles from "./Forma_feedback.module.css";
 import { Overlay } from "../Overlay/Overlay";
 import { Popup } from "../Popup/Popup";
 import { AuthForm } from "../AuthForm/AuthForm";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const Forma_feedback = () => {
+  const [newItem, setNewItem] = useState({
+    score: "",
+    text: "",
+  });
   const [popupIsOpened, setPopupIsOpened] = useState(false);
   const [authUser, setAuthUser] = useState(null);
-  const [newItem, setNewItem] = useState({ name: "", text: "", score: "" });
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    // Проверка наличия токена в localStorage
+    const token = localStorage.getItem("authToken");
+    if (token) {
+      // Если токен есть, устанавливаем пользователя как авторизованного
+      setAuthUser({ token });
+    } else {
+      setAuthUser(null);
+    }
+  }, []);
 
   const feedback = async (e) => {
     e.preventDefault();
-    if (!newItem.name || !newItem.text || !newItem.score) {
+
+    if (!newItem.score || !newItem.text) {
       setError("Пожалуйста, заполните все поля");
       setTimeout(() => {
         setError("");
-      }, 5000);
-    } else {
-      try {
-        const user = auth.currentUser;
-        if (user) {
-          const newItemRef = push(ref(db, "feedback"));
-          const newItemKey = newItemRef.key;
-          const newItemData = {
-            name: newItem.name,
-            text: newItem.text,
-            score: newItem.score,
-            userId: user.uid,
-          };
-          await set(ref(db, `feedback/${newItemKey}`), newItemData);
-          setNewItem({ name: "", text: "", score: "" });
-          setError("");
-          alert("Ваш отзыв принят");
-        }
-      } catch (error) {
-        console.error("Ошибка при добавлении документа: ", error);
-      }
+      }, 3000);
+      return;
     }
+
+    const token = localStorage.getItem("authToken");
+
+    // Отправляем данные на сервер для создания отзыва
+    fetch("http://localhost:5000/api/feedback/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        score: newItem.score,
+        text: newItem.text,
+      }),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (!result.success) {
+          setError(result.message || "Ошибка при отправке отзыва");
+          setTimeout(() => {
+            setError("");
+          }, 3000);
+          return;
+        }
+
+        // Обновляем данные после успешного создания отзыва
+        setNewItem({ score: "", text: "" });
+        alert(`Отзыв успешно создан. Спасибо!`);
+        window.location.reload();
+      })
+      .catch((error) => {
+        console.error("Ошибка при отправке данных на сервер:", error);
+        setError("Ошибка при отправке отзыва");
+        setTimeout(() => {
+          setError("");
+        }, 3000);
+      });
   };
 
-  const openedPopup = () => {
+  const openPopup = () => {
     setPopupIsOpened(true);
   };
 
@@ -57,7 +90,7 @@ export const Forma_feedback = () => {
           Форма обратной <br /> связи
         </h2>
         <p className={Styles.form_p}>
-          Оставляйте ваши отзывы и пожелания <br /> они очень важны для нас.{" "}
+          Оставляйте ваши отзывы и пожелания <br /> они очень важны для нас.
         </p>
       </div>
       <div className={Styles.right_form}>
@@ -92,14 +125,14 @@ export const Forma_feedback = () => {
             Отправить
           </button>
         ) : (
-          <button className={Styles.button_form} onClick={openedPopup}>
+          <button className={Styles.button_form} onClick={openPopup}>
             Отправить
           </button>
         )}
       </div>
       <Overlay isOpened={popupIsOpened} close={closePopup} />
       <Popup isOpened={popupIsOpened} close={closePopup}>
-        <AuthForm close={closePopup} />
+        <AuthForm close={closePopup} updateAuthUser={setAuthUser} />
       </Popup>
     </div>
   );

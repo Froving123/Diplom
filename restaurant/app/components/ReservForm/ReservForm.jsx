@@ -55,7 +55,7 @@ export const ReservForm = (props) => {
       setError("Пожалуйста, заполните все поля");
       setTimeout(() => {
         setError("");
-      }, 5000);
+      }, 3000);
       return; // Не продолжаем выполнение, если поля не заполнены
     }
 

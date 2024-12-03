@@ -13,13 +13,23 @@
 }
 
 .slider_line {
-  width: 300%;
   display: flex;
-  transition: 1s;
+  transition: transform 1s ease;
 }
 
 .sliders {
-  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.feedback_card {
+  box-sizing: border-box;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .feedback_all {

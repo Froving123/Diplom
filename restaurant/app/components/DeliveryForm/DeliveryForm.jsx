@@ -16,7 +16,7 @@ export const DeliveryForm = (props) => {
       setError("Пожалуйста, заполните поле");
       setTimeout(() => {
         setError("");
-      }, 5000);
+      }, 3000);
     } else {
       try {
         const user = auth.currentUser;

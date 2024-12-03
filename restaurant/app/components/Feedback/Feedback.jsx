@@ -1,16 +1,39 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 import Styles from "./Feedback.module.css";
 
 export const Feedback = () => {
   const [sliderCount, setSliderCount] = useState(0);
-  const [sliderWidth, setSliderWidth] = useState(0);
+  const [feedbacks, setFeedbacks] = useState([]); // Данные с сервера
+  const [error, setError] = useState("");
 
   const sliderRef = useRef(null);
   const sliderLineRef = useRef(null);
 
+  const [sliderWidth, setSliderWidth] = useState(0);
+
+  // Загрузка отзывов с сервера
   useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/feedback/user");
+        const result = await response.json();
+        if (result.success) {
+          setFeedbacks(result.feedbacks);
+        } else {
+          throw new Error(result.message || " ");
+        }
+      } catch (err) {
+        setError(err.message);
+      }
+    };
+
+    fetchFeedbacks();
+  }, []);
+
+  // Используем useLayoutEffect, чтобы измерить ширину слайдера до рендера
+  useLayoutEffect(() => {
     const updateSliderWidth = () => {
       if (sliderRef.current) {
         setSliderWidth(sliderRef.current.offsetWidth);
@@ -18,13 +41,12 @@ export const Feedback = () => {
     };
 
     updateSliderWidth();
-
     window.addEventListener("resize", updateSliderWidth);
 
     return () => {
       window.removeEventListener("resize", updateSliderWidth);
     };
-  }, []);
+  }, [feedbacks]); // Зависимость от feedbacks, чтобы при изменении количества отзывов обновлялся размер
 
   useEffect(() => {
     rollSlider();
@@ -39,78 +61,83 @@ export const Feedback = () => {
   };
 
   const rightSlide = () => {
-    setSliderCount((prevCount) =>
-      prevCount + 1 >= sliders.length ? 0 : prevCount + 1
-    );
+    if (feedbacks.length > 1) {
+      setSliderCount((prevCount) =>
+        prevCount + 1 >= feedbacks.length ? 0 : prevCount + 1
+      );
+    }
   };
 
   const leftSlide = () => {
-    setSliderCount((prevCount) =>
-      prevCount - 1 < 0 ? sliders.length - 1 : prevCount - 1
-    );
+    if (feedbacks.length > 1) {
+      setSliderCount((prevCount) =>
+        prevCount - 1 < 0 ? feedbacks.length - 1 : prevCount - 1
+      );
+    }
   };
 
   useEffect(() => {
-    const intervalId = setInterval(rightSlide, 10000);
-    return () => clearInterval(intervalId);
-  }, []);
+    if (feedbacks.length > 1) {
+      const intervalId = setInterval(rightSlide, 8000);
+      return () => clearInterval(intervalId);
+    }
+  }, [feedbacks]);
 
-  const sliders = [
-    <div className={Styles.feedback_all} key={1}>
-      <h2 className={Styles.feedback_h_all}>
-        Я надолго запомню мой День рождения, проведённый в этом ресторане!{" "}
-        <br />
-        Отдельное спасибо за комплепент в виде фруктовой тарелки. Будем
-        рекомендовать <br />
-        этот ресторан своим друзьям и родственникам, путешествующих в
-        Санкт-Петербург!!! <br />
-      </h2>
-      <p className={Styles.feedback_p_all}>Посетитель</p>
-      <p className={Styles.feedback_name_all}>Михаил</p>
-    </div>,
-    <div className={Styles.feedback_all} key={2}>
-      <h2 className={Styles.feedback_h_all}>
-        Хороший ресторан. Еда была вкусной, а атмосфера заведения придавала
-        особое очарование. <br />
-        Очень вежливый персонал, официант отлично знает позиции в меню и помог с
-        выбором. <br />
-        В общем нам все очень понравилось. Рекомендую посетить это место. <br />
-      </h2>
-      <p className={Styles.feedback_p_all}>Посетитель</p>
-      <p className={Styles.feedback_name_all}>Николай</p>
-    </div>,
-    <div className={Styles.feedback_all} key={3}>
-      <h2 className={Styles.feedback_h_all}>
-        Отмечали юбилей. Прекрасная праздничная атмосфера, бесподобная кухня,
-        профессиональная подача блюд, <br />
-        торт выше всех похвал. Обязательно вернемся сюда. Огромное спасибо всем
-        кто участвовал в <br />
-        организации нашего праздника. Рекомендуем всем посетить это волшебное
-        место. <br />
-      </h2>
-      <p className={Styles.feedback_p_all}>Посетитель</p>
-      <p className={Styles.feedback_name_all}>Виктор</p>
-    </div>,
-  ];
+  // Если отзывов нет, компонент не отображается
+  if (feedbacks.length === 0) {
+    return null;
+  }
+
+  // Рассчитываем динамическую ширину для слайдера
+  const sliderLineWidth = feedbacks.length * 100 + "%";
+
+  if (error) {
+    return <p className={Styles.error}>{error}</p>;
+  }
 
   return (
     <div className={Styles.feedback}>
       <div className={Styles.slider} ref={sliderRef}>
-        <div className={Styles.slider_line} ref={sliderLineRef}>
-          {sliders.map((slider, index) => (
-            <div className={Styles.sliders} key={index}>
-              {slider}
+        <div
+          className={Styles.slider_line}
+          ref={sliderLineRef}
+          style={{ width: sliderLineWidth }}
+        >
+          {feedbacks.map((feedback, index) => (
+            <div
+              className={Styles.sliders}
+              key={index}
+              style={{ width: `${100 / feedbacks.length}%` }} // Устанавливаем ширину каждого отзыва в процентах
+            >
+              <div className={Styles.feedback_card}>
+                <h2 className={Styles.feedback_h_all}>{feedback.text}</h2>
+                <p className={Styles.feedback_p_all}>Посетитель</p>
+                <p className={Styles.feedback_name_all}>{feedback.userName}</p>
+                <p className={Styles.feedback_score}>
+                  Оценка: {feedback.score}
+                </p>
+                <p className={Styles.feedback_date}>
+                  Дата:{" "}
+                  {new Date(feedback.date).toLocaleString("ru-RU", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </p>
+              </div>
             </div>
           ))}
         </div>
-        <div className={Styles.slider_button}>
-          <button className={Styles.slider_left} onClick={leftSlide}>
-            &lt;
-          </button>
-          <button className={Styles.slider_right} onClick={rightSlide}>
-            &gt;
-          </button>
-        </div>
+        {feedbacks.length > 1 && (
+          <div className={Styles.slider_button}>
+            <button className={Styles.slider_left} onClick={leftSlide}>
+              &lt;
+            </button>
+            <button className={Styles.slider_right} onClick={rightSlide}>
+              &gt;
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
