@@ -111,13 +111,11 @@ export const Feedback = () => {
             >
               <div className={Styles.feedback_card}>
                 <h2 className={Styles.feedback_h_all}>{feedback.text}</h2>
-                <p className={Styles.feedback_p_all}>Посетитель</p>
-                <p className={Styles.feedback_name_all}>{feedback.userName}</p>
+                <p className={Styles.feedback_name}>{feedback.userName}</p>
                 <p className={Styles.feedback_score}>
-                  Оценка: {feedback.score}
+                  Оценка: {feedback.score}/5
                 </p>
                 <p className={Styles.feedback_date}>
-                  Дата:{" "}
                   {new Date(feedback.date).toLocaleString("ru-RU", {
                     day: "2-digit",
                     month: "2-digit",

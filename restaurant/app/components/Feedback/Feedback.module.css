@@ -46,19 +46,28 @@
   font-size: 30px;
   font-family: "Tinos-Italic";
   font-weight: 400;
-  line-height: 36px;
-  margin-bottom: 50px;
+  line-height: 38px;
+  margin-bottom: 15px;
+  text-align: center;
+  width: 80%;
 }
 
-.feedback_p_all {
+.feedback_name {
   font-size: 26px;
   color: rgb(82, 82, 82);
   margin-bottom: 0%;
 }
 
-.feedback_name_all {
+.feedback_score{
   font-size: 26px;
   color: rgb(82, 82, 82);
+  margin-bottom: 0%;
+}
+
+.feedback_date{
+  font-size: 26px;
+  color: rgb(82, 82, 82);
+  margin-bottom: 0%;
 }
 
 .slider_button {
