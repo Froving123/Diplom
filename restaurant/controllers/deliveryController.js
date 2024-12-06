@@ -61,6 +61,60 @@ class DeliveryController {
     }
   }
 
+  async getDiscountedItem(req, res) {
+    try {
+      const query = `
+        SELECT 
+          COALESCE(Прайс_лист.Цена - Спец_предложения.Размер_скидки, Прайс_лист.Цена) AS DiscountedPrice,
+          Категория_блюда.Наименование AS CategoryName
+        FROM 
+          Прайс_лист
+        LEFT JOIN 
+          Спец_предложения ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+        JOIN 
+          Блюда ON Прайс_лист.ID_блюда = Блюда.ID
+        JOIN 
+          Категория_блюда ON Блюда.ID_категории = Категория_блюда.ID
+        WHERE 
+          Спец_предложения.Размер_скидки IS NOT NULL
+        ORDER BY 
+          DiscountedPrice ASC
+        LIMIT 1;
+      `;
+
+      conn.query(query, (err, results) => {
+        if (err) {
+          console.error("Ошибка при получении товара с учётом скидки:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при получении товара с учётом скидки",
+          });
+        }
+
+        if (results.length > 0) {
+          const { DiscountedPrice, CategoryName } = results[0];
+          res
+            .status(200)
+            .json({
+              success: true,
+              price: DiscountedPrice,
+              category: CategoryName,
+            });
+        } else {
+          res
+            .status(200)
+            .json({
+              success: false,
+              message: "Нет доступных товаров со скидкой",
+            });
+        }
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
   async getMenu(req, res) {
     try {
       const query = `
@@ -83,22 +137,25 @@ class DeliveryController {
         ORDER BY 
           Категория_блюда.ID, Блюда.ID;
       `;
-  
+
       conn.query(query, (err, results) => {
         if (err) {
           console.error("Ошибка при получении меню с учетом скидок:", err);
           return res
             .status(500)
-            .json({ success: false, message: "Ошибка при получении меню с учетом скидок" });
+            .json({
+              success: false,
+              message: "Ошибка при получении меню с учетом скидок",
+            });
         }
-  
+
         res.status(200).json({ success: true, menu: results });
       });
     } catch (error) {
       console.error("Ошибка на сервере:", error);
       res.status(500).json({ success: false, message: "Ошибка на сервере" });
     }
-  }  
+  }
 
   async userDelivery(req, res) {
     try {

@@ -33,9 +33,7 @@ export const Delivery_menu = () => {
     // Функция для загрузки блюд с учетом скидок
     const fetchDishes = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:5000/api/delivery/menu"
-        );
+        const response = await fetch("http://localhost:5000/api/delivery/menu");
         const data = await response.json();
         if (response.ok) {
           setDishes(data.menu);
@@ -127,7 +125,9 @@ export const Delivery_menu = () => {
                           <span className={Styles.old_price}>
                             {dish.Цена_без_скидки}₽
                           </span>{" "}
-                          <span className={Styles.new_price}>{dish.Цена_со_скидкой}₽</span>
+                          <span className={Styles.new_price}>
+                            {dish.Цена_со_скидкой}₽
+                          </span>
                         </>
                       ) : (
                         `${dish.Цена_без_скидки}₽`
@@ -155,4 +155,3 @@ export const Delivery_menu = () => {
     </div>
   );
 };
-
