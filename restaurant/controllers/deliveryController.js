@@ -61,86 +61,44 @@ class DeliveryController {
     }
   }
 
-  async menuDelivery(req, res) {
+  async getMenu(req, res) {
     try {
       const query = `
         SELECT 
-          Блюда.ID, 
-          Блюда.Название, 
-          Блюда.Фото, 
+          Блюда.ID,
+          Блюда.Название,
+          Блюда.Фото,
           Категория_блюда.Наименование AS Категория,
-          Прайс_лист.Цена
+          Прайс_лист.Цена AS Цена_без_скидки,
+          COALESCE(Прайс_лист.Цена - Спец_предложения.Размер_скидки, Прайс_лист.Цена) AS Цена_со_скидкой,
+          Спец_предложения.Размер_скидки AS Скидка
         FROM 
           Блюда
         JOIN 
           Категория_блюда ON Блюда.ID_категории = Категория_блюда.ID
         JOIN 
           Прайс_лист ON Блюда.ID = Прайс_лист.ID_блюда
+        LEFT JOIN 
+          Спец_предложения ON Блюда.ID = Спец_предложения.ID_блюда
         ORDER BY 
           Категория_блюда.ID, Блюда.ID;
       `;
-
+  
       conn.query(query, (err, results) => {
         if (err) {
-          console.error("Ошибка при получении меню:", err);
+          console.error("Ошибка при получении меню с учетом скидок:", err);
           return res
             .status(500)
-            .json({ success: false, message: "Ошибка при получении меню" });
+            .json({ success: false, message: "Ошибка при получении меню с учетом скидок" });
         }
-
+  
         res.status(200).json({ success: true, menu: results });
       });
     } catch (error) {
       console.error("Ошибка на сервере:", error);
       res.status(500).json({ success: false, message: "Ошибка на сервере" });
     }
-  }
-
- /* async createOrder(req, res) {
-    try {
-      const { userId, orderDetails } = req.body;
-
-      const insertOrderQuery = `
-        INSERT INTO Заказ (ID_пользователя, Дата)
-        VALUES (?, NOW())
-      `;
-
-      conn.query(insertOrderQuery, [userId], (err, orderResult) => {
-        if (err) {
-          console.error("Ошибка при создании заказа:", err);
-          return res
-            .status(500)
-            .json({ success: false, message: "Ошибка при создании заказа" });
-        }
-
-        const orderId = orderResult.insertId;
-
-        const insertOrderDetailsQuery = `
-          INSERT INTO Блюда_в_заказе (ID_заказа, ID_блюда)
-          VALUES (?, ?)
-        `;
-
-        orderDetails.forEach((foodId) => {
-          conn.query(insertOrderDetailsQuery, [orderId, foodId], (err) => {
-            if (err) {
-              console.error("Ошибка при добавлении деталей заказа:", err);
-              return res.status(500).json({
-                success: false,
-                message: "Ошибка при создании заказа",
-              });
-            }
-          });
-        });
-
-        res
-          .status(201)
-          .json({ success: true, message: "Заказ успешно создан" });
-      });
-    } catch (error) {
-      console.error("Ошибка на сервере:", error);
-      res.status(500).json({ success: false, message: "Ошибка на сервере" });
-    }
-  }*/
+  }  
 
   async userDelivery(req, res) {
     try {

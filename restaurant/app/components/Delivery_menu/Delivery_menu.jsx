@@ -30,10 +30,12 @@ export const Delivery_menu = () => {
       }
     };
 
-    // Функция для загрузки блюд
+    // Функция для загрузки блюд с учетом скидок
     const fetchDishes = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/delivery/menu");
+        const response = await fetch(
+          "http://localhost:5000/api/delivery/menu"
+        );
         const data = await response.json();
         if (response.ok) {
           setDishes(data.menu);
@@ -100,7 +102,6 @@ export const Delivery_menu = () => {
     }
   };
 
-  // Отображение интерфейса
   return (
     <div className={Styles.delivery_menu}>
       <h2 className={Styles.delivery_h}>Закажите домой</h2>
@@ -120,7 +121,18 @@ export const Delivery_menu = () => {
                       alt={dish.Название}
                     />
                     <h3 className={Styles.food_h}>{dish.Название}</h3>
-                    <p className={Styles.price_menu}>{dish.Цена} ₽</p>
+                    <p className={Styles.price_menu}>
+                      {dish.Скидка ? (
+                        <>
+                          <span className={Styles.old_price}>
+                            {dish.Цена_без_скидки}₽
+                          </span>{" "}
+                          <span className={Styles.new_price}>{dish.Цена_со_скидкой}₽</span>
+                        </>
+                      ) : (
+                        `${dish.Цена_без_скидки}₽`
+                      )}
+                    </p>
                     <button
                       className={Styles.button_menu_delivery}
                       onClick={() => handleAddToCart(dish.ID)}
@@ -143,3 +155,4 @@ export const Delivery_menu = () => {
     </div>
   );
 };
+

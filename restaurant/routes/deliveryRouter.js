@@ -4,6 +4,6 @@ const deliveryController = require("../controllers/deliveryController");
 
 router.get("/categories", deliveryController.getCategories);
 router.get("/price", deliveryController.getPriceList);
-router.get("/menu", deliveryController.menuDelivery);
+router.get("/menu", deliveryController.getMenu);
 
 module.exports = router;
