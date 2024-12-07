@@ -11,68 +11,7 @@ const conn = mysql.createConnection({
 });
 
 class ReservationController {
-  async createReservation(req, res) {
-    try {
-      const authHeader = req.headers.authorization;
-
-      // Проверка наличия токена
-      if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Токен отсутствует" });
-      }
-
-      const token = authHeader.split(" ")[1];
-
-      // Расшифровка токена и извлечение ID пользователя
-      let decodedToken;
-      try {
-        decodedToken = jwt.verify(token, jwtSecret);
-      } catch (err) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Неверный токен" });
-      }
-
-      const userId = decodedToken.userId;
-
-      // Получаем данные для бронирования из тела запроса
-      const { table, people, date, time } = req.body;
-
-      // SQL-запрос для создания бронирования
-      const reservationQuery = `
-          INSERT INTO Бронирование (ID_стола, Количество_человек, Дата, Время, ID_пользователя)
-          VALUES (?, ?, ?, ?, ?)
-        `;
-
-      conn.query(
-        reservationQuery,
-        [table, people, date, time, userId],
-        (err, result) => {
-          if (err) {
-            console.error("Ошибка при создании бронирования:", err);
-            return res.status(500).json({
-              success: false,
-              message: "Ошибка при создании бронирования",
-            });
-          }
-
-          return res.status(201).json({
-            success: true,
-            message: "Бронирование успешно создано",
-          });
-        }
-      );
-    } catch (error) {
-      console.error("Ошибка на сервере:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Произошла ошибка на сервере",
-      });
-    }
-  }
-
-  async tableReservation(req, res) {
+  async tablesReservation(req, res) {
     try {
       // SQL-запрос для получения всех столов
       const query = `SELECT ID, Наименование FROM Столы`;
@@ -88,7 +27,7 @@ class ReservationController {
 
         res.status(200).json({
           success: true,
-          tables: results, 
+          tables: results,
         });
       });
     } catch (error) {
@@ -98,6 +37,132 @@ class ReservationController {
         message: "Произошла ошибка на сервере",
       });
     }
+  }
+
+  async activeTables(req, res) {
+    try {
+      const { date, time } = req.query; 
+
+      // Запрос для получения доступных столов
+      const query = `
+        SELECT ID, Наименование
+        FROM Столы
+        WHERE ID NOT IN (
+          SELECT ID_стола
+          FROM Бронирование
+          WHERE Дата = ? AND ABS(TIMESTAMPDIFF(HOUR, Время, ?)) < 3
+        )
+      `;
+
+      const startDateTime = `${date} ${time}`;
+
+      conn.query(query, [date, startDateTime], (err, results) => {
+        if (err) {
+          console.error("Ошибка при получении доступных столов:", err);
+          return res
+            .status(500)
+            .json({
+              success: false,
+              message: "Ошибка при получении доступных столов",
+            });
+        }
+
+        return res.status(200).json({ success: true, tables: results });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Произошла ошибка на сервере" });
+    }
+  }
+
+  async createReservation(req, res) {
+    const authHeader = req.headers.authorization;
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Токен отсутствует" });
+    }
+
+    const token = authHeader.split(" ")[1];
+    let decodedToken;
+
+    try {
+      decodedToken = jwt.verify(token, jwtSecret);
+    } catch (err) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Неверный токен" });
+    }
+
+    const userId = decodedToken.userId;
+
+    const { date, time, table, people } = req.body;
+
+    if (!date || !time || !table || !people) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Не все обязательные данные предоставлены.",
+        });
+    }
+
+    // Проверяем количество бронирований пользователя в базе данных
+    const query = `
+      SELECT COUNT(*) AS reservCount
+      FROM Бронирование
+      WHERE ID_пользователя = ?`;
+
+    conn.query(query, [userId], (err, results) => {
+      if (err) {
+        console.error("Ошибка при проверке бронирований пользователя:", err);
+        return res
+          .status(500)
+          .json({
+            success: false,
+            message: "Ошибка при проверке бронирований",
+          });
+      }
+
+      const reservCount = results[0].reservCount;
+
+      // Если у пользователя уже 3 или больше бронирований, блокируем создание нового
+      if (reservCount >= 3) {
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: "Вы не можете создать более 3-х бронирований.",
+          });
+      }
+
+      // Если бронирований меньше 3-х, разрешаем создать новое бронирование
+      const insertQuery = `
+        INSERT INTO Бронирование (ID_пользователя, Дата, Время, Количество_человек, ID_стола)
+        VALUES (?, ?, ?, ?, ?)`;
+
+      conn.query(
+        insertQuery,
+        [userId, date, time, people, table],
+        (err, results) => {
+          if (err) {
+            console.error("Ошибка при создании бронирования:", err);
+            return res
+              .status(500)
+              .json({
+                success: false,
+                message: "Ошибка при создании бронирования",
+              });
+          }
+
+          return res
+            .status(201)
+            .json({ success: true, message: "Бронирование успешно создано" });
+        }
+      );
+    });
   }
 
   async userReservation(req, res) {
@@ -118,9 +183,9 @@ class ReservationController {
       // Расшифровываем токен
       try {
         const decoded = jwt.verify(token, jwtSecret);
-        userId = decoded.userId; 
+        userId = decoded.userId;
       } catch (err) {
-        console.error("Ошибка расшифровки токена:", err); 
+        console.error("Ошибка расшифровки токена:", err);
         return res.status(403).json({
           success: false,
           message: "Неверный или истекший токен",

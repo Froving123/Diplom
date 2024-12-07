@@ -13,12 +13,11 @@ export const ReservForm = (props) => {
   const [availableTables, setAvailableTables] = useState([]);
   const [error, setError] = useState("");
 
-  // Получение столов с сервера при загрузке компонента
   useEffect(() => {
-    const fetchAvailableTables = async () => {
+    const fetchAllTables = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/reservation/table",
+          "http://localhost:5000/api/reservation/tables",
           {
             method: "GET",
             headers: {
@@ -31,72 +30,93 @@ export const ReservForm = (props) => {
         if (response.ok) {
           setAvailableTables(result.tables);
         } else {
-          setError(result.message || "Ошибка при получении столов");
-          setTimeout(() => {
-            setError("");
-          }, 3000);
+          setError(result.message || "Ошибка при получении всех столов");
+          setTimeout(() => setError(""), 3000);
         }
       } catch (error) {
-        console.error("Ошибка при получении столов:", error);
-        setError("Ошибка при получении столов");
-        setTimeout(() => {
-          setError("");
-        }, 3000);
+        console.error("Ошибка при получении всех столов:", error);
+        setError("Ошибка при получении всех столов");
+        setTimeout(() => setError(""), 3000);
       }
     };
 
-    fetchAvailableTables();
+    fetchAllTables();
   }, []);
+
+  useEffect(() => {
+    if (newItem.date && newItem.time) {
+      const fetchAvailableTables = async () => {
+        try {
+          const response = await fetch(
+            `http://localhost:5000/api/reservation/active-tables?date=${newItem.date}&time=${newItem.time}`,
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          const result = await response.json();
+          if (response.ok) {
+            setAvailableTables(result.tables);
+          } else {
+            setError(result.message || "Ошибка при получении доступных столов");
+          }
+        } catch (error) {
+          console.error("Ошибка при получении доступных столов:", error);
+          setError("Ошибка при получении доступных столов");
+        }
+      };
+
+      fetchAvailableTables();
+    }
+  }, [newItem.date, newItem.time]); 
 
   const reserv = async (e) => {
     e.preventDefault();
 
     if (!newItem.date || !newItem.time || !newItem.people || !newItem.table) {
       setError("Пожалуйста, заполните все поля");
-      setTimeout(() => {
-        setError("");
-      }, 3000);
-      return; // Не продолжаем выполнение, если поля не заполнены
+      setTimeout(() => setError(""), 3000);
+      return;
     }
 
     const token = localStorage.getItem("authToken");
 
-    // Отправляем данные на сервер для создания бронирования
-    fetch("http://localhost:5000/api/reservation/create", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        date: newItem.date,
-        time: newItem.time,
-        people: newItem.people,
-        table: newItem.table,
-      }),
-    })
-      .then((response) => response.json())
-      .then((result) => {
-        if (!result.success) {
-          setError(result.message || "Ошибка при бронировании");
-          setTimeout(() => {
-            setError("");
-          }, 3000);
-          return;
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/reservation/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            date: newItem.date,
+            time: newItem.time,
+            people: newItem.people,
+            table: newItem.table,
+          }),
         }
+      );
 
-        // Очищаем формы
-        setNewItem({ date: "", time: "", people: "", table: "" });
-        alert("Бронирование успешно создано");
-        props.close();
-      })
-      .catch((error) => {
-        console.error("Ошибка при отправке данных на сервер:", error);
-        setError("Ошибка при бронировании");
-        setTimeout(() => {
-          setError("");
-        }, 3000);
-      });
+      const result = await response.json();
+      if (!response.ok) {
+        setError(result.message || "Ошибка при бронировании");
+        setTimeout(() => setError(""), 3000);
+        return;
+      }
+
+      setNewItem({ date: "", time: "", people: "", table: "" });
+      alert("Бронирование успешно создано");
+      props.close();
+    } catch (error) {
+      console.error("Ошибка при бронировании:", error);
+      setError("Ошибка при бронировании");
+      setTimeout(() => setError(""), 3000);
+    }
   };
 
   const handleClear = () => {
@@ -148,6 +168,7 @@ export const ReservForm = (props) => {
           <select
             className={Styles["form__field-input"]}
             disabled={availableTables.length === 0}
+            value={newItem.table}
             onChange={(e) => setNewItem({ ...newItem, table: e.target.value })}
           >
             <option value="">Выберите стол</option>
