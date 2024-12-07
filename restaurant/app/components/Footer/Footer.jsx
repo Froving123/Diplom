@@ -19,7 +19,7 @@ export const Footer = () => {
         )}
         <div className={Styles.footer_info}>
           <p className={Styles.top_fot_h}>Позвонить нам</p>
-          <p className={Styles.top_fot_p}>+7(985)330-**-**</p>
+          <p className={Styles.top_fot_p}>+7(919)449-26-26</p>
         </div>
         <div className={Styles.footer_info}>
           <p className={Styles.top_fot_h}>График работы</p>
