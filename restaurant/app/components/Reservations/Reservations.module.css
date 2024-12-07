@@ -25,24 +25,42 @@
   background-color: rgb(210, 209, 209);
   border-radius: 15px;
   margin-bottom: 20px;
-  padding: 10px 25px 10px 25px;
+  padding: 10px 0px 10px 25px;
+  justify-content: space-between;
   gap: 40px;
 }
 
 .reserv_description {
   font-weight: 900;
   font-size: 25px;
+  padding: 10px 0px;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.delivery_box {
-  transform: scale(2);
+.button_remove {
+  background-color: rgb(255, 106, 43);
+  color: white;
+  transition: 0.5s;
+  border: 1px solid black;
+  padding: 10px;
+}
+
+.button_remove:hover {
+  background-color: rgb(253, 116, 57);
+  color: black;
+}
+
+.remove_text {
+  margin: 0%;
+  font-size: 20px;
+  font-weight: 600;
 }
 
 .reserv_empty {
   font-weight: 900;
   font-size: 30px;
   margin: 25px;
+  margin-right: 50px;
   font-family: Arial, Helvetica, sans-serif;
 }
 

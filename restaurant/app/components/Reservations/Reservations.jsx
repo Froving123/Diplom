@@ -44,6 +44,38 @@ export const UserReservations = () => {
     fetchUserReservations();
   }, []);
 
+  const removeReserv = async (ReservId) => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      console.log("Токен не найден");
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/api/reservation/remove", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ ReservId }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        await   fetchUserReservations();  
+      } else {
+        console.error(result.message);
+      }
+    } catch (err) {
+      console.error("Ошибка при удалении брони:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserReservations();
+  }, []);
+
   return (
     <div className={Styles.reservation}>
       <h2 className={Styles.title_reserv}>Ваше бронирование</h2>
@@ -61,7 +93,7 @@ export const UserReservations = () => {
                 })}
               </p>
               <p className={Styles.reserv_description}>
-                Время: {reservation.Время}
+              Время: {reservation.Время.split(":").slice(0, 2).join(":")}
               </p>
               <p className={Styles.reserv_description}>
                 Количество человек: {reservation.Количество_человек}
@@ -69,6 +101,12 @@ export const UserReservations = () => {
               <p className={Styles.reserv_description}>
                 Номер стола: {reservation.Номер_стола}
               </p>
+              <button
+                className={Styles.button_remove}
+                onClick={() => removeReserv(reservation.ID)}
+              >
+                <p className={Styles.remove_text}>Удалить</p>
+              </button>
             </li>
           ))}
         </ul>

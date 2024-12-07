@@ -165,6 +165,65 @@ class ReservationController {
     });
   }
 
+  async removeReserv(req, res) {
+    try {
+      const { ReservId } = req.body;
+
+      const authHeader = req.headers.authorization;
+
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        return res
+          .status(401)
+          .json({ success: false, message: "Токен отсутствует" });
+      }
+
+      const token = authHeader.split(" ")[1];
+      let decodedToken;
+      try {
+        decodedToken = jwt.verify(token, jwtSecret);
+      } catch (err) {
+        return res
+          .status(401)
+          .json({ success: false, message: "Неверный токен" });
+      }
+
+      const userId = decodedToken.userId;
+
+      // Находим бронирование пользователя
+      const findReservQuery = `SELECT ID FROM Бронирование WHERE ID_пользователя = ?`;
+      conn.query(findReservQuery, [userId], (err, reservResults) => {
+        if (err || reservResults.length === 0) {
+          return res
+            .status(404)
+            .json({ success: false, message: "бронь не найдена" });
+        }
+
+        const reservId = reservResults[0].ID;
+
+            // Удаляем бронь
+            const deleteReserv = `
+          DELETE FROM Бронирование 
+          WHERE ID = ?
+        `;
+            conn.query(deleteReserv, [reservId], (err) => {
+              if (err) {
+                return res.status(500).json({
+                  success: false,
+                  message: "Ошибка при удалении Бронирования",
+                });
+              }
+              res.status(200).json({
+                success: true,
+                message: "Бронирование удалено",
+              });
+            });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
   async userReservation(req, res) {
     try {
       const authHeader = req.headers.authorization;
