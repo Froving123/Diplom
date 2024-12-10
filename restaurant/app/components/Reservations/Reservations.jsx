@@ -51,19 +51,29 @@ export const UserReservations = () => {
       return;
     }
 
+    const confirmDelete = window.confirm(
+      "Вы уверены, что хотите отменить бронирование?"
+    );
+    if (!confirmDelete) {
+      return; // Отмена удаления
+    }
+
     try {
-      const response = await fetch("http://localhost:5000/api/reservation/remove", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ ReservId }),
-      });
+      const response = await fetch(
+        "http://localhost:5000/api/reservation/remove",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ ReservId }),
+        }
+      );
 
       const result = await response.json();
       if (result.success) {
-        await   fetchUserReservations();  
+        await fetchUserReservations();
       } else {
         console.error(result.message);
       }
@@ -93,7 +103,7 @@ export const UserReservations = () => {
                 })}
               </p>
               <p className={Styles.reserv_description}>
-              Время: {reservation.Время.split(":").slice(0, 2).join(":")}
+                Время: {reservation.Время.split(":").slice(0, 2).join(":")}
               </p>
               <p className={Styles.reserv_description}>
                 Количество человек: {reservation.Количество_человек}
@@ -105,7 +115,7 @@ export const UserReservations = () => {
                 className={Styles.button_remove}
                 onClick={() => removeReserv(reservation.ID)}
               >
-                <p className={Styles.remove_text}>Удалить</p>
+                <p className={Styles.remove_text}>Отменить</p>
               </button>
             </li>
           ))}

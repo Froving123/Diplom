@@ -41,22 +41,22 @@ class ReservationController {
 
   async activeTables(req, res) {
     try {
-      const { date, time } = req.query; 
+      const { date, time, people } = req.query; 
 
-      // Запрос для получения доступных столов
       const query = `
-        SELECT ID, Наименование
-        FROM Столы
-        WHERE ID NOT IN (
-          SELECT ID_стола
-          FROM Бронирование
-          WHERE Дата = ? AND ABS(TIMESTAMPDIFF(HOUR, Время, ?)) < 3
-        )
-      `;
+            SELECT ID, Наименование, Вместимость
+            FROM Столы
+            WHERE Вместимость >= ?
+            AND ID NOT IN (
+                SELECT ID_стола
+                FROM Бронирование
+                WHERE Дата = ? AND ABS(TIMESTAMPDIFF(HOUR, Время, ?)) < 3
+            )
+        `;
 
       const startDateTime = `${date} ${time}`;
 
-      conn.query(query, [date, startDateTime], (err, results) => {
+      conn.query(query, [people, date, startDateTime], (err, results) => {
         if (err) {
           console.error("Ошибка при получении доступных столов:", err);
           return res
@@ -101,12 +101,10 @@ class ReservationController {
     const { date, time, table, people } = req.body;
 
     if (!date || !time || !table || !people) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Не все обязательные данные предоставлены.",
-        });
+      return res.status(400).json({
+        success: false,
+        message: "Не все обязательные данные предоставлены.",
+      });
     }
 
     // Проверяем количество бронирований пользователя в базе данных
@@ -118,24 +116,20 @@ class ReservationController {
     conn.query(query, [userId], (err, results) => {
       if (err) {
         console.error("Ошибка при проверке бронирований пользователя:", err);
-        return res
-          .status(500)
-          .json({
-            success: false,
-            message: "Ошибка при проверке бронирований",
-          });
+        return res.status(500).json({
+          success: false,
+          message: "Ошибка при проверке бронирований",
+        });
       }
 
       const reservCount = results[0].reservCount;
 
       // Если у пользователя уже 3 или больше бронирований, блокируем создание нового
       if (reservCount >= 3) {
-        return res
-          .status(400)
-          .json({
-            success: false,
-            message: "Вы не можете создать более 3-х бронирований.",
-          });
+        return res.status(400).json({
+          success: false,
+          message: "Вы не можете создать более 3-х бронирований.",
+        });
       }
 
       // Если бронирований меньше 3-х, разрешаем создать новое бронирование
@@ -149,12 +143,10 @@ class ReservationController {
         (err, results) => {
           if (err) {
             console.error("Ошибка при создании бронирования:", err);
-            return res
-              .status(500)
-              .json({
-                success: false,
-                message: "Ошибка при создании бронирования",
-              });
+            return res.status(500).json({
+              success: false,
+              message: "Ошибка при создании бронирования",
+            });
           }
 
           return res
@@ -200,23 +192,23 @@ class ReservationController {
 
         const reservId = reservResults[0].ID;
 
-            // Удаляем бронь
-            const deleteReserv = `
+        // Удаляем бронь
+        const deleteReserv = `
           DELETE FROM Бронирование 
           WHERE ID = ?
         `;
-            conn.query(deleteReserv, [reservId], (err) => {
-              if (err) {
-                return res.status(500).json({
-                  success: false,
-                  message: "Ошибка при удалении Бронирования",
-                });
-              }
-              res.status(200).json({
-                success: true,
-                message: "Бронирование удалено",
-              });
+        conn.query(deleteReserv, [reservId], (err) => {
+          if (err) {
+            return res.status(500).json({
+              success: false,
+              message: "Ошибка при удалении Бронирования",
             });
+          }
+          res.status(200).json({
+            success: true,
+            message: "Бронирование удалено",
+          });
+        });
       });
     } catch (error) {
       console.error("Ошибка на сервере:", error);

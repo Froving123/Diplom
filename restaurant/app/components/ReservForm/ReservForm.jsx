@@ -44,11 +44,11 @@ export const ReservForm = (props) => {
   }, []);
 
   useEffect(() => {
-    if (newItem.date && newItem.time) {
+    if (newItem.date && newItem.time && newItem.people) {
       const fetchAvailableTables = async () => {
         try {
           const response = await fetch(
-            `http://localhost:5000/api/reservation/active-tables?date=${newItem.date}&time=${newItem.time}`,
+            `http://localhost:5000/api/reservation/active-tables?date=${newItem.date}&time=${newItem.time}&people=${newItem.people}`,
             {
               method: "GET",
               headers: {
@@ -71,7 +71,7 @@ export const ReservForm = (props) => {
 
       fetchAvailableTables();
     }
-  }, [newItem.date, newItem.time]); 
+  }, [newItem.date, newItem.time, newItem.people]);
 
   const reserv = async (e) => {
     e.preventDefault();
@@ -152,7 +152,11 @@ export const ReservForm = (props) => {
           <select
             className={Styles["form__field-input"]}
             value={newItem.people}
-            onChange={(e) => setNewItem({ ...newItem, people: e.target.value })}
+            onChange={(e) => {
+              const people = e.target.value;
+              setNewItem({ ...newItem, people });
+              setAvailableTables([]);
+            }}
           >
             <option value="">Сколько будет человек</option>
             <option value="1">1</option>

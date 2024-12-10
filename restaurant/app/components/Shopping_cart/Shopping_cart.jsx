@@ -6,7 +6,7 @@ import { useCart } from "@/CartContext"; // Импорт контекста ко
 
 export const Shopping_cart = () => {
   const [userProduct, setUserProduct] = useState([]);
-  const { updateCart } = useCart(); 
+  const { updateCart } = useCart();
 
   // Получение данных о корзине с сервера
   const fetchUserProduct = async () => {
@@ -58,7 +58,7 @@ export const Shopping_cart = () => {
 
       const result = await response.json();
       if (result.success) {
-        await fetchUserProduct(); 
+        await fetchUserProduct();
         updateCart();
       } else {
         console.error(result.message);
@@ -92,7 +92,7 @@ export const Shopping_cart = () => {
       const result = await response.json();
       if (result.success) {
         await fetchUserProduct();
-        updateCart(); 
+        updateCart();
       } else {
         console.error(result.message);
       }
@@ -109,6 +109,13 @@ export const Shopping_cart = () => {
       return;
     }
 
+    const confirmDelete = window.confirm(
+      "Вы уверены, что хотите Удалить товар?"
+    );
+    if (!confirmDelete) {
+      return; // Отмена удаления
+    }
+
     try {
       const response = await fetch("http://localhost:5000/api/bucket/remove", {
         method: "POST",
@@ -121,8 +128,8 @@ export const Shopping_cart = () => {
 
       const result = await response.json();
       if (result.success) {
-        await fetchUserProduct(); 
-        updateCart(); 
+        await fetchUserProduct();
+        updateCart();
       } else {
         console.error(result.message);
       }
