@@ -2,66 +2,86 @@
 
 import React, { useEffect, useState } from "react";
 import Styles from "./DeliveryForm.module.css";
+import { useCart } from "@/CartContext";
 
 export const DeliveryForm = (props) => {
-  const [newItem, setNewItem] = useState({ address: "", payment: "" });
+  const [newItem, setNewItem] = useState({ street: "", home: "", flat: "", payment: "" });
+  const { totalPrice, updateCart } = useCart();
   const [error, setError] = useState("");
-  const [userProduct, setUserProduct] = useState([]);
-  const [total, setTotal] = useState(0);
-  const [deliveryPrice, setDeliveryPrice] = useState(0); // переименовали переменную
+  const DELIVERY_PRICE = 700; // Статичная стоимость доставки
 
-  const delivery = async (e) => {
+  const submitOrder = async (e) => {
     e.preventDefault();
-    if (!newItem.address) {
-      setError("Пожалуйста, заполните поле");
+
+    if (!newItem.street || !newItem.home || !newItem.payment) {
+      setError("Пожалуйста, заполните все обязательные поля");
       setTimeout(() => {
         setError("");
       }, 3000);
-    } else {
-      try {
-        const user = auth.currentUser;
-        if (user) {
-          const newItemRef = push(ref(db, "delivery"));
-          const newItemKey = newItemRef.key;
-          const newItemData = {
-            address: newItem.address,
-            payment: newItem.payment,
-            userId: user.uid,
-            price: total,
-          };
-          await set(ref(db, `delivery/${newItemKey}`), newItemData);
-          setNewItem({ address: "" });
-          setError("");
-          props.close();
-          await removeAllProducts();
-          window.location.reload();
-          alert("Ваш заказ принят");
-        }
-      } catch (error) {
-        console.error("Ошибка при добавлении документа: ", error);
+      return;
+    }
+
+    try {
+      const orderData = {
+        address: {
+          street: newItem.street,
+          home: newItem.home,
+          flat: newItem.flat || "",
+        },
+        payment: newItem.payment,
+        total: totalPrice, // Общая стоимость с доставкой
+        deliveryPrice: DELIVERY_PRICE,
+      };
+
+      const response = await fetch("http://localhost:5000/api/orders/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
+      });
+
+      if (response.ok) {
+        alert("Ваш заказ успешно создан!");
+        setNewItem({ street: "", home: "", flat: "", payment: "" });
+        props.close(); // Закрытие формы
+      } else {
+        const result = await response.json();
+        setError(result.message || "Ошибка при создании заказа");
       }
+    } catch (error) {
+      console.error("Ошибка отправки заказа:", error);
+      setError("Произошла ошибка. Повторите попытку позже.");
     }
   };
 
+  useEffect(() => {
+    updateCart(); // Обновление данных корзины при монтировании
+  }, [updateCart]);
+
   return (
-    <form className={Styles["form"]}>
+    <form className={Styles["form"]} onSubmit={submitOrder}>
       <h2 className={Styles["form__title"]}>Оформление</h2>
       <div className={Styles["form__fields"]}>
         <label className={Styles["form__field"]}>
-          <span className={Styles["form__field-title"]}>Улица</span>
+          <span className={Styles["form__field-title"]}>Улица<span className={Styles["required"]}>*</span></span>
           <input
-            className={Styles["form__field-input"]}
+            className={`${Styles["form__field-input"]} ${
+              !newItem.street && error ? Styles["error-border"] : ""
+            }`}
             type="text"
+             aria-required="true"
             value={newItem.street}
             placeholder="Ленина"
             onChange={(e) => setNewItem({ ...newItem, street: e.target.value })}
           />
         </label>
         <label className={Styles["form__field"]}>
-          <span className={Styles["form__field-title"]}>Дом</span>
+          <span className={Styles["form__field-title"]}>Дом<span className={Styles["required"]}>*</span></span>
           <input
-            className={Styles["form__field-input"]}
+            className={`${Styles["form__field-input"]} ${
+              !newItem.street && error ? Styles["error-border"] : ""
+            }`}
             type="text"
+             aria-required="true"
             value={newItem.home}
             placeholder="156"
             onChange={(e) => setNewItem({ ...newItem, home: e.target.value })}
@@ -78,9 +98,12 @@ export const DeliveryForm = (props) => {
           />
         </label>
         <label className={Styles["form__field"]}>
-          <span className={Styles["form__field-title"]}>Способ оплаты</span>
+          <span className={Styles["form__field-title"]}>Способ оплаты<span className={Styles["required"]}>*</span></span>
           <select
-            className={Styles["form__field-input"]}
+           className={`${Styles["form__field-input"]} ${
+            !newItem.street && error ? Styles["error-border"] : ""
+          }`}
+           aria-required="true"
             value={newItem.payment}
             onChange={(e) =>
               setNewItem({ ...newItem, payment: e.target.value })
@@ -89,20 +112,17 @@ export const DeliveryForm = (props) => {
             <option value="" disabled>
               Выберите способ оплаты
             </option>
-            <option value="Наличными при получении">
-              Наличными при получении
-            </option>
+            <option value="Наличными при получении">Наличными при получении</option>
             <option value="Картой при получении">Картой при получении</option>
           </select>
         </label>
         <div className={Styles.order}>
           <p className={Styles.order_content}>Стоимость доставки</p>
-          <p className={Styles.order_content}>{deliveryPrice}₽</p>{" "}
-          {/* используем deliveryPrice */}
+          <p className={Styles.order_content}>{DELIVERY_PRICE}₽</p>
         </div>
         <div className={Styles.order}>
           <p className={Styles.order_content}>Стоимость заказа</p>
-          <p className={Styles.order_content}>{total}₽</p>
+          <p className={Styles.order_content}>{totalPrice + DELIVERY_PRICE}₽</p>
         </div>
       </div>
       {error && <p className={Styles.error_message}>{error}</p>}
