@@ -5,10 +5,32 @@ import Styles from "./DeliveryForm.module.css";
 import { useCart } from "@/CartContext";
 
 export const DeliveryForm = (props) => {
-  const [newItem, setNewItem] = useState({ street: "", home: "", flat: "", payment: "" });
+  const [newItem, setNewItem] = useState({
+    street: "",
+    home: "",
+    flat: "",
+    payment: "",
+  });
   const { totalPrice, updateCart } = useCart();
   const [error, setError] = useState("");
   const DELIVERY_PRICE = 700; // Статичная стоимость доставки
+
+  const numberInput = (setState, maxLength) => (e) => {
+    const value = e.target.value.replace(/\D/g, "");
+    if (value.length <= maxLength) {
+      setState(value);
+    }
+  };
+  const russianInput = (key) => (e) => {
+    const value = e.target.value.replace(/[^А-Яа-яЁё]/g, "");
+    const formattedValue = value.replace(/(^|\\s)([а-яё])/g, (match) =>
+      match.toUpperCase()
+    );
+    setNewItem((prevState) => ({
+      ...prevState,
+      [key]: formattedValue,
+    }));
+  };
 
   const submitOrder = async (e) => {
     e.preventDefault();
@@ -29,11 +51,11 @@ export const DeliveryForm = (props) => {
           flat: newItem.flat || "",
         },
         payment: newItem.payment,
-        total: totalPrice, // Общая стоимость с доставкой
+        totalPrice: totalPrice, // Общая стоимость с доставкой
         deliveryPrice: DELIVERY_PRICE,
       };
 
-      const response = await fetch("http://localhost:5000/api/orders/create", {
+      const response = await fetch("http://localhost:5000/api/order/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderData),
@@ -62,29 +84,36 @@ export const DeliveryForm = (props) => {
       <h2 className={Styles["form__title"]}>Оформление</h2>
       <div className={Styles["form__fields"]}>
         <label className={Styles["form__field"]}>
-          <span className={Styles["form__field-title"]}>Улица<span className={Styles["required"]}>*</span></span>
+          <span className={Styles["form__field-title"]}>
+            Улица<span className={Styles["required"]}>*</span>
+          </span>
           <input
             className={`${Styles["form__field-input"]} ${
               !newItem.street && error ? Styles["error-border"] : ""
             }`}
             type="text"
-             aria-required="true"
+            aria-required="true"
             value={newItem.street}
             placeholder="Ленина"
-            onChange={(e) => setNewItem({ ...newItem, street: e.target.value })}
+            onChange={russianInput("street")}
           />
         </label>
         <label className={Styles["form__field"]}>
-          <span className={Styles["form__field-title"]}>Дом<span className={Styles["required"]}>*</span></span>
+          <span className={Styles["form__field-title"]}>
+            Дом<span className={Styles["required"]}>*</span>
+          </span>
           <input
             className={`${Styles["form__field-input"]} ${
               !newItem.street && error ? Styles["error-border"] : ""
             }`}
             type="text"
-             aria-required="true"
+            aria-required="true"
             value={newItem.home}
             placeholder="156"
-            onChange={(e) => setNewItem({ ...newItem, home: e.target.value })}
+            onChange={numberInput(
+              (value) => setNewItem({ ...newItem, home: value }),
+              4
+            )}
           />
         </label>
         <label className={Styles["form__field"]}>
@@ -94,16 +123,21 @@ export const DeliveryForm = (props) => {
             type="text"
             value={newItem.flat}
             placeholder="45"
-            onChange={(e) => setNewItem({ ...newItem, flat: e.target.value })}
+            onChange={numberInput(
+              (value) => setNewItem({ ...newItem, flat: value }),
+              5
+            )}
           />
         </label>
         <label className={Styles["form__field"]}>
-          <span className={Styles["form__field-title"]}>Способ оплаты<span className={Styles["required"]}>*</span></span>
+          <span className={Styles["form__field-title"]}>
+            Способ оплаты<span className={Styles["required"]}>*</span>
+          </span>
           <select
-           className={`${Styles["form__field-input"]} ${
-            !newItem.street && error ? Styles["error-border"] : ""
-          }`}
-           aria-required="true"
+            className={`${Styles["form__field-input"]} ${
+              !newItem.street && error ? Styles["error-border"] : ""
+            }`}
+            aria-required="true"
             value={newItem.payment}
             onChange={(e) =>
               setNewItem({ ...newItem, payment: e.target.value })
@@ -112,7 +146,9 @@ export const DeliveryForm = (props) => {
             <option value="" disabled>
               Выберите способ оплаты
             </option>
-            <option value="Наличными при получении">Наличными при получении</option>
+            <option value="Наличными при получении">
+              Наличными при получении
+            </option>
             <option value="Картой при получении">Картой при получении</option>
           </select>
         </label>

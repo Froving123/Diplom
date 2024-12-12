@@ -21,7 +21,13 @@ export const AuthForm = (props) => {
   };
 
   const validateEmail = (email) =>
-    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email); // пароль для почты
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email); // пример для почты
+  const phoneInput = (input) => (e) => {
+    const value = e.target.value.replace(/\D/g, ""); // Удаляем все символы, кроме цифр
+    if (value.length <= 11) {
+      input(value);
+    }
+  };
   const validatePhone = (phone) => /^\d{11}$/.test(phone); // Пример для номера телефона
   const validatePassword = (password) => password.length >= 6; // Пример для пароля
   const russianInput = (input) => (e) => {
@@ -289,7 +295,7 @@ export const AuthForm = (props) => {
                 type="tel"
                 placeholder="80000000000"
                 value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={phoneInput(setPhone)}
               />
             </label>
             <label className={Styles["form__field"]}>

@@ -10,44 +10,55 @@ const conn = mysql.createConnection({
 class DeliveryController {
   async createOrder(req, res) {
     try {
-      const { userId, orderDetails } = req.body;
+      const { address, deliveryPrice } = req.body;
 
-      const insertOrderQuery = `
-        INSERT INTO Заказ (ID_пользователя, Дата)
-        VALUES (?, NOW())
+      // 1. Вставляем адрес в таблицу Адрес
+      const insertAddressQuery = `
+        INSERT INTO Адрес (Улица, Дом, Квартира)
+        VALUES (?, ?, ?)
       `;
-
-      conn.query(insertOrderQuery, [userId], (err, orderResult) => {
-        if (err) {
-          console.error("Ошибка при создании заказа:", err);
-          return res
-            .status(500)
-            .json({ success: false, message: "Ошибка при создании заказа" });
-        }
-
-        const orderId = orderResult.insertId;
-
-        const insertOrderDetailsQuery = `
-          INSERT INTO Блюда_в_заказе (ID_заказа, ID_блюда)
-          VALUES (?, ?)
-        `;
-
-        orderDetails.forEach((foodId) => {
-          conn.query(insertOrderDetailsQuery, [orderId, foodId], (err) => {
-            if (err) {
-              console.error("Ошибка при добавлении деталей заказа:", err);
-              return res.status(500).json({
+      conn.query(
+        insertAddressQuery,
+        [address.street, address.home, address.flat || null],
+        (err, addressResult) => {
+          if (err) {
+            console.error("Ошибка при добавлении адреса:", err);
+            return res
+              .status(500)
+              .json({
                 success: false,
-                message: "Ошибка при создании заказа",
+                message: "Ошибка при добавлении адреса",
               });
-            }
-          });
-        });
+          }
 
-        res
-          .status(201)
-          .json({ success: true, message: "Заказ успешно создан" });
-      });
+          const addressId = addressResult.insertId; // Получаем ID добавленного адреса
+
+          // 2. Вставляем данные в таблицу Доставка
+          const insertDeliveryQuery = `
+            INSERT INTO Доставка (ID_адреса, Цена)
+            VALUES (?, ?)
+          `;
+          conn.query(insertDeliveryQuery, [addressId, deliveryPrice], (err) => {
+            if (err) {
+              console.error("Ошибка при добавлении доставки:", err);
+              return res
+                .status(500)
+                .json({
+                  success: false,
+                  message: "Ошибка при добавлении доставки",
+                });
+            }
+
+            res
+              .status(201)
+              .json({
+                success: true,
+                message: "Доставка успешно создана",
+                addressId,
+              });
+          });
+        }
+      );
     } catch (error) {
       console.error("Ошибка на сервере:", error);
       res.status(500).json({ success: false, message: "Ошибка на сервере" });
