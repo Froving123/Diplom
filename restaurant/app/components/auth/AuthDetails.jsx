@@ -9,7 +9,6 @@ export const AuthDetails = () => {
   const [authUser, setAuthUser] = useState(null);
 
   useEffect(() => {
-    // Получаем токен из localStorage
     const token = localStorage.getItem("authToken");
 
     if (token) {
@@ -23,26 +22,29 @@ export const AuthDetails = () => {
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            setAuthUser(data.user); // Устанавливаем информацию о пользователе
+            setAuthUser(data.user);
           } else {
-            setAuthUser(null);
             localStorage.removeItem("authToken");
+            setAuthUser(null);
+            window.location.href = "/"; // Перенаправление на главную страницу
           }
         })
         .catch((err) => {
           console.error("Ошибка при получении данных пользователя:", err);
-          setAuthUser(null);
           localStorage.removeItem("authToken");
+          setAuthUser(null);
+          window.location.href = "/"; // Перенаправление на главную страницу
         });
     } else {
-      setAuthUser(null); // Если токен отсутствует, сбрасываем состояние
+      setAuthUser(null);
+      window.location.href = "/"; // Перенаправление на главную страницу
     }
   }, []);
 
   const userSignOut = () => {
-    localStorage.removeItem("authToken"); // Удаляем токен из localStorage
-    setAuthUser(null); // Обновляем состояние
-    window.location.href = "/";
+    localStorage.removeItem("authToken");
+    setAuthUser(null);
+    window.location.href = "/"; // Перенаправление на главную страницу
   };
 
   return (
@@ -57,7 +59,7 @@ export const AuthDetails = () => {
           </button>
         </div>
       ) : (
-        ""
+        <p className={Styles.noUser}>Вы не авторизованы</p>
       )}
     </div>
   );

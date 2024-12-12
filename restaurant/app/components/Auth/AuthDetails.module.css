@@ -43,6 +43,15 @@
   color: black;
 }
 
+.noUser {
+  margin-top: 55px;
+  margin-bottom: 25px;
+  margin-left: 750px;
+  font-weight: 400;
+  font-size: 55px;
+  color: white;
+}
+
 @media screen and (max-width: 500px) {
   .str_profile {
     align-items: start;
