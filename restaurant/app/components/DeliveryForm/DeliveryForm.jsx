@@ -11,9 +11,40 @@ export const DeliveryForm = (props) => {
     flat: "",
     payment: "",
   });
+  const [availablePayment, setAvailablePayment] = useState([]);
   const { totalPrice, updateCart } = useCart();
   const [error, setError] = useState("");
   const DELIVERY_PRICE = 700; // Статичная стоимость доставки
+
+  useEffect(() => {
+    const fetchAllPayment = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/order/payment",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const result = await response.json();
+        if (response.ok) {
+          setAvailablePayment(result.payment);
+        } else {
+          setError(result.message || "Ошибка при получении всех способов");
+          setTimeout(() => setError(""), 3000);
+        }
+      } catch (error) {
+        console.error("Ошибка при получении всех способов:", error);
+        setError("Ошибка при получении всех способов");
+        setTimeout(() => setError(""), 3000);
+      }
+    };
+
+    fetchAllPayment();
+  }, []);
 
   const numberInput = (setState, maxLength) => (e) => {
     const value = e.target.value.replace(/\D/g, "");
@@ -55,9 +86,14 @@ export const DeliveryForm = (props) => {
         deliveryPrice: DELIVERY_PRICE,
       };
 
+      const token = localStorage.getItem("authToken");
+
       const response = await fetch("http://localhost:5000/api/order/create", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify(orderData),
       });
 
@@ -65,6 +101,7 @@ export const DeliveryForm = (props) => {
         alert("Ваш заказ успешно создан!");
         setNewItem({ street: "", home: "", flat: "", payment: "" });
         props.close(); // Закрытие формы
+        window.location.reload();
       } else {
         const result = await response.json();
         setError(result.message || "Ошибка при создании заказа");
@@ -138,18 +175,18 @@ export const DeliveryForm = (props) => {
               !newItem.street && error ? Styles["error-border"] : ""
             }`}
             aria-required="true"
+            disabled={availablePayment.length === 0}
             value={newItem.payment}
             onChange={(e) =>
               setNewItem({ ...newItem, payment: e.target.value })
             }
           >
-            <option value="" disabled>
-              Выберите способ оплаты
-            </option>
-            <option value="Наличными при получении">
-              Наличными при получении
-            </option>
-            <option value="Картой при получении">Картой при получении</option>
+            <option value=""> Выберите способ оплаты</option>
+            {availablePayment.map((payment) => (
+              <option key={payment.ID} value={payment.ID}>
+                {payment.Наименование}
+              </option>
+            ))}
           </select>
         </label>
         <div className={Styles.order}>

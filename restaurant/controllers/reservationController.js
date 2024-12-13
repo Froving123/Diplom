@@ -159,8 +159,6 @@ class ReservationController {
 
   async removeReserv(req, res) {
     try {
-      const { ReservId } = req.body;
-
       const authHeader = req.headers.authorization;
 
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
