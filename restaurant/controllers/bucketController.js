@@ -157,9 +157,21 @@ class BucketController {
           }
 
           // Запрос для получения цены блюда
-          const getFoodPriceQuery = `SELECT Цена FROM Прайс_лист WHERE ID = ?`;
-          conn.query(getFoodPriceQuery, [foodId], (err, foodPriceResults) => {
-            if (err || foodPriceResults.length === 0) {
+          const getDiscountedPriceQuery = `
+          SELECT 
+            CASE 
+              WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
+                THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
+              ELSE Прайс_лист.Цена
+            END AS Цена
+          FROM Прайс_лист
+          LEFT JOIN Спец_предложения 
+            ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+          WHERE Прайс_лист.ID_блюда = ?
+        `;
+
+          conn.query(getDiscountedPriceQuery, [foodId], (err, priceResults) => {
+            if (err || priceResults.length === 0) {
               console.error("Ошибка при получении цены блюда:", err);
               return res.status(500).json({
                 success: false,
@@ -167,7 +179,7 @@ class BucketController {
               });
             }
 
-            const foodPrice = foodPriceResults[0].Цена; // Цена блюда
+            const foodPrice = priceResults[0].Цена;
 
             if (foodResults.length > 0) {
               // Блюдо уже есть в корзине, увеличиваем количество
@@ -348,12 +360,25 @@ class BucketController {
                   message: "Ошибка при увеличении количества блюда",
                 });
               }
-              const getFoodPriceQuery = `SELECT Цена FROM Прайс_лист WHERE ID = ?`;
+
+              const getDiscountedPriceQuery = `
+              SELECT 
+                CASE 
+                  WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
+                    THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
+                  ELSE Прайс_лист.Цена
+                END AS Цена
+              FROM Прайс_лист
+              LEFT JOIN Спец_предложения 
+                ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+              WHERE Прайс_лист.ID_блюда = ?
+            `;
+
               conn.query(
-                getFoodPriceQuery,
+                getDiscountedPriceQuery,
                 [foodId],
-                (err, foodPriceResults) => {
-                  if (err || foodPriceResults.length === 0) {
+                (err, priceResults) => {
+                  if (err || priceResults.length === 0) {
                     console.error("Ошибка при получении цены блюда:", err);
                     return res.status(500).json({
                       success: false,
@@ -361,8 +386,7 @@ class BucketController {
                     });
                   }
 
-                  const foodPrice = foodPriceResults[0].Цена;
-
+                  const foodPrice = priceResults[0].Цена;
                   // Обновляем общую цену корзины
                   const updateTotalPriceQuery = `
                 UPDATE Корзина 
@@ -480,12 +504,25 @@ class BucketController {
                   message: "Ошибка при уменьшении количества блюда",
                 });
               }
-              const getFoodPriceQuery = `SELECT Цена FROM Прайс_лист WHERE ID = ?`;
+
+              const getDiscountedPriceQuery = `
+              SELECT 
+                CASE 
+                  WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
+                    THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
+                  ELSE Прайс_лист.Цена
+                END AS Цена
+              FROM Прайс_лист
+              LEFT JOIN Спец_предложения 
+                ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+              WHERE Прайс_лист.ID_блюда = ?
+            `;
+
               conn.query(
-                getFoodPriceQuery,
+                getDiscountedPriceQuery,
                 [foodId],
-                (err, foodPriceResults) => {
-                  if (err || foodPriceResults.length === 0) {
+                (err, priceResults) => {
+                  if (err || priceResults.length === 0) {
                     console.error("Ошибка при получении цены блюда:", err);
                     return res.status(500).json({
                       success: false,
@@ -493,7 +530,7 @@ class BucketController {
                     });
                   }
 
-                  const foodPrice = foodPriceResults[0].Цена;
+                  const foodPrice = priceResults[0].Цена;
 
                   // Обновляем общую цену корзины
                   const updateTotalPriceQuery = `
@@ -611,12 +648,24 @@ class BucketController {
                 });
               }
 
-              const getFoodPriceQuery = `SELECT Цена FROM Прайс_лист WHERE ID = ?`;
+              const getDiscountedPriceQuery = `
+              SELECT 
+                CASE 
+                  WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
+                    THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
+                  ELSE Прайс_лист.Цена
+                END AS Цена
+              FROM Прайс_лист
+              LEFT JOIN Спец_предложения 
+                ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+              WHERE Прайс_лист.ID_блюда = ?
+            `;
+
               conn.query(
-                getFoodPriceQuery,
+                getDiscountedPriceQuery,
                 [foodId],
-                (err, foodPriceResults) => {
-                  if (err || foodPriceResults.length === 0) {
+                (err, priceResults) => {
+                  if (err || priceResults.length === 0) {
                     console.error("Ошибка при получении цены блюда:", err);
                     return res.status(500).json({
                       success: false,
@@ -624,7 +673,7 @@ class BucketController {
                     });
                   }
 
-                  const foodPrice = foodPriceResults[0].Цена;
+                  const foodPrice = priceResults[0].Цена;
 
                   // Обновляем общую цену корзины
                   const updateTotalPriceQuery = `
@@ -705,12 +754,24 @@ class BucketController {
 
         // Теперь получаем блюда из этой корзины
         const getFoodsQuery = `
-            SELECT Блюда_в_корзине.ID, Блюда_в_корзине.Количество, Блюда.Название, Блюда_в_корзине.ID_блюда, Прайс_лист.Цена, Блюда_в_корзине.ID_корзины
-            FROM Блюда_в_корзине
-            INNER JOIN Блюда ON Блюда_в_корзине.ID_блюда = Блюда.ID
-            INNER JOIN Прайс_лист ON Блюда.ID = Прайс_лист.ID_блюда
-            WHERE Блюда_в_корзине.ID_корзины = ?
-          `;
+          SELECT 
+            Блюда_в_корзине.ID,
+            Блюда_в_корзине.Количество,
+            Блюда.Название,
+            Блюда_в_корзине.ID_блюда,
+            COALESCE(Прайс_лист.Цена - Спец_предложения.Размер_скидки, Прайс_лист.Цена) AS Цена,
+            Блюда_в_корзине.ID_корзины
+          FROM 
+            Блюда_в_корзине
+          INNER JOIN 
+            Блюда ON Блюда_в_корзине.ID_блюда = Блюда.ID
+          INNER JOIN 
+            Прайс_лист ON Блюда.ID = Прайс_лист.ID_блюда
+          LEFT JOIN 
+            Спец_предложения ON Блюда.ID = Спец_предложения.ID_блюда
+          WHERE 
+            Блюда_в_корзине.ID_корзины = ?
+        `;
 
         conn.query(getFoodsQuery, [bucketId], (err, foods) => {
           if (err) {
