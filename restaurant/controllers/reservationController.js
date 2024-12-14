@@ -226,7 +226,6 @@ class ReservationController {
 
       let userId;
 
-      // Расшифровываем токен
       try {
         const decoded = jwt.verify(token, jwtSecret);
         userId = decoded.userId;

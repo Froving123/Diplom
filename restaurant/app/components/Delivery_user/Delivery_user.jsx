@@ -10,7 +10,6 @@ export const Delivery_user = () => {
   // Функция для загрузки заказов
   const fetchUserOrders = async () => {
     const token = localStorage.getItem("authToken"); // Получаем токен из localStorage
-    console.log("Токен авторизации:", token); // Логирование токена (если нужно)
 
     if (!token) {
       setError("Вы не авторизованы. Пожалуйста, войдите в систему.");
@@ -18,7 +17,6 @@ export const Delivery_user = () => {
     }
 
     try {
-      console.log("Отправляем запрос для получения заказов...");
       const response = await fetch("http://localhost:5000/api/order/user", {
         method: "GET",
         headers: {
@@ -28,23 +26,21 @@ export const Delivery_user = () => {
       });
 
       const result = await response.json();
-      console.log("Ответ от сервера:", result); // Логируем ответ сервера
 
       if (response.ok) {
-        console.log("Заказы успешно загружены:", result.orders); // Логирование заказов
         setUserOrders(result.orders || []); // Устанавливаем заказы
       } else {
-        console.error("Ошибка от сервера:", result.message); // Логируем ошибку с сервера
+        console.error("Ошибка от сервера:", result.message);
         setError(result.message);
       }
     } catch (err) {
-      console.error("Ошибка при получении заказов:", err); // Логирование ошибки
+      console.error("Ошибка при получении заказов:", err); 
       setError("Ошибка при загрузке заказов");
     }
   };
 
   useEffect(() => {
-    fetchUserOrders(); // Загрузка заказов при монтировании компонента
+    fetchUserOrders(); 
   }, []);
 
   const removeOrder = async (orderId) => {
@@ -62,7 +58,6 @@ export const Delivery_user = () => {
     }
 
     try {
-      // Отправляем запрос на сервер для удаления заказа
       const response = await fetch("http://localhost:5000/api/order/remove", {
         method: "POST",
         headers: {
@@ -75,8 +70,7 @@ export const Delivery_user = () => {
       const result = await response.json();
       if (result.success) {
         console.log("Заказ успешно удален");
-        // При успешном удалении обновляем данные пользователя (например, список заказов)
-        await fetchUserOrders(); // Функция для обновления списка заказов
+        await fetchUserOrders();
       } else {
         console.error(result.message);
       }
@@ -92,9 +86,6 @@ export const Delivery_user = () => {
       {userOrders.length > 0 ? (
         <ul className={Styles.ul_delivery}>
           {userOrders.map((order) => {
-            console.log("Обрабатываем заказ:", order.orderId); // Логируем ID каждого заказа
-            console.log("Блюда для заказа:", order.foods); // Логируем блюда заказа
-
             return (
               <li key={order.orderId} className={Styles.li_delivery}>
                 <p className={Styles.delivery_description}>

@@ -40,7 +40,6 @@ class OrderController {
 
   async createOrder(req, res) {
     try {
-      // Проверка токена
       const authHeader = req.headers.authorization;
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res
@@ -178,7 +177,7 @@ class OrderController {
                                 });
                               }
 
-                              // Удаление корзины после удаления блюд
+                              // Удаление корзины
                               const deleteBucketQuery = `DELETE FROM Корзина WHERE ID_пользователя = ?`;
                               conn.query(deleteBucketQuery, [userId], (err) => {
                                 if (err) {
@@ -245,10 +244,6 @@ class OrderController {
           .json({ success: false, message: "ID заказа обязателен" });
       }
 
-      // Логируем переданный orderId для отладки
-      console.log("Попытка удаления заказа с ID:", orderId);
-
-      // Проверяем, существует ли заказ, принадлежащий текущему пользователю
       const getOrderDetailsQuery = `
         SELECT 
           Заказ.ID AS orderId,
@@ -263,12 +258,10 @@ class OrderController {
       const orderDetails = await new Promise((resolve, reject) => {
         conn.query(getOrderDetailsQuery, [orderId], (err, results) => {
           if (err) return reject(err);
-          console.log("Результаты поиска заказа:", results); // Логируем результаты
-          resolve(results[0]); // Возвращаем только первую строку результата
+          resolve(results[0]);
         });
       });
 
-      // Если заказ не найден или не принадлежит пользователю
       if (!orderDetails) {
         return res
           .status(404)
@@ -280,10 +273,6 @@ class OrderController {
 
       const { deliveryId, contentId, addressId } = orderDetails;
 
-      // Логируем информацию перед удалением
-      console.log("Удаляем заказ с деталями:", orderDetails);
-
-      // Удаляем записи в правильном порядке
       await new Promise((resolve, reject) => {
         conn.query(
           "DELETE FROM Блюда_в_заказе WHERE ID_содержания_заказа = ?",
