@@ -41,7 +41,7 @@ class ReservationController {
 
   async activeTables(req, res) {
     try {
-      const { date, time, people } = req.query; 
+      const { date, time, people } = req.query;
 
       const query = `
             SELECT ID, Наименование, Вместимость
@@ -59,12 +59,10 @@ class ReservationController {
       conn.query(query, [people, date, startDateTime], (err, results) => {
         if (err) {
           console.error("Ошибка при получении доступных столов:", err);
-          return res
-            .status(500)
-            .json({
-              success: false,
-              message: "Ошибка при получении доступных столов",
-            });
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при получении доступных столов",
+          });
         }
 
         return res.status(200).json({ success: true, tables: results });
@@ -190,7 +188,7 @@ class ReservationController {
 
         const reservId = reservResults[0].ID;
 
-        // Удаляем бронь
+        // Отменяем бронь
         const deleteReserv = `
           DELETE FROM Бронирование 
           WHERE ID = ?
@@ -199,12 +197,12 @@ class ReservationController {
           if (err) {
             return res.status(500).json({
               success: false,
-              message: "Ошибка при удалении Бронирования",
+              message: "Ошибка при отмене Бронирования",
             });
           }
           res.status(200).json({
             success: true,
-            message: "Бронирование удалено",
+            message: "Бронирование отменено",
           });
         });
       });
@@ -221,7 +219,6 @@ class ReservationController {
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({
           success: true,
-          message: "Бронирование пользователя выведено на фронт",
         });
       }
 

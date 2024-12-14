@@ -28,7 +28,7 @@ export const Footer = () => {
         </div>
         <div className={Styles.footer_info}>
           <p className={Styles.top_fot_h}>Прийти к нам</p>
-          <p className={Styles.top_fot_p}>Санкт-Петербург, Лесная, 20</p>
+          <p className={Styles.top_fot_p}>Березники, Мира, 20</p>
         </div>
       </div>
       <hr className={Styles.hr_footer} />

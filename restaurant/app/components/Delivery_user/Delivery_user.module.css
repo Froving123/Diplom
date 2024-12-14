@@ -25,19 +25,45 @@
   background-color: rgb(210, 209, 209);
   border-radius: 15px;
   margin-bottom: 20px;
-  padding: 0px 25px 0px 25px;
+  padding: 0px 0px 0px 25px;
   width: auto;
   gap: 30px;
 }
 
 .delivery_description {
   font-weight: 900;
-  font-size: 23px;
+  font-size: 15px;
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.delivery_box {
-  transform: scale(2);
+.food_list {
+  background-color: transparent;
+  padding: 0%;
+}
+
+.food_item {
+  font-weight: 900;
+  font-size: 15px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.button_remove {
+  background-color: rgb(255, 106, 43);
+  color: white;
+  transition: 0.5s;
+  border: 1px solid black;
+  padding: 10px;
+}
+
+.button_remove:hover {
+  background-color: rgb(253, 116, 57);
+  color: black;
+}
+
+.remove_text {
+  margin: 0%;
+  font-size: 20px;
+  font-weight: 600;
 }
 
 .delivery_empty {
@@ -70,10 +96,6 @@
 
   .delivery_description {
     font-size: 12px;
-  }
-
-  .delivery_box {
-    transform: scale(1);
   }
 
   .delivery_empty {

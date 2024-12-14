@@ -78,7 +78,7 @@ export const UserReservations = () => {
         console.error(result.message);
       }
     } catch (err) {
-      console.error("Ошибка при удалении брони:", err);
+      console.error("Ошибка при отмене брони:", err);
     }
   };
 
