@@ -104,11 +104,30 @@
     padding: 10px;
     border-radius: 10px;
     flex-direction: column;
-    gap: 10px;
+    gap: 0px;
   }
 
+  .delivery_description_h {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  
   .delivery_description {
-    font-size: 12px;
+    font-size: 13px;
+    margin-bottom: 0%;
+    padding: 0%;
+  }
+
+  .delivery_ul_foods {
+    margin-bottom: 20px;
+  }
+
+  .food_list {
+    gap: 10px;
+  }
+  
+  .food_item {
+    font-size: 13px;
   }
 
   .delivery_empty {

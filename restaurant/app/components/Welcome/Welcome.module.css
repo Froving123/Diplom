@@ -112,7 +112,8 @@
   }
 
   .h1 {
-    line-height: 48px;
+    font-size: 45px;
+    line-height: 50px;
   }
 
   .name_restaurant {

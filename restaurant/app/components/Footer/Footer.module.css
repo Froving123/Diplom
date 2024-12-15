@@ -71,12 +71,13 @@
   }
 
   .logo {
-    width: 70px;
-    height: 50px;
+    width: 55px;
+    height: 40px;
   }
 
   .top_footer {
     margin-bottom: 0px;
+    align-items: start;
     gap: 5px;
   }
 
@@ -108,12 +109,13 @@
   }
 
   .logo {
-    width: 95px;
-    height: 70px;
+    width: 70px;
+    height: 55px;
   }
 
   .top_footer {
     margin-bottom: 0px;
+    align-items: start;
   }
 
   .footer_info {
@@ -122,11 +124,11 @@
 
   .top_fot_h {
     margin-bottom: 7px;
-    font-size: 15px;
+    font-size: 12px;
   }
 
   .top_fot_p {
-    font-size: 11px;
+    font-size: 8px;
   }
 
   .fot_copyright {

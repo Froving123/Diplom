@@ -142,7 +142,7 @@ export const Delivery_user = () => {
                     {order.deliveryTime.split(":").slice(0, 2).join(":")}
                   </p>
                 </div>
-                <div>
+                <div className={Styles.delivery_ul_foods}>
                   <p className={Styles.delivery_description_h}>
                     Список блюд в заказе:
                   </p>
