@@ -34,13 +34,13 @@ export const Delivery_user = () => {
         setError(result.message);
       }
     } catch (err) {
-      console.error("Ошибка при получении заказов:", err); 
+      console.error("Ошибка при получении заказов:", err);
       setError("Ошибка при загрузке заказов");
     }
   };
 
   useEffect(() => {
-    fetchUserOrders(); 
+    fetchUserOrders();
   }, []);
 
   const removeOrder = async (orderId) => {
@@ -70,7 +70,7 @@ export const Delivery_user = () => {
       const result = await response.json();
       if (result.success) {
         console.log("Заказ успешно удален");
-        await fetchUserOrders();
+        window.location.reload(); 
       } else {
         console.error(result.message);
       }
@@ -97,7 +97,8 @@ export const Delivery_user = () => {
                   })}
                 </p>
                 <p className={Styles.delivery_description}>
-                  Время заказа: {order.orderTime}
+                  Время заказа:{" "}
+                  {order.orderTime.split(":").slice(0, 2).join(":")}
                 </p>
                 <p className={Styles.delivery_description}>
                   Адрес: {order.address}
@@ -122,7 +123,8 @@ export const Delivery_user = () => {
                   Статус заказа: {order.status}
                 </p>
                 <p className={Styles.delivery_description}>
-                  Время доставки: {order.deliveryTime}
+                  Время доставки:{" "}
+                  {order.deliveryTime.split(":").slice(0, 2).join(":")}
                 </p>
                 <button
                   className={Styles.button_remove}

@@ -267,7 +267,7 @@ class OrderController {
           .status(404)
           .json({
             success: false,
-            message: "Заказ не найден или не принадлежит пользователю",
+            message: "Заказ не найден",
           });
       }
 
