@@ -438,7 +438,7 @@ class OrderController {
         });
       });
   
-      // Вместо сообщения, если заказов нет, возвращаем пустой массив
+      // Возвращаем пустой массив
       if (orders.length === 0) {
         return res.status(200).json({ success: true, message: "Заказы не найдены", orders: [] });
       }
