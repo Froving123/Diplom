@@ -95,7 +95,7 @@ export const UserReservations = () => {
           {userReservations.map((reservation) => (
             <li key={reservation.ID} className={Styles.li_reserv}>
               <p className={Styles.reserv_description}>
-                Дата:{" "}
+                <strong className={Styles.reserv_description_h}>Дата: </strong>
                 {new Date(reservation.Дата).toLocaleString("ru-RU", {
                   day: "2-digit",
                   month: "2-digit",
@@ -103,13 +103,20 @@ export const UserReservations = () => {
                 })}
               </p>
               <p className={Styles.reserv_description}>
-                Время: {reservation.Время.split(":").slice(0, 2).join(":")}
+                <strong className={Styles.reserv_description_h}>Время: </strong>
+                {reservation.Время.split(":").slice(0, 2).join(":")}
               </p>
               <p className={Styles.reserv_description}>
-                Количество человек: {reservation.Количество_человек}
+                <strong className={Styles.reserv_description_h}>
+                  Количество человек:{" "}
+                </strong>
+                {reservation.Количество_человек}
               </p>
               <p className={Styles.reserv_description}>
-                Номер стола: {reservation.Номер_стола}
+                <strong className={Styles.reserv_description_h}>
+                  Номер стола:{" "}
+                </strong>
+                {reservation.Номер_стола}
               </p>
               <button
                 className={Styles.button_remove}

@@ -50,7 +50,9 @@ export const Delivery_user = () => {
       return;
     }
 
-    const confirmDelete = window.confirm("Вы уверены, что хотите отменить заказ?");
+    const confirmDelete = window.confirm(
+      "Вы уверены, что хотите отменить заказ?"
+    );
     if (!confirmDelete) {
       return; // Отмена удаления
     }
@@ -86,44 +88,74 @@ export const Delivery_user = () => {
           {userOrders.map((order) => {
             return (
               <li key={order.orderId} className={Styles.li_delivery}>
-                <p className={Styles.delivery_description}>
-                  Дата заказа:{" "}
-                  {new Date(order.orderDate).toLocaleString("ru-RU", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  })}
-                </p>
-                <p className={Styles.delivery_description}>
-                  Время заказа:{" "}
-                  {order.orderTime.split(":").slice(0, 2).join(":")}
-                </p>
-                <p className={Styles.delivery_description}>
-                  Адрес: {order.address}
-                </p>
-                <p className={Styles.delivery_description}>
-                  Способ оплаты: {order.paymentMethod}
-                </p>
-                <p className={Styles.delivery_description}>
-                  Стоимость заказа: {order.totalPrice} ₽
-                </p>
-                <p className={Styles.delivery_description}>Список блюд:</p>
-                <ul className={Styles.food_list}>
-                  {order.foods.map((food, index) => {
-                    return (
-                      <li key={index} className={Styles.food_item}>
-                        {food.foodName} — {food.quantity} шт.
-                      </li>
-                    );
-                  })}
-                </ul>
-                <p className={Styles.delivery_description}>
-                  Статус заказа: {order.status}
-                </p>
-                <p className={Styles.delivery_description}>
-                  Время доставки:{" "}
-                  {order.deliveryTime.split(":").slice(0, 2).join(":")}
-                </p>
+                <div>
+                  <p className={Styles.delivery_description}>
+                    <strong className={Styles.delivery_description_h}>
+                      Дата заказа:{" "}
+                    </strong>
+                    <br></br>
+                    {new Date(order.orderDate).toLocaleString("ru-RU", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })}
+                  </p>
+                  <p className={Styles.delivery_description}>
+                    <strong className={Styles.delivery_description_h}>
+                      Время заказа:{" "}
+                    </strong>
+                    <br></br>
+                    {order.orderTime.split(":").slice(0, 2).join(":")}
+                  </p>
+                  <p className={Styles.delivery_description}>
+                    <strong className={Styles.delivery_description_h}>
+                      Адрес:{" "}
+                    </strong>
+                    <br></br>
+                    {order.address}
+                  </p>
+                  <p className={Styles.delivery_description}>
+                    <strong className={Styles.delivery_description_h}>
+                      Способ оплаты:{" "}
+                    </strong>
+                    <br></br>
+                    {order.paymentMethod}
+                  </p>
+                  <p className={Styles.delivery_description}>
+                    <strong className={Styles.delivery_description_h}>
+                      Стоимость заказа:{" "}
+                    </strong>
+                    <br></br> {order.totalPrice} ₽
+                  </p>
+                  <p className={Styles.delivery_description}>
+                    <strong className={Styles.delivery_description_h}>
+                      Статус заказа:{" "}
+                    </strong>
+                    <br></br>
+                    {order.status}
+                  </p>
+                  <p className={Styles.delivery_description}>
+                    <strong className={Styles.delivery_description_h}>
+                      Время доставки:{" "}
+                    </strong>
+                    <br></br>
+                    {order.deliveryTime.split(":").slice(0, 2).join(":")}
+                  </p>
+                </div>
+                <div>
+                  <p className={Styles.delivery_description_h}>
+                    Список блюд в заказе:
+                  </p>
+                  <ul className={Styles.food_list}>
+                    {order.foods.map((food, index) => {
+                      return (
+                        <li key={index} className={Styles.food_item}>
+                          {food.foodName} — {food.quantity} шт.
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
                 <button
                   className={Styles.button_remove}
                   onClick={() => removeOrder(order.orderId)}
