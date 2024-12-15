@@ -50,9 +50,7 @@ export const Delivery_user = () => {
       return;
     }
 
-    const confirmDelete = window.confirm(
-      "Вы уверены, что хотите отменить заказ?"
-    );
+    const confirmDelete = window.confirm("Вы уверены, что хотите отменить заказ?");
     if (!confirmDelete) {
       return; // Отмена удаления
     }
@@ -70,7 +68,8 @@ export const Delivery_user = () => {
       const result = await response.json();
       if (result.success) {
         console.log("Заказ успешно удален");
-        window.location.reload(); 
+        // Обновляем список заказов после удаления
+        await fetchUserOrders();
       } else {
         console.error(result.message);
       }
