@@ -138,24 +138,50 @@
 
 @media screen and (min-width: 501px) and (max-width: 750px) {
   .delivery {
-    margin: 15px 0px 35px 0px;
+    margin: 0px;
   }
 
   .title_delivery {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
+    margin-left: 0px;
     font-size: 27px;
   }
 
-  .li_delivery {
-    padding: 25px;
+  .ul_delivery {
+    margin-left: 15px;
   }
 
+  .li_delivery {
+    padding: 10px;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .delivery_description_h {
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  
   .delivery_description {
+    font-size: 20px;
+    margin-bottom: 0%;
+    padding: 0%;
+  }
+
+  .delivery_ul_foods {
+    margin-bottom: 20px;
+  }
+
+  .food_list {
+    gap: 15px;
+  }
+  
+  .food_item {
     font-size: 20px;
   }
 
   .delivery_empty {
     font-size: 20px;
-    margin: 20px;
+    margin: 15px;
   }
 }

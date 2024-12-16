@@ -233,6 +233,35 @@
     gap: 70px;
   }
 
+  .category {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-items: left;
+  }
+
+  .category_h {
+    color: rgb(252, 130, 37);
+    font-family: "Pacifico";
+    letter-spacing: 2px;
+    font-size: 25px;
+  }
+
+  .hr_name {
+    width: 250px;
+    height: 5px;
+    border: none;
+    margin: 0%;
+    background-color: rgb(252, 130, 37);
+  }
+
+  .foods_category {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
   .food {
     border-radius: 7px;
     gap: 8px;

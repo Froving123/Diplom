@@ -150,12 +150,12 @@
   }
 
   .product_content {
-    padding: 10px;
+    padding-left: 10px;
   }
 
   .product_description {
     font-size: 15px;
-    margin: 0%;
+    margin: 10px;
   }
 
   .button_remove {

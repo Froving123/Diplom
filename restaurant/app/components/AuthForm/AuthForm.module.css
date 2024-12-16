@@ -139,36 +139,42 @@
 
 @media screen and (min-width: 501px) and (max-width: 750px) {
   .form__title {
-    margin-bottom: 17px;
-    font-size: 30px;
+    margin-bottom: 10px;
+    font-size: 25px;
   }
 
   .form__field {
-    margin-bottom: 17px;
+    margin-bottom: 15px;
   }
 
   .form__field-title {
-    margin-bottom: 8px;
-    font-size: 18px;
-  }
-
-  .form__field-input {
-    padding: 15px 17px;
+    margin-bottom: 5px;
     font-size: 15px;
   }
 
-  .form__reset {
+  .form__field-input {
+    padding: 10px 12px;
     font-size: 12px;
-    padding: 12px 14px;
+  }
+
+  .form__reset {
+    padding: 7px 10px;
+    font-size: 10px;
   }
 
   .form__transition {
-    font-size: 12px;
-    padding: 12px 14px;
+    padding: 7px 10px;
+    font-size: 10px;
   }
 
   .form__submit {
-    font-size: 12px;
-    padding: 12px 14px;
+    padding: 7px 10px;
+    font-size: 10px;
+  }
+
+  .error_message {
+    color: red;
+    font-weight: bold;
+    font-size: small;
   }
 }
