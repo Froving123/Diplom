@@ -129,10 +129,10 @@ export const Feedback = () => {
         {feedbacks.length > 1 && (
           <div className={Styles.slider_button}>
             <button className={Styles.slider_left} onClick={leftSlide}>
-              &lt;
+              <img src="./images/left-button.png" className={Styles.button_img}></img>
             </button>
             <button className={Styles.slider_right} onClick={rightSlide}>
-              &gt;
+            <img src="./images/right-button.png" className={Styles.button_img}></img>
             </button>
           </div>
         )}
