@@ -1,19 +1,23 @@
+"use client";
+
+import { usePathname } from "next/navigation";
 import { Header } from "./components/Header/Header";
 import { Footer } from "./components/Footer/Footer";
+import { AdminHeader } from "./components/Header/AdminHeader";
+import { AdminFooter } from "./components/Footer/AdminFooter";
 import "./globals.css";
 
-export const metadata = {
-  title: "Best Rest",
-  description: "Ресторан вкусной еды",
-};
-
 export default function RootLayout({ children }) {
+  const pathname = usePathname();
+
+  const isAdminPage = pathname.startsWith("/Admin");
+
   return (
     <html lang="ru">
       <body>
-        <Header />
+        {isAdminPage ? <AdminHeader /> : <Header />}
         {children}
-        <Footer />
+        {isAdminPage ? <AdminFooter /> : <Footer />}
       </body>
     </html>
   );
