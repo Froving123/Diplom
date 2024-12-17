@@ -39,7 +39,7 @@ export const Discount = () => {
         </h2>
         <p className={Styles.discount_p}>
           {discountedItem.price !== null && discountedItem.category
-            ? `Только в этом месяце ${discountedItem.category} ${discountedItem.price}₽`
+            ? `Только в этом месяце ${discountedItem.category} в доставке ${discountedItem.price}₽`
             : ""}
         </p>
       </div>

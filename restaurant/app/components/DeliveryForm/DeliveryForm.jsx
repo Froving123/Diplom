@@ -112,6 +112,10 @@ export const DeliveryForm = (props) => {
     }
   };
 
+  const handleClear = () => {
+    setNewItem({ street: "", home: "", flat: "", payment: "" });
+  };
+
   useEffect(() => {
     updateCart(); // Обновление данных корзины при монтировании
   }, [updateCart]);
@@ -189,17 +193,24 @@ export const DeliveryForm = (props) => {
             ))}
           </select>
         </label>
-        <div className={Styles.order}>
-          <p className={Styles.order_content}>Стоимость доставки</p>
-          <p className={Styles.order_content}>{DELIVERY_PRICE}₽</p>
+        <div className={Styles.price}>
+          <p className={Styles.price_content}>Стоимость доставки</p>
+          <p className={Styles.price_content}>{DELIVERY_PRICE}₽</p>
         </div>
-        <div className={Styles.order}>
-          <p className={Styles.order_content}>Стоимость заказа</p>
-          <p className={Styles.order_content}>{totalPrice + DELIVERY_PRICE}₽</p>
+        <div className={Styles.price}>
+          <p className={Styles.price_content}>Стоимость заказа</p>
+          <p className={Styles.price_content}>{totalPrice + DELIVERY_PRICE}₽</p>
         </div>
       </div>
       {error && <p className={Styles.error_message}>{error}</p>}
       <div className={Styles["form__actions"]}>
+        <button
+          className={Styles["form__reset"]}
+          type="reset"
+          onClick={handleClear}
+        >
+          Очистить
+        </button>
         <button type="submit" className={Styles["form__submit"]}>
           Заказать
         </button>

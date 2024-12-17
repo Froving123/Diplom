@@ -231,7 +231,7 @@ class OrderController {
       );
     } catch (error) {
       console.error("Ошибка на сервере:", error);
-      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+      res.status(500).json({ success: false });
     }
   }
 
@@ -239,9 +239,11 @@ class OrderController {
     try {
       const { orderId } = req.body;
       if (!orderId) {
-        return res.status(400).json({ success: false, message: "ID заказа обязателен" });
+        return res
+          .status(400)
+          .json({ success: false, message: "ID заказа обязателен" });
       }
-  
+
       // Получаем детали заказа
       const getOrderDetailsQuery = `
         SELECT 
@@ -253,71 +255,91 @@ class OrderController {
         INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
         WHERE Заказ.ID = ? 
       `;
-  
+
       const orderDetails = await new Promise((resolve, reject) => {
         conn.query(getOrderDetailsQuery, [orderId], (err, results) => {
           if (err) return reject(err);
           resolve(results[0]);
         });
       });
-  
+
       if (!orderDetails) {
-        return res.status(404).json({ success: false, message: "Заказ не найден" });
+        return res
+          .status(404)
+          .json({ success: false, message: "Заказ не найден" });
       }
-  
+
       const { deliveryId, contentId, addressId } = orderDetails;
-  
+
       // Удаляем блюда из заказа
       await new Promise((resolve, reject) => {
-        conn.query("DELETE FROM Блюда_в_заказе WHERE ID_содержания_заказа = ?", [contentId], (err) => (err ? reject(err) : resolve()));
+        conn.query(
+          "DELETE FROM Блюда_в_заказе WHERE ID_содержания_заказа = ?",
+          [contentId],
+          (err) => (err ? reject(err) : resolve())
+        );
       });
-  
+
       // Удаляем сам заказ
       await new Promise((resolve, reject) => {
-        conn.query("DELETE FROM Заказ WHERE ID = ?", [orderId], (err) => (err ? reject(err) : resolve()));
+        conn.query("DELETE FROM Заказ WHERE ID = ?", [orderId], (err) =>
+          err ? reject(err) : resolve()
+        );
       });
-  
+
       // Удаляем содержание заказа
       await new Promise((resolve, reject) => {
-        conn.query("DELETE FROM Содержание_заказа WHERE ID = ?", [contentId], (err) => (err ? reject(err) : resolve()));
+        conn.query(
+          "DELETE FROM Содержание_заказа WHERE ID = ?",
+          [contentId],
+          (err) => (err ? reject(err) : resolve())
+        );
       });
-  
+
       // Удаляем доставку
       await new Promise((resolve, reject) => {
-        conn.query("DELETE FROM Доставка WHERE ID = ?", [deliveryId], (err) => (err ? reject(err) : resolve()));
+        conn.query("DELETE FROM Доставка WHERE ID = ?", [deliveryId], (err) =>
+          err ? reject(err) : resolve()
+        );
       });
-  
+
       // Удаляем адрес
       await new Promise((resolve, reject) => {
-        conn.query("DELETE FROM Адрес WHERE ID = ?", [addressId], (err) => (err ? reject(err) : resolve()));
+        conn.query("DELETE FROM Адрес WHERE ID = ?", [addressId], (err) =>
+          err ? reject(err) : resolve()
+        );
       });
-  
+
       res.status(200).json({ success: true, message: "Заказ успешно удален" });
     } catch (error) {
       console.error("Ошибка на сервере:", error);
-      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+      res.status(500).json({ success: false });
     }
   }
-  
+
   // Получение заказов пользователя
   async userOrder(req, res) {
     try {
       const authHeader = req.headers.authorization;
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({ success: false, message: "Токен отсутствует" });
+        return res
+          .status(401)
+          .json({ success: false, message: "Токен отсутствует" });
       }
-  
+
       const token = authHeader.split(" ")[1];
       let decodedToken;
-  
+
       try {
         decodedToken = jwt.verify(token, jwtSecret);
       } catch (err) {
-        return res.status(401).json({ success: false, message: "Неверный токен" });
+        return res
+          .status(401)
+          .json({ success: false, message: "Неверный токен" });
       }
-  
+
       const userId = decodedToken.userId;
-  
+
       // Получаем заказы пользователя
       const getOrdersQuery = `
         SELECT 
@@ -340,7 +362,7 @@ class OrderController {
         WHERE Содержание_заказа.ID_пользователя = ? 
         ORDER BY Заказ.Дата_заказа DESC, Заказ.Время_заказа DESC
       `;
-  
+
       const orders = await new Promise((resolve, reject) => {
         conn.query(getOrdersQuery, [userId], (err, results) => {
           if (err) {
@@ -349,11 +371,11 @@ class OrderController {
           resolve(results);
         });
       });
-  
+
       if (orders.length === 0) {
         return res.status(404).json({ success: false, message: "Нет заказов" });
       }
-  
+
       const getFoodsQuery = `
         SELECT 
           Блюда.Название AS foodName,
@@ -362,7 +384,7 @@ class OrderController {
         INNER JOIN Блюда ON Блюда_в_заказе.ID_блюда = Блюда.ID
         WHERE Блюда_в_заказе.ID_содержания_заказа = ?
       `;
-  
+
       const ordersWithFoods = await Promise.all(
         orders.map(async (order) => {
           const foods = await new Promise((resolve, reject) => {
@@ -376,7 +398,7 @@ class OrderController {
           return { ...order, foods };
         })
       );
-  
+
       res.status(200).json({
         success: true,
         message: "Заказы успешно получены",
@@ -384,28 +406,32 @@ class OrderController {
       });
     } catch (error) {
       console.error("Ошибка на сервере:", error);
-      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+      res.status(500).json({ success: false });
     }
   }
-  
+
   async userOrder(req, res) {
     try {
       const authHeader = req.headers.authorization;
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({ success: false, message: "Токен отсутствует" });
+        return res
+          .status(401)
+          .json({ success: false, message: "Токен отсутствует" });
       }
-  
+
       const token = authHeader.split(" ")[1];
       let decodedToken;
-  
+
       try {
         decodedToken = jwt.verify(token, jwtSecret);
       } catch (err) {
-        return res.status(401).json({ success: false, message: "Неверный токен" });
+        return res
+          .status(401)
+          .json({ success: false, message: "Неверный токен" });
       }
-  
+
       const userId = decodedToken.userId;
-  
+
       // Получаем заказы пользователя
       const getOrdersQuery = `
         SELECT 
@@ -428,7 +454,7 @@ class OrderController {
         WHERE Содержание_заказа.ID_пользователя = ? 
         ORDER BY Заказ.Дата_заказа DESC, Заказ.Время_заказа DESC
       `;
-  
+
       const orders = await new Promise((resolve, reject) => {
         conn.query(getOrdersQuery, [userId], (err, results) => {
           if (err) {
@@ -437,12 +463,14 @@ class OrderController {
           resolve(results);
         });
       });
-  
+
       // Возвращаем пустой массив
       if (orders.length === 0) {
-        return res.status(200).json({ success: true, message: "Заказы не найдены", orders: [] });
+        return res
+          .status(200)
+          .json({ success: true, message: "Заказы не найдены", orders: [] });
       }
-  
+
       const getFoodsQuery = `
         SELECT 
           Блюда.Название AS foodName,
@@ -451,7 +479,7 @@ class OrderController {
         INNER JOIN Блюда ON Блюда_в_заказе.ID_блюда = Блюда.ID
         WHERE Блюда_в_заказе.ID_содержания_заказа = ?
       `;
-  
+
       const ordersWithFoods = await Promise.all(
         orders.map(async (order) => {
           const foods = await new Promise((resolve, reject) => {
@@ -465,7 +493,7 @@ class OrderController {
           return { ...order, foods };
         })
       );
-  
+
       res.status(200).json({
         success: true,
         message: "Заказы успешно получены",
@@ -473,9 +501,9 @@ class OrderController {
       });
     } catch (error) {
       console.error("Ошибка на сервере:", error);
-      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+      res.status(500).json({ success: false });
     }
-  }  
+  }
 }
 
 module.exports = new OrderController();

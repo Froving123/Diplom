@@ -101,13 +101,13 @@ export const Feedback = () => {
         <div
           className={Styles.slider_line}
           ref={sliderLineRef}
-          style={{ width: sliderLineWidth }}
+          style={{ width: `${sliderLineWidth}%` }}
         >
           {feedbacks.map((feedback, index) => (
             <div
               className={Styles.sliders}
               key={index}
-              style={{ width: `${100 / feedbacks.length}%` }} // Устанавливаем ширину каждого отзыва в процентах
+              style={{ width: `100%` }} // Каждый слайд занимает 100% родителя
             >
               <div className={Styles.feedback_card}>
                 <h2 className={Styles.feedback_h_all}>{feedback.text}</h2>
@@ -116,23 +116,28 @@ export const Feedback = () => {
                   Оценка: {feedback.score}/5
                 </p>
                 <p className={Styles.feedback_date}>
-                  {new Date(feedback.date).toLocaleString("ru-RU", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  })}
+                  {new Date(feedback.date).toLocaleDateString("ru-RU")}
                 </p>
               </div>
             </div>
           ))}
         </div>
+        {/* Кнопки управления слайдером */}
         {feedbacks.length > 1 && (
           <div className={Styles.slider_button}>
             <button className={Styles.slider_left} onClick={leftSlide}>
-              <img src="./images/left-button.png" className={Styles.button_img}></img>
+              <img
+                src="./images/left-button.png"
+                className={Styles.button_img}
+                alt="Left"
+              />
             </button>
             <button className={Styles.slider_right} onClick={rightSlide}>
-            <img src="./images/right-button.png" className={Styles.button_img}></img>
+              <img
+                src="./images/right-button.png"
+                className={Styles.button_img}
+                alt="Right"
+              />
             </button>
           </div>
         )}
