@@ -51,7 +51,7 @@ export const AdminAuthForm = (props) => {
       return;
     }
 
-    fetch("http://localhost:5000/api/admin/createPassword", {
+    fetch("http://localhost:5000/api/admin/create-password", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -82,7 +82,7 @@ export const AdminAuthForm = (props) => {
         setLogin("");
         setCopyPassword("");
         setPassword("");
-        alert("Сотрудник успешно создаль пароль");
+        alert("Сотрудник успешно создал пароль");
         props.close();
         window.location.reload();
       })

@@ -11,7 +11,7 @@ const conn = mysql.createConnection({
   database: "Best-Rest",
 });
 
-class UserController {
+class AdminController {
   // Метод для создания пароля
   async createPassword(req, res) {
     try {
@@ -20,7 +20,7 @@ class UserController {
       // Проверка, существует ли пользователь с таким логином
       const checkUserSql = `
         SELECT * FROM Сотрудники
-        WHERE  Логин= ? AND Пароль!= 0
+        WHERE  Логин= ? AND Пароль!= NULL
       `;
 
       conn.query(checkUserSql, [login], (err, results) => {
@@ -50,39 +50,43 @@ class UserController {
             });
           }
 
-          // SQL-запрос для добавления нового пользователя
+          // SQL-запрос для обновления пароля пользователя с заданным логином
           const addUserSql = `
-            INSERT INTO Сотрудники
-            (Пароль)
-            VALUES (?) WHERE Логин= ?
+            UPDATE Сотрудники
+            SET Пароль = ?
+            WHERE Логин = ?
           `;
 
-          conn.query(
-            addUserSql,
-            [hashedPassword, login],
-            (addErr, result) => {
-              if (addErr) {
-                console.error("Ошибка при добавлении пользователя:", addErr);
-                return res.status(500).json({
-                  success: false,
-                  message: "Ошибка при регистрации пользователя",
-                });
-              }
-
-              // Создание JWT токена
-              const token = jwt.sign(
-                { userId: result.insertId },
-                jwtSecret,
-                { expiresIn: "3h" } // Срок действия токена 3 часа
-              );
-
-              return res.status(201).json({
-                success: true,
-                message: "Пользователь успешно зарегистрирован",
-                token,
+          conn.query(addUserSql, [hashedPassword, login], (addErr, result) => {
+            if (addErr) {
+              console.error("Ошибка при создании пароля:", addErr);
+              return res.status(500).json({
+                success: false,
+                message: "Ошибка при создании пароля",
               });
             }
-          );
+
+            if (result.affectedRows === 0) {
+              // Если ни одна строка не была обновлена, значит пользователя с таким логином нет
+              return res.status(404).json({
+                success: false,
+                message: "Пользователь с таким логином не найден",
+              });
+            }
+
+            // Создание JWT токена
+            const token = jwt.sign(
+              { login: login },
+              jwtSecret,
+              { expiresIn: "3h" } // Срок действия токена 3 часа
+            );
+
+            return res.status(201).json({
+              success: true,
+              message: "Пароль успешно обновлён",
+              token,
+            });
+          });
         });
       });
     } catch (error) {
@@ -96,15 +100,15 @@ class UserController {
 
   async login(req, res) {
     try {
-      const { email, password } = req.body;
+      const { login, password } = req.body;
 
       // Проверка, существует ли пользователь с таким email
       const checkUserSql = `
-        SELECT * FROM Пользователь
-        WHERE Email = ?
+        SELECT * FROM Сотрудники
+        WHERE Логин= ?
       `;
 
-      conn.query(checkUserSql, [email], (err, results) => {
+      conn.query(checkUserSql, [login], (err, results) => {
         if (err) {
           console.error("Ошибка при проверке пользователя:", err);
           return res.status(500).json({
@@ -116,7 +120,7 @@ class UserController {
         if (results.length === 0) {
           return res.status(404).json({
             success: false,
-            message: "Пользователь с таким email не найден",
+            message: "Пользователь с таким логином не найден",
           });
         }
 
@@ -188,7 +192,7 @@ class UserController {
       const userId = decodedToken.userId;
 
       // Запрос на получение данных пользователя из базы данных
-      const getUserSql = `SELECT * FROM Пользователь WHERE ID = ?`;
+      const getUserSql = `SELECT * FROM Сотрудники WHERE ID = ?`;
 
       conn.query(getUserSql, [userId], (err, results) => {
         if (err) {
@@ -211,14 +215,11 @@ class UserController {
           user: {
             id: user.ID,
             name: user.Имя,
-            lastName: user.Фамилия,
-            email: user.Email,
-            phone: user.Номер_телефона,
           },
         });
       });
     } catch (error) {
-      console.error("Ошибка в функции profile:", error);
+      console.error("Ошибка в функции admin:", error);
       return res
         .status(500)
         .json({ success: false, message: "Ошибка сервера" });
@@ -226,4 +227,4 @@ class UserController {
   }
 }
 
-module.exports = new UserController();
+module.exports = new AdminController();
