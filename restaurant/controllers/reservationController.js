@@ -50,13 +50,11 @@ class ReservationController {
             AND ID NOT IN (
                 SELECT ID_стола
                 FROM Бронирование
-                WHERE Дата = ? AND ABS(TIMESTAMPDIFF(HOUR, Время, ?)) < 3
+                WHERE Дата = ? AND ABS(TIME_TO_SEC(TIME(Время)) - TIME_TO_SEC(?)) < 10800
             )
         `;
 
-      const startDateTime = `${date} ${time}`;
-
-      conn.query(query, [people, date, startDateTime], (err, results) => {
+      conn.query(query, [people, date, time], (err, results) => {
         if (err) {
           console.error("Ошибка при получении доступных столов:", err);
           return res.status(500).json({
