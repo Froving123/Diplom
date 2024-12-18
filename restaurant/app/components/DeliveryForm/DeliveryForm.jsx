@@ -14,7 +14,7 @@ export const DeliveryForm = (props) => {
   const [availablePayment, setAvailablePayment] = useState([]);
   const { totalPrice, updateCart } = useCart();
   const [error, setError] = useState("");
-  const DELIVERY_PRICE = 700; // Статичная стоимость доставки
+  const DELIVERY_PRICE = 500; // Статичная стоимость доставки
 
   useEffect(() => {
     const fetchAllPayment = async () => {

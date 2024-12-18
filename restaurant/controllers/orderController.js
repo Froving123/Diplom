@@ -78,10 +78,10 @@ class OrderController {
           const addressId = addressResult.insertId;
 
           // Добавление доставки
-          const insertDeliveryQuery = `INSERT INTO Доставка (ID_адреса, Цена) VALUES (?, ?)`;
+          const insertDeliveryQuery = `INSERT INTO Доставка (Цена) VALUES (?)`;
           conn.query(
             insertDeliveryQuery,
-            [addressId, deliveryPrice],
+            [deliveryPrice],
             (err, deliveryResult) => {
               if (err) {
                 console.error("Ошибка при добавлении доставки:", err);
@@ -193,10 +193,10 @@ class OrderController {
                                 }
 
                                 // Добавление заказа
-                                const insertOrderQuery = `INSERT INTO Заказ (ID_статуса, ID_доставки, ID_содержания_заказа, ID_способа, Дата_заказа, Время_заказа) VALUES ((SELECT ID FROM Статус_заказа WHERE ID = 1), ?, ?, ?, CURDATE(), CURTIME())`;
+                                const insertOrderQuery = `INSERT INTO Заказ (ID_статуса, ID_доставки, ID_адреса, ID_содержания_заказа, ID_способа, Дата_заказа, Время_заказа) VALUES ((SELECT ID FROM Статус_заказа WHERE ID = 1), ?, ?, ?, ?, CURDATE(), CURTIME())`;
                                 conn.query(
                                   insertOrderQuery,
-                                  [deliveryId, contentId, payment],
+                                  [deliveryId, addressId, contentId, payment],
                                   (err, orderResult) => {
                                     if (err) {
                                       console.error(
@@ -250,9 +250,8 @@ class OrderController {
           Заказ.ID AS orderId,
           Заказ.ID_доставки AS deliveryId,
           Заказ.ID_содержания_заказа AS contentId,
-          Доставка.ID_адреса AS addressId
+          Заказ.ID_адреса AS addressId
         FROM Заказ
-        INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
         WHERE Заказ.ID = ? 
       `;
 
@@ -355,7 +354,7 @@ class OrderController {
           Содержание_заказа.ID AS contentId
         FROM Заказ
         INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
-        INNER JOIN Адрес ON Доставка.ID_адреса = Адрес.ID
+        INNER JOIN Адрес ON Заказ.ID_адреса = Адрес.ID
         INNER JOIN Статус_заказа ON Заказ.ID_статуса = Статус_заказа.ID
         INNER JOIN Содержание_заказа ON Заказ.ID_содержания_заказа = Содержание_заказа.ID
         INNER JOIN Способ_оплаты ON Заказ.ID_способа = Способ_оплаты.ID
@@ -447,7 +446,7 @@ class OrderController {
           Содержание_заказа.ID AS contentId
         FROM Заказ
         INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
-        INNER JOIN Адрес ON Доставка.ID_адреса = Адрес.ID
+        INNER JOIN Адрес ON Заказ.ID_адреса = Адрес.ID
         INNER JOIN Статус_заказа ON Заказ.ID_статуса = Статус_заказа.ID
         INNER JOIN Содержание_заказа ON Заказ.ID_содержания_заказа = Содержание_заказа.ID
         INNER JOIN Способ_оплаты ON Заказ.ID_способа = Способ_оплаты.ID
