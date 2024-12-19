@@ -19,7 +19,7 @@ class FeedbackController {
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res.status(401).json({
           success: false,
-          message: "Токен отсутствует",
+          message: "Сессия была закончена, авторизуйтесь заново",
         });
       }
 
@@ -31,7 +31,7 @@ class FeedbackController {
       } catch (err) {
         return res.status(401).json({
           success: false,
-          message: "Неверный токен",
+          message: "Сессия была закончена, авторизуйтесь заново",
         });
       }
 

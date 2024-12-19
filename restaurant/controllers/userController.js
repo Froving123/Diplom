@@ -170,7 +170,7 @@ class UserController {
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res
           .status(401)
-          .json({ success: false, message: "Токен отсутствует" });
+          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
       }
 
       const token = authHeader.split(" ")[1];
@@ -182,7 +182,7 @@ class UserController {
       } catch (err) {
         return res
           .status(401)
-          .json({ success: false, message: "Неверный токен" });
+          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
       }
 
       const userId = decodedToken.userId;
