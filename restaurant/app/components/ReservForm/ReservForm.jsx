@@ -149,7 +149,19 @@ export const ReservForm = (props) => {
             className={Styles["form__field-input"]}
             type="time"
             value={newItem.time}
-            onChange={(e) => setNewItem({ ...newItem, time: e.target.value })}
+            onChange={(e) => {
+              const selectedTime = e.target.value;
+              // Проверка времени
+              if (selectedTime < "07:00" || selectedTime > "21:00") {
+                setError("Время должно быть в диапазоне с 07:00 до 21:00");
+                setTimeout(() => setError(""), 3000);
+              } else {
+                setError("");
+                setNewItem({ ...newItem, time: selectedTime });
+              }
+            }}
+            min="07:00"
+            max="21:00"
           />
         </label>
         <label className={Styles["form__field"]}>
