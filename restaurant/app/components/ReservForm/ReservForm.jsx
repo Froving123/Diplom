@@ -12,6 +12,11 @@ export const ReservForm = (props) => {
   });
   const [availableTables, setAvailableTables] = useState([]);
   const [error, setError] = useState("");
+  const today = new Date();
+  const minDate = today.toISOString().split("T")[0];
+  const maxDate = new Date(today.setMonth(today.getMonth() + 1))
+    .toISOString()
+    .split("T")[0];
 
   useEffect(() => {
     const fetchAllTables = async () => {
@@ -133,6 +138,8 @@ export const ReservForm = (props) => {
             className={Styles["form__field-input"]}
             type="date"
             value={newItem.date}
+            min={minDate} // Ограничение на выбор прошлой даты
+            max={maxDate} // Ограничение на выбор даты через месяц
             onChange={(e) => setNewItem({ ...newItem, date: e.target.value })}
           />
         </label>
