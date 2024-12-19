@@ -2,7 +2,7 @@ const mysql = require("mysql");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const jwtSecret = "Best-Rest";
+const jwtSecret = "Best-RestAdmin";
 
 const conn = mysql.createConnection({
   host: "MySQL-8.0",
@@ -20,7 +20,7 @@ class AdminController {
       // Проверка, существует ли пользователь с таким логином
       const checkUserSql = `
         SELECT * FROM Сотрудники
-        WHERE  Логин= ? AND Пароль!= NULL
+        WHERE Логин = ? AND Пароль != ''
       `;
 
       conn.query(checkUserSql, [login], (err, results) => {
@@ -73,13 +73,6 @@ class AdminController {
                 message: "Пользователь с таким логином не найден",
               });
             }
-
-            // Создание JWT токена
-            const token = jwt.sign(
-              { login: login },
-              jwtSecret,
-              { expiresIn: "3h" } // Срок действия токена 3 часа
-            );
 
             return res.status(201).json({
               success: true,
@@ -143,9 +136,8 @@ class AdminController {
             });
           }
 
-          // Создание JWT токена
           const token = jwt.sign(
-            { userId: user.ID },
+            { login: user.Логин },
             jwtSecret,
             { expiresIn: "3h" } // Срок действия токена 3 часа
           );
@@ -189,7 +181,7 @@ class AdminController {
           .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
       }
 
-      const userId = decodedToken.userId;
+      const userId = decodedToken.login;
 
       // Запрос на получение данных пользователя из базы данных
       const getUserSql = `SELECT * FROM Сотрудники WHERE ID = ?`;

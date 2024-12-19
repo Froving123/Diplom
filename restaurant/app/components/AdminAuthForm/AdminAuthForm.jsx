@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Styles from "./AdminAuthForm.module.css";
+import { useRouter } from "next/navigation";
 
 export const AdminAuthForm = (props) => {
   const [isLoginForm, setIsLoginForm] = useState(true);
@@ -9,6 +10,7 @@ export const AdminAuthForm = (props) => {
   const [password, setPassword] = useState("");
   const [copyPassword, setCopyPassword] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter();
 
   const toggleForm = (e) => {
     e.preventDefault();
@@ -71,12 +73,6 @@ export const AdminAuthForm = (props) => {
           return;
         }
 
-        // Сохраняем токен в localStorage
-        localStorage.setItem("authToken", result.token);
-
-        // Обновляем состояние в Header
-        props.updateAuthUser({ token: result.token });
-
         // Очищаем формы
         setError("");
         setLogin("");
@@ -125,7 +121,7 @@ export const AdminAuthForm = (props) => {
           }
 
           // Сохраняем токен в localStorage
-          localStorage.setItem("authToken", result.token);
+          localStorage.setItem("authTokenAdmin", result.token);
 
           // Обновляем состояние в Header
           props.updateAuthUser({ token: result.token });
@@ -136,7 +132,7 @@ export const AdminAuthForm = (props) => {
           setPassword("");
           alert("Сотрудник успешно авторизован");
           props.close();
-          window.location.reload();
+          router.push("/Contman");; // изменить на нужный роут
         })
         .catch((error) => {
           console.error("Ошибка при отправке данных на сервер:", error);

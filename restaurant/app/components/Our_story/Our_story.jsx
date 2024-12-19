@@ -15,7 +15,7 @@ export const Our_story = () => {
         </p>
       </div>
       <div className={Styles.right_story}>
-        <img className={Styles.story_img} src="./images/img-story.svg" />
+        <img className={Styles.story_img} src="/images/img-story.svg" />
       </div>
     </div>
   );

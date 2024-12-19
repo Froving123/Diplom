@@ -4,18 +4,14 @@ import Styles from "./Header.module.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { Overlay } from "../Overlay/Overlay";
-import { Popup } from "../Popup/Popup";
-import { AuthForm } from "../AuthForm/AuthForm";
 
-export const Header = () => {
-  const [popupIsOpened, setPopupIsOpened] = useState(false);
+export const ContmanHeader = () => {
   const pathname = usePathname();
   const [authUser, setAuthUser] = useState(null);
 
   useEffect(() => {
     // Проверка наличия токена в localStorage
-    const token = localStorage.getItem("authToken");
+    const token = localStorage.getItem("authTokenAdmin");
     if (token) {
       // Если токен есть, устанавливаем пользователя как авторизованного
       setAuthUser({ token });
@@ -24,20 +20,12 @@ export const Header = () => {
     }
   }, []);
 
-  const openPopup = () => {
-    setPopupIsOpened(true);
-  };
-
-  const closePopup = () => {
-    setPopupIsOpened(false);
-  };
-
   return (
     <header className={Styles.header}>
-      {pathname === "/" ? (
+      {pathname === "/Contman" ? (
         <img className={Styles.logo} src="/images/logo.png" />
       ) : (
-        <Link href="/" className={Styles.logo_link}>
+        <Link href="/Contman" className={Styles.logo_link}>
           <img className={Styles.logo} src="/images/logo.png" />
         </Link>
       )}
@@ -45,19 +33,9 @@ export const Header = () => {
         <ul className={Styles.ul_header}>
           <li className={Styles.nav_p}>
             <Link
-              href="/AboutUs"
+              href="/Contman/Menu"
               className={`${Styles.nav_link} ${
-                pathname === "/AboutUs" ? Styles.nav_link_active : ""
-              }`}
-            >
-              О нас
-            </Link>
-          </li>
-          <li className={Styles.nav_p}>
-            <Link
-              href="/Menu"
-              className={`${Styles.nav_link} ${
-                pathname === "/Menu" ? Styles.nav_link_active : ""
+                pathname === "/Contman/Menu" ? Styles.nav_link_active : ""
               }`}
             >
               Меню
@@ -84,27 +62,17 @@ export const Header = () => {
             </Link>
           </li>
           <li className={Styles.nav_p}>
-            {authUser ? (
               <Link
-                href="/Profile"
+                href="/ProfileAdmin"
                 className={`${Styles.nav_link} ${
-                  pathname === "/Profile" ? Styles.nav_link_active : ""
+                  pathname === "/ProfileAdmin" ? Styles.nav_link_active : ""
                 }`}
               >
                 Профиль
               </Link>
-            ) : (
-              <button className={Styles.button_profile} onClick={openPopup}>
-                Войти
-              </button>
-            )}
           </li>
         </ul>
       </nav>
-      <Overlay isOpened={popupIsOpened} close={closePopup} />
-      <Popup isOpened={popupIsOpened} close={closePopup}>
-        <AuthForm close={closePopup} updateAuthUser={setAuthUser} />
-      </Popup>
     </header>
   );
 };

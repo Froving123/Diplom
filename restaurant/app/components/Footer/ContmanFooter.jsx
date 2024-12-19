@@ -2,18 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import Styles from "./Footer.module.css";
+import Styles from "./Contman.module.css";
 
-export const Footer = () => {
+export const ContmanFooter = () => {
   const pathname = usePathname();
 
   return (
     <footer className={Styles.all_footer}>
       <div className={Styles.top_footer}>
-        {pathname === "/" ? (
+        {pathname === "/Contman" ? (
           <img className={Styles.logo} src="/images/logo.png" />
         ) : (
-          <Link href="/" className={Styles.logo_link}>
+          <Link href="/Contman" className={Styles.logo_link}>
             <img className={Styles.logo} src="/images/logo.png" />
           </Link>
         )}

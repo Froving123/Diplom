@@ -127,14 +127,14 @@ export const Feedback = () => {
           <div className={Styles.slider_button}>
             <button className={Styles.slider_left} onClick={leftSlide}>
               <img
-                src="./images/left-button.png"
+                src="/images/left-button.png"
                 className={Styles.button_img}
                 alt="Left"
               />
             </button>
             <button className={Styles.slider_right} onClick={rightSlide}>
               <img
-                src="./images/right-button.png"
+                src="/images/right-button.png"
                 className={Styles.button_img}
                 alt="Right"
               />
