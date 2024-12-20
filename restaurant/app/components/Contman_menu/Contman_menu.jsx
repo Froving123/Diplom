@@ -10,10 +10,10 @@ export const Contman_menu = () => {
   const [categories, setCategories] = useState([]);
   const [dishes, setDishes] = useState([]);
   const [popupIsOpen, setPopupIsOpen] = useState(false);
-  const [authUser, setAuthUser] = useState(null);
+  const [selectedDish, setSelectedDish] = useState(null);
 
   useEffect(() => {
-    // Функция для загрузки категорий
+    // Загрузка категорий
     const fetchCategories = async () => {
       try {
         const response = await fetch(
@@ -30,7 +30,7 @@ export const Contman_menu = () => {
       }
     };
 
-    // Функция для загрузки блюд с учетом скидок
+    // Загрузка блюд
     const fetchDishes = async () => {
       try {
         const response = await fetch("http://localhost:5000/api/delivery/menu");
@@ -45,62 +45,15 @@ export const Contman_menu = () => {
       }
     };
 
-    // Проверяем, авторизован ли пользователь
-    const token = localStorage.getItem("authToken");
-    setAuthUser(token ? { token } : null);
-
     fetchCategories();
     fetchDishes();
   }, []);
 
-  // Обработчик добавления блюда в корзину
-  const handleAddToCart = async (dishId) => {
-    // Всегда открываем форму авторизации
+  // Открыть форму изменения цены с выбранным блюдом
+  const openPriceForm = (dish) => {
+    setSelectedDish(dish);
     setPopupIsOpen(true);
-  
-    if (!authUser) {
-      return; // Если пользователь не авторизован, только открываем форму
-    }
-  
-    try {
-      // Создаём корзину, если она ещё не создана
-      const createBucketResponse = await fetch(
-        "http://localhost:5000/api/bucket/create",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authUser.token}`,
-          },
-        }
-      );
-  
-      const bucketResult = await createBucketResponse.json();
-      if (!createBucketResponse.ok) {
-        alert(bucketResult.message || "Ошибка при создании корзины");
-        return;
-      }
-  
-      // Добавляем блюдо в корзину
-      const response = await fetch("http://localhost:5000/api/bucket/foot", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${authUser.token}`,
-        },
-        body: JSON.stringify({ foodId: dishId }),
-      });
-  
-      const result = await response.json();
-      if (response.ok) {
-        alert(result.message || "Блюдо добавлено в корзину");
-      } else {
-        alert(result.message || "Ошибка при добавлении блюда в корзину");
-      }
-    } catch (err) {
-      console.error("Ошибка при добавлении в корзину:", err);
-    }
-  };  
+  };
 
   return (
     <div className={Styles.delivery_menu}>
@@ -137,7 +90,7 @@ export const Contman_menu = () => {
                     </p>
                     <button
                       className={Styles.button_menu_delivery}
-                      onClick={() => handleAddToCart(dish.ID)}
+                      onClick={() => openPriceForm(dish)}
                     >
                       Изменить цену блюда
                     </button>
@@ -151,7 +104,7 @@ export const Contman_menu = () => {
       <Popup isOpened={popupIsOpen} close={() => setPopupIsOpen(false)}>
         <PriceForm
           close={() => setPopupIsOpen(false)}
-          updateAuthUser={setAuthUser}
+          dish={selectedDish} // Передаем выбранное блюдо
         />
       </Popup>
     </div>

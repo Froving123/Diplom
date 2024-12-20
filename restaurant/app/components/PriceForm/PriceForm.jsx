@@ -1,221 +1,90 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Styles from "./PriceForm.module.css";
 
-export const PriceForm = (props) => {
-  const [newItem, setNewItem] = useState({
-    date: "",
-    time: "",
-    people: "",
-    table: "",
-  });
-  const [availableTables, setAvailableTables] = useState([]);
+export const PriceForm = ({ close, dish }) => {
+  const [price, setPrice] = useState("");
   const [error, setError] = useState("");
-  const today = new Date();
-  const minDate = today.toISOString().split("T")[0];
-  const maxDate = new Date(today.setMonth(today.getMonth() + 1))
-    .toISOString()
-    .split("T")[0];
 
-  useEffect(() => {
-    const fetchAllTables = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:5000/api/reservation/tables",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const result = await response.json();
-        if (response.ok) {
-          setAvailableTables(result.tables);
-        } else {
-          setError(result.message || "Ошибка при получении всех столов");
-          setTimeout(() => setError(""), 3000);
-        }
-      } catch (error) {
-        console.error("Ошибка при получении всех столов:", error);
-        setError("Ошибка при получении всех столов");
-        setTimeout(() => setError(""), 3000);
-      }
-    };
-
-    fetchAllTables();
-  }, []);
-
-  useEffect(() => {
-    if (newItem.date && newItem.time && newItem.people) {
-      const fetchAvailableTables = async () => {
-        try {
-          const response = await fetch(
-            `http://localhost:5000/api/reservation/active-tables?date=${newItem.date}&time=${newItem.time}&people=${newItem.people}`,
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-
-          const result = await response.json();
-          if (response.ok) {
-            setAvailableTables(result.tables);
-          } else {
-            setError(result.message || "Ошибка при получении доступных столов");
-          }
-        } catch (error) {
-          console.error("Ошибка при получении доступных столов:", error);
-          setError("Ошибка при получении доступных столов");
-        }
-      };
-
-      fetchAvailableTables();
+  const priceInput = (input) => (e) => {
+    const value = e.target.value.replace(/\D/g, ""); // Удаляем все символы, кроме цифр
+    if (value.length <= 5) {
+      input(value);
     }
-  }, [newItem.date, newItem.time, newItem.people]);
+  };
 
-  const reserv = async (e) => {
+  const priceChange = async (e) => {
     e.preventDefault();
 
-    if (!newItem.date || !newItem.time || !newItem.people || !newItem.table) {
-      setError("Пожалуйста, заполните все поля");
+    if (!price) {
+      setError("Пожалуйста, введите цену");
       setTimeout(() => setError(""), 3000);
       return;
     }
 
-    const token = localStorage.getItem("authToken");
-
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/reservation/create",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            date: newItem.date,
-            time: newItem.time,
-            people: newItem.people,
-            table: newItem.table,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:5000/api/contman/price", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          dishId: dish.ID, // Идентификатор выбранного блюда
+          price,
+        }),
+      });
 
       const result = await response.json();
       if (!response.ok) {
-        setError(result.message || "Ошибка при бронировании");
+        setError(result.message || "Ошибка при изменении");
         setTimeout(() => setError(""), 3000);
         return;
       }
 
-      setNewItem({ date: "", time: "", people: "", table: "" });
-      alert("Бронирование успешно создано");
-      props.close();
+      alert("Цена успешно изменена");
+      close();
+      window.location.reload();
     } catch (error) {
-      console.error("Ошибка при бронировании:", error);
-      setError("Ошибка при бронировании");
+      console.error("Ошибка при изменении цены:", error);
+      setError("Ошибка при изменении цены");
       setTimeout(() => setError(""), 3000);
     }
   };
 
-  const handleClear = () => {
-    setNewItem({ date: "", time: "", people: "", table: "" });
-  };
-
   return (
     <form className={Styles["form"]}>
-      <h2 className={Styles["form__title"]}>Бронирование</h2>
+      <h2 className={Styles["form__title"]}>Изменение цены</h2>
       <div className={Styles["form__fields"]}>
         <label className={Styles["form__field"]}>
-          <span className={Styles["form__field-title"]}>Дата</span>
+          <span className={Styles["form__field-title"]}>Новая цена (в рублях)</span>
           <input
             className={Styles["form__field-input"]}
-            type="date"
-            value={newItem.date}
-            min={minDate} // Ограничение на выбор прошлой даты
-            max={maxDate} // Ограничение на выбор даты через месяц
-            onChange={(e) => setNewItem({ ...newItem, date: e.target.value })}
+            type="text"
+            value={price}
+            onChange={priceInput(setPrice)}
           />
         </label>
-        <label className={Styles["form__field"]}>
-          <span className={Styles["form__field-title"]}>Время</span>
-          <input
-            className={Styles["form__field-input"]}
-            type="time"
-            value={newItem.time}
-            onChange={(e) => {
-              const selectedTime = e.target.value;
-              // Проверка времени
-              if (selectedTime < "07:00" || selectedTime > "21:00") {
-                setError("Время должно быть в диапазоне с 07:00 до 21:00");
-                setTimeout(() => setError(""), 3000);
-              } else {
-                setError("");
-                setNewItem({ ...newItem, time: selectedTime });
-              }
-            }}
-            min="07:00"
-            max="21:00"
-          />
-        </label>
-        <label className={Styles["form__field"]}>
-          <span className={Styles["form__field-title"]}>
-            Количество человек
-          </span>
-          <select
-            className={Styles["form__field-input"]}
-            value={newItem.people}
-            onChange={(e) => {
-              const people = e.target.value;
-              setNewItem({ ...newItem, people });
-              setAvailableTables([]);
-            }}
-          >
-            <option value="">Сколько будет человек</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
-            <option value="6">6</option>
-          </select>
-        </label>
-        <label className={Styles["form__field"]}>
-          <span className={Styles["form__field-title"]}>Выберите стол</span>
-          <select
-            className={Styles["form__field-input"]}
-            disabled={availableTables.length === 0}
-            value={newItem.table}
-            onChange={(e) => setNewItem({ ...newItem, table: e.target.value })}
-          >
-            <option value="">Выберите стол</option>
-            {availableTables.map((table) => (
-              <option key={table.ID} value={table.ID}>
-                {table.Наименование}
-              </option>
-            ))}
-          </select>
-        </label>
+        <div className={Styles.price}>
+          <p className={Styles.price_content}>Текущая цена</p>
+          <p className={Styles.price_content}>
+            {dish ? `${dish.Цена_без_скидки}₽` : "Неизвестно"}
+          </p>
+        </div>
       </div>
       {error && <p className={Styles.error_message}>{error}</p>}
       <div className={Styles["form__actions"]}>
         <button
           className={Styles["form__reset"]}
           type="reset"
-          onClick={handleClear}
+          onClick={() => setPrice("")}
         >
           Очистить
         </button>
-        <button onClick={reserv} className={Styles["form__submit"]}>
-          Забронировать
+        <button onClick={priceChange} className={Styles["form__submit"]}>
+          Изменить
         </button>
       </div>
     </form>
   );
-};
+};  
