@@ -4,6 +4,6 @@ const adminController = require("../controllers/adminController");
 
 router.post("/create-password", adminController.createPassword);
 router.post("/login", adminController.login);
-router.get("/admin", adminController.admin);
+router.get("/profile", adminController.admin);
 
 module.exports = router;

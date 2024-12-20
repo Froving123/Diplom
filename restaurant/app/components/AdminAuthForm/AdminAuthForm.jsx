@@ -124,7 +124,7 @@ export const AdminAuthForm = (props) => {
           localStorage.setItem("authTokenAdmin", result.token);
 
           // Обновляем состояние в Header
-          props.updateAuthUser({ token: result.token });
+          props.updateAuthAdmin({ token: result.token });
 
           // Очищаем формы
           setError("");
@@ -132,7 +132,7 @@ export const AdminAuthForm = (props) => {
           setPassword("");
           alert("Сотрудник успешно авторизован");
           props.close();
-          router.push("/Contman");; // изменить на нужный роут
+          router.push("/Contman/Menu");
         })
         .catch((error) => {
           console.error("Ошибка при отправке данных на сервер:", error);

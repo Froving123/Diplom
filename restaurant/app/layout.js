@@ -15,7 +15,6 @@ import "./globals.css";
 export default function RootLayout({ children }) {
   const pathname = usePathname();
 
-  // Логика определения шапки
   const isAdminPage = pathname.startsWith("/Admin");
   const isContmanPage = pathname.startsWith("/Contman");
   const isManordPage = pathname.startsWith("/Manord");

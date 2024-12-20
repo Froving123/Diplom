@@ -10,7 +10,7 @@ export default function Home() {
     <main className={Styles.back}>
       <Overlay isOpened={true} close={() => {}} />
       <Popup isOpened={true} close={() => {}} >
-        <AdminAuthForm close={() => {}} updateAuthUser={() => {}} />
+        <AdminAuthForm close={() => {}} updateAuthAdmin={() => {}} />
       </Popup>
     </main>
   );

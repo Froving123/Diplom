@@ -1,9 +1,9 @@
-import { Our_menu } from "../../components/Our_menu/Our_menu";
+import { Contman_menu } from "../../components/Contman_menu/Contman_menu";
 
 export default function Home() {
   return (
     <main>
-      <Our_menu />
+      <Contman_menu />
     </main>
   );
 }

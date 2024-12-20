@@ -137,9 +137,9 @@ class AdminController {
           }
 
           const token = jwt.sign(
-            { login: user.Логин },
+            { login: user.Логин, id: user.ID },
             jwtSecret,
-            { expiresIn: "3h" } // Срок действия токена 3 часа
+            { expiresIn: "19h" } // Срок действия токена 3 часа
           );
 
           return res.status(200).json({
@@ -181,7 +181,7 @@ class AdminController {
           .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
       }
 
-      const userId = decodedToken.login;
+      const userId = decodedToken.id;
 
       // Запрос на получение данных пользователя из базы данных
       const getUserSql = `SELECT * FROM Сотрудники WHERE ID = ?`;
@@ -206,7 +206,7 @@ class AdminController {
           success: true,
           user: {
             id: user.ID,
-            name: user.Имя,
+            login: user.Логин
           },
         });
       });

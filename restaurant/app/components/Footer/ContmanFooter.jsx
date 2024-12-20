@@ -1,22 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import Styles from "./Contman.module.css";
 
 export const ContmanFooter = () => {
-  const pathname = usePathname();
 
   return (
     <footer className={Styles.all_footer}>
       <div className={Styles.top_footer}>
-        {pathname === "/Contman" ? (
           <img className={Styles.logo} src="/images/logo.png" />
-        ) : (
-          <Link href="/Contman" className={Styles.logo_link}>
-            <img className={Styles.logo} src="/images/logo.png" />
-          </Link>
-        )}
         <div className={Styles.footer_info}>
           <p className={Styles.top_fot_h}>Позвонить нам</p>
           <p className={Styles.top_fot_p}>+7(919)449-26-26</p>

@@ -43,7 +43,7 @@
     font-size: 30px;
   }
   
-  .button_profile {
+  .button_logout {
     font-size: 30px;
     font-family: "Pacifico";
     color: rgb(252, 130, 37);
@@ -54,7 +54,7 @@
   }
   
   .nav_link:hover,
-  .button_profile:hover {
+  .button_logout:hover {
     color: white;
   }
   

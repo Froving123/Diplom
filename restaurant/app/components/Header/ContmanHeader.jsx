@@ -1,34 +1,63 @@
 "use client";
 
-import Styles from "./Header.module.css";
+import Styles from "./ContmanHeader.module.css";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 export const ContmanHeader = () => {
   const pathname = usePathname();
-  const [authUser, setAuthUser] = useState(null);
+  const [authAdmin, setAuthAdmin] = useState(null);
 
   useEffect(() => {
-    // Проверка наличия токена в localStorage
     const token = localStorage.getItem("authTokenAdmin");
+  
     if (token) {
-      // Если токен есть, устанавливаем пользователя как авторизованного
-      setAuthUser({ token });
+      // Отправляем запрос на сервер, чтобы получить данные пользователя
+      fetch("http://localhost:5000/api/admin/profile", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            // Проверяем логин на соответствие
+            if (data.user.login === "Contman") {
+              setAuthAdmin(data.user);
+            } else {
+              localStorage.removeItem("authTokenAdmin");
+              setAuthAdmin(null);
+              window.location.href = "/Admin"; 
+            }
+          } else {
+            localStorage.removeItem("authTokenAdmin");
+            setAuthAdmin(null);
+            window.location.href = "/Admin";
+          }
+        })
+        .catch((err) => {
+          console.error("Ошибка при получении данных пользователя:", err);
+          localStorage.removeItem("authTokenAdmin");
+          setAuthAdmin(null);
+          window.location.href = "/Admin"; 
+        });
     } else {
-      setAuthUser(null);
+      setAuthAdmin(null);
+      window.location.href = "/Admin"; 
     }
-  }, []);
+  }, []);  
+
+  const adminSignOut = () => {
+    localStorage.removeItem("authTokenAdmin");
+    setAuthAdmin(null);
+    window.location.href = "/Admin";
+  };
 
   return (
     <header className={Styles.header}>
-      {pathname === "/Contman" ? (
-        <img className={Styles.logo} src="/images/logo.png" />
-      ) : (
-        <Link href="/Contman" className={Styles.logo_link}>
-          <img className={Styles.logo} src="/images/logo.png" />
-        </Link>
-      )}
+      <img className={Styles.logo} src="/images/logo.png" />
       <nav>
         <ul className={Styles.ul_header}>
           <li className={Styles.nav_p}>
@@ -38,38 +67,33 @@ export const ContmanHeader = () => {
                 pathname === "/Contman/Menu" ? Styles.nav_link_active : ""
               }`}
             >
-              Меню
+              Меню доставки
             </Link>
           </li>
           <li className={Styles.nav_p}>
             <Link
-              href="/Delivery"
+              href="/Contman/Discount"
               className={`${Styles.nav_link} ${
-                pathname === "/Delivery" ? Styles.nav_link_active : ""
+                pathname === "/Contman/Discount" ? Styles.nav_link_active : ""
               }`}
             >
-              Доставка
+              Специальные предложения
             </Link>
           </li>
           <li className={Styles.nav_p}>
             <Link
-              href="/Cart"
+              href="/Contman/Feedback"
               className={`${Styles.nav_link} ${
-                pathname === "/Cart" ? Styles.nav_link_active : ""
+                pathname === "/Contman/Feedback" ? Styles.nav_link_active : ""
               }`}
             >
-              Корзина
+              Отзывы
             </Link>
           </li>
           <li className={Styles.nav_p}>
-              <Link
-                href="/ProfileAdmin"
-                className={`${Styles.nav_link} ${
-                  pathname === "/ProfileAdmin" ? Styles.nav_link_active : ""
-                }`}
-              >
-                Профиль
-              </Link>
+            <button className={Styles.button_logout} onClick={adminSignOut}>
+              Выйти
+            </button>
           </li>
         </ul>
       </nav>
