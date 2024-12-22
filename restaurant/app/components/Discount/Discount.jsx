@@ -7,7 +7,6 @@ import Link from "next/link";
 export const Discount = () => {
   const [discountedItem, setDiscountedItem] = useState({
     price: null,
-    category: null,
   });
 
   useEffect(() => {
@@ -19,7 +18,7 @@ export const Discount = () => {
         );
         const data = await response.json();
         if (response.ok && data.success) {
-          setDiscountedItem({ price: data.price, category: data.category });
+          setDiscountedItem({ price: data.price });
         } else {
           console.error("Ошибка загрузки данных о скидке:", data.message);
         }
@@ -39,7 +38,7 @@ export const Discount = () => {
         </h2>
         <p className={Styles.discount_p}>
           {discountedItem.price !== null && discountedItem.category
-            ? `Только в этом месяце ${discountedItem.category} в доставке ${discountedItem.price}₽`
+            ? `Специальное предложене, цена некоторых блюд в доставке ${discountedItem.price}₽`
             : ""}
         </p>
       </div>
