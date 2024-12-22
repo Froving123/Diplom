@@ -21,7 +21,8 @@ class ContmanController {
             UPDATE 
               Прайс_лист
             SET 
-              Цена = ?
+              Цена = ?,
+              Дата = CURDATE()
             WHERE 
               ID_блюда = ?
           `;
