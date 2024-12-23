@@ -90,51 +90,9 @@ class ContmanController {
     }
   }
 
-  async updateOffer(req, res) {
-    const { id, dishId, description, startDate, endDate, discount } = req.body;
-
-    if (!id || !dishId || !description || !startDate || !endDate || !discount) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Данные не указаны" });
-    }
-
-    try {
-      const query = `
-        UPDATE 
-          Спец_предложения
-        SET 
-          ID_блюда = ?, 
-          Описание = ?, 
-          Дата_начала = ?, 
-          Дата_окончания = ?, 
-          Размер_скидки = ?
-        WHERE 
-          ID = ?
-      `;
-      conn.query(
-        query,
-        [dishId, description, startDate, endDate, discount, id],
-        (err, result) => {
-          if (err) {
-            console.error("Ошибка при обновлении предложения:", err);
-            return res.status(500).json({
-              success: false,
-              message: "Ошибка при обновлении предложения",
-            });
-          }
-          res.json({ success: true, message: "Предложение обновлено" });
-        }
-      );
-    } catch (error) {
-      console.error("Ошибка на сервере:", error);
-      res.status(500).json({ success: false, message: "Ошибка на сервере" });
-    }
-  }
-
   // Удаление спецпредложения
   async deleteOffer(req, res) {
-    const { id } = req.params; // Получение ID из параметров запроса
+    const { id } = req.body; // Получение ID из тела запроса
 
     if (!id) {
       return res.status(400).json({ success: false, message: "ID не указан" });
@@ -174,9 +132,9 @@ class ContmanController {
 
   // Создание нового спецпредложения
   async createOffer(req, res) {
-    const { dishId, description, startDate, endDate, discount } = req.body;
+    const { dish, description, startDate, endDate, discount } = req.body;
 
-    if (!dishId || !description || !startDate || !endDate || !discount) {
+    if (!dish || !description || !startDate || !endDate || !discount) {
       return res
         .status(400)
         .json({ success: false, message: "Данные не указаны" });
@@ -189,7 +147,7 @@ class ContmanController {
       `;
       conn.query(
         query,
-        [dishId, description, startDate, endDate, discount],
+        [dish, description, startDate, endDate, discount],
         (err, result) => {
           if (err) {
             console.error("Ошибка при создании предложения:", err);
@@ -204,6 +162,36 @@ class ContmanController {
     } catch (error) {
       console.error("Ошибка на сервере:", error);
       res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
+  async activeDish(req, res) {
+    try {
+      const query = `
+            SELECT ID, Название
+            FROM Блюда
+            WHERE ID NOT IN (
+                SELECT ID_Блюда
+                FROM Спец_предложения
+            )
+        `;
+
+      conn.query(query, (err, results) => {
+        if (err) {
+          console.error("Ошибка при получении доступных блюд:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при получении доступных блюд",
+          });
+        }
+
+        return res.status(200).json({ success: true, dishes: results });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      return res
+        .status(500)
+        .json({ success: false, message: "Произошла ошибка на сервере" });
     }
   }
 }

@@ -2,12 +2,17 @@
 
 import React, { useState, useEffect } from "react";
 import Styles from "./Special_offers.module.css";
+import { Overlay } from "../Overlay/Overlay";
+import { Popup } from "../Popup/Popup";
+import { CreateOfferForm } from "../CreateOfferForm/CreateOfferForm";
 
 export const Special_offers = () => {
   const [offers, setOffers] = useState([]);
+  const [popupIsOpen, setPopupIsOpen] = useState(false);
+  const [selectedOffer, setSelectedOffer] = useState(null);
   const [error, setError] = useState("");
 
-  // Получение всех спецпредложений с сервера
+  // Получение всех специальных предложений
   const fetchOffers = async () => {
     try {
       const response = await fetch(
@@ -29,7 +34,7 @@ export const Special_offers = () => {
     }
   };
 
-  // Удаление спецпредложения
+  // Удаление специального предложения
   const deleteOffer = async (offerId) => {
     const confirmDelete = window.confirm(
       "Вы уверены, что хотите удалить это предложение?"
@@ -52,7 +57,6 @@ export const Special_offers = () => {
 
       const result = await response.json();
       if (result.success) {
-        alert("Предложение успешно удалено!");
         fetchOffers(); // Обновить список предложений
       } else {
         setError(result.message || "Ошибка при удалении предложения");
@@ -63,84 +67,15 @@ export const Special_offers = () => {
     }
   };
 
-  /* // Изменение спецпредложения
-  const updateOffer = async (offerId) => {
-    if (!newDescription || !newDishId || !newStartDate || !newEndDate || !newDiscount) {
-      return; // Отмена, если пользователь не ввел значения
-    }
-
-    try {
-      const response = await fetch(
-        "http://localhost:5000/api/contman/offerUpdate",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            id: offerId,
-            description: newDescription,
-            dishId: newDishId,
-            startDate: newStartDate,
-            endDate: newEndDate,
-            discount: newDiscount,
-          }),
-        }
-      );
-
-      const result = await response.json();
-      if (result.success) {
-        alert("Предложение успешно обновлено!");
-        fetchOffers(); // Обновить список предложений
-      } else {
-        setError(result.message || "Ошибка при обновлении предложения");
-      }
-    } catch (err) {
-      setError("Ошибка при обновлении предложения");
-      console.error(err);
-    }
-  };
-
-  // Создание нового спецпредложения
-  const createOffer = async () => {
-    if (!description || !dishId || !startDate || !endDate || !discount) {
-      return; // Отмена, если пользователь не ввел значения
-    }
-
-    try {
-      const response = await fetch(
-        "http://localhost:5000/api/contman/offerCreate",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            description,
-            dishId,
-            startDate,
-            endDate,
-            discount,
-          }),
-        }
-      );
-
-      const result = await response.json();
-      if (result.success) {
-        alert("Спецпредложение успешно создано!");
-        fetchOffers(); // Обновить список предложений
-      } else {
-        setError(result.message || "Ошибка при создании предложения");
-      }
-    } catch (err) {
-      setError("Ошибка при создании предложения");
-      console.error(err);
-    }
-  };*/
-
   useEffect(() => {
     fetchOffers();
   }, []);
+
+  // Открытие формы для создания нового предложения
+  const openCreateOfferForm = () => {
+    setSelectedOffer(null); // Сбрасываем выбранное предложение
+    setPopupIsOpen(true); // Открываем попап для создания
+  };
 
   return (
     <div className={Styles.special_offers}>
@@ -171,9 +106,6 @@ export const Special_offers = () => {
                   </p>
                 </div>
                 <div className={Styles.offer_controls}>
-                  <button className={Styles.button_edit}>
-                    <p className={Styles.button_text}>Изменить</p>
-                  </button>
                   <button
                     className={Styles.button_delete}
                     onClick={() => deleteOffer(offer.ID)}
@@ -193,10 +125,18 @@ export const Special_offers = () => {
         )}
       </div>
       <div>
-        <button className={Styles.button_create}>
+        <button
+          className={Styles.button_create}
+          onClick={() => openCreateOfferForm()}
+        >
           <p className={Styles.create_text}>Создать новое предложение</p>
         </button>
       </div>
+      {/* Попап для создания предложения */}
+      <Overlay isOpened={popupIsOpen} close={() => setPopupIsOpen(false)} />
+      <Popup isOpened={popupIsOpen} close={() => setPopupIsOpen(false)}>
+        <CreateOfferForm close={() => setPopupIsOpen(false)} />
+      </Popup>
     </div>
   );
 };

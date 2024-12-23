@@ -66,15 +66,13 @@ class DeliveryController {
       const query = `
         SELECT 
           COALESCE(Прайс_лист.Цена - Спец_предложения.Размер_скидки, Прайс_лист.Цена) AS DiscountedPrice,
-          Категория_блюда.Наименование AS CategoryName
+          Блюда.Название AS DishName
         FROM 
           Прайс_лист
         LEFT JOIN 
           Спец_предложения ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
         JOIN 
           Блюда ON Прайс_лист.ID_блюда = Блюда.ID
-        JOIN 
-          Категория_блюда ON Блюда.ID_категории = Категория_блюда.ID
         WHERE 
           Спец_предложения.Размер_скидки IS NOT NULL
         ORDER BY 
@@ -84,29 +82,29 @@ class DeliveryController {
 
       conn.query(query, (err, results) => {
         if (err) {
-          console.error("Ошибка при получении товара с учётом скидки:", err);
+          console.error(
+            "Ошибка при получении блюда с минимальной ценой со скидкой:",
+            err
+          );
           return res.status(500).json({
             success: false,
-            message: "Ошибка при получении товара с учётом скидки",
+            message:
+              "Ошибка при получении блюда с минимальной ценой со скидкой",
           });
         }
 
         if (results.length > 0) {
-          const { DiscountedPrice, CategoryName } = results[0];
-          res
-            .status(200)
-            .json({
-              success: true,
-              price: DiscountedPrice,
-              category: CategoryName,
-            });
+          const { DiscountedPrice, DishName } = results[0];
+          res.status(200).json({
+            success: true,
+            price: DiscountedPrice,
+            dishName: DishName,
+          });
         } else {
-          res
-            .status(200)
-            .json({
-              success: false,
-              message: "Нет доступных товаров со скидкой",
-            });
+          res.status(200).json({
+            success: false,
+            message: "Нет доступных блюд со скидкой",
+          });
         }
       });
     } catch (error) {
@@ -141,12 +139,10 @@ class DeliveryController {
       conn.query(query, (err, results) => {
         if (err) {
           console.error("Ошибка при получении меню с учетом скидок:", err);
-          return res
-            .status(500)
-            .json({
-              success: false,
-              message: "Ошибка при получении меню с учетом скидок",
-            });
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при получении меню с учетом скидок",
+          });
         }
 
         res.status(200).json({ success: true, menu: results });

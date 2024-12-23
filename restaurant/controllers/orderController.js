@@ -44,7 +44,10 @@ class OrderController {
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res
           .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+          .json({
+            success: false,
+            message: "Сессия была закончена, авторизуйтесь заново",
+          });
       }
 
       const token = authHeader.split(" ")[1];
@@ -55,11 +58,26 @@ class OrderController {
       } catch (err) {
         return res
           .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+          .json({
+            success: false,
+            message: "Сессия была закончена, авторизуйтесь заново",
+          });
       }
 
       const userId = decodedToken.userId;
       const { address, deliveryPrice, totalPrice, payment } = req.body;
+
+      const currentTime = new Date();
+      const hours = currentTime.getHours(); 
+      const minutes = currentTime.getMinutes(); 
+
+      // Проверка, находится ли текущее время в пределах 07:00 - 22:00
+      if (hours < 7 || (hours === 22 && minutes > 0) || hours > 22) {
+        return res.status(400).json({
+          success: false,
+          message: "Заказать можно только с 07:00 до 22:00",
+        });
+      }
 
       // Добавление адреса
       const insertAddressQuery = `INSERT INTO Адрес (Улица, Дом, Квартира) VALUES (?, ?, ?)`;
@@ -323,7 +341,10 @@ class OrderController {
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res
           .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+          .json({
+            success: false,
+            message: "Сессия была закончена, авторизуйтесь заново",
+          });
       }
 
       const token = authHeader.split(" ")[1];
@@ -334,7 +355,10 @@ class OrderController {
       } catch (err) {
         return res
           .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+          .json({
+            success: false,
+            message: "Сессия была закончена, авторизуйтесь заново",
+          });
       }
 
       const userId = decodedToken.userId;
