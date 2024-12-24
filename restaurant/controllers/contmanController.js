@@ -194,6 +194,76 @@ class ContmanController {
         .json({ success: false, message: "Произошла ошибка на сервере" });
     }
   }
+
+  async getAllReview(req, res) {
+    try {
+      const query = `
+        SELECT 
+          Отзыв.ID, 
+          Отзыв.Оценка, 
+          Отзыв.Текст_отзыва, 
+          Отзыв.Дата, 
+          Пользователь.Имя AS Имя_пользователя
+        FROM 
+          Отзыв
+        JOIN 
+          Пользователь ON Отзыв.ID_пользователя = Пользователь.ID
+          ORDER BY Отзыв.Дата DESC
+      `;
+      conn.query(query, (err, results) => {
+        if (err) {
+          console.error("Ошибка при получении отзывов:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при получении отзывов",
+          });
+        }
+        res.json({ success: true, data: results });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
+  async deleteReview(req, res) {
+    const { id } = req.body; // Получение ID из тела запроса
+
+    if (!id) {
+      return res.status(400).json({ success: false, message: "ID не указан" });
+    }
+
+    try {
+      const query = `
+          DELETE FROM Отзыв
+          WHERE ID = ?
+        `;
+      conn.query(query, [id], (err, result) => {
+        if (err) {
+          console.error("Ошибка при удалении отзыва:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при удалении отзыва",
+          });
+        }
+
+        if (result.affectedRows === 0) {
+          return res.status(404).json({
+            success: false,
+            message: "Отзыв с указанным ID не найден",
+          });
+        }
+
+        res.json({
+          success: true,
+          message: "Отзыв успешно удален",
+        });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
 }
 
 module.exports = new ContmanController();

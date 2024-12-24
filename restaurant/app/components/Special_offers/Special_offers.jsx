@@ -79,7 +79,7 @@ export const Special_offers = () => {
 
   return (
     <div className={Styles.special_offers}>
-      <div>
+      <div  className={Styles.special_offers_ul}>
         {error && <p className={Styles.error_message}>{error}</p>}
         {offers.length > 0 ? (
           <ul className={Styles.ul_offers}>

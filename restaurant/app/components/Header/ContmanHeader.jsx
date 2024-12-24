@@ -82,9 +82,9 @@ export const ContmanHeader = () => {
           </li>
           <li className={Styles.nav_p}>
             <Link
-              href="/Contman/Feedback"
+              href="/Contman/Review"
               className={`${Styles.nav_link} ${
-                pathname === "/Contman/Feedback" ? Styles.nav_link_active : ""
+                pathname === "/Contman/Review" ? Styles.nav_link_active : ""
               }`}
             >
               Отзывы

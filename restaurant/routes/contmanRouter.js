@@ -7,5 +7,7 @@ router.get("/offerGet", contmanController.getAllOffers);
 router.post("/offerDelete", contmanController.deleteOffer);
 router.post("/offerCreate", contmanController.createOffer);
 router.get("/dishOffer", contmanController.activeDish);
+router.get("/reviewGet", contmanController.getAllReview);
+router.post("/reviewDelete", contmanController.deleteReview);
 
 module.exports = router;

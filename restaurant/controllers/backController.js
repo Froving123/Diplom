@@ -111,6 +111,7 @@ class FeedbackController {
           Пользователь 
         ON 
           Отзыв.ID_пользователя = Пользователь.ID
+          ORDER BY Отзыв.Дата DESC
       `;
 
       conn.query(feedbackQuery, (err, results) => {
