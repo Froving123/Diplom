@@ -396,7 +396,7 @@ class OrderController {
       });
 
       if (orders.length === 0) {
-        return res.status(404).json({ success: false, message: "Нет заказов" });
+        return res.status(404).json({ success: false });
       }
 
       const getFoodsQuery = `
