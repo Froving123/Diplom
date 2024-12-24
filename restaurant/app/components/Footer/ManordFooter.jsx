@@ -1,8 +1,8 @@
 "use client";
 
-import Styles from "./ContmanFooter.module.css";
+import Styles from "./ManordFooter.module.css";
 
-export const ContmanFooter = () => {
+export const ManordFooter = () => {
 
   return (
     <footer className={Styles.all_footer}>

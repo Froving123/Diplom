@@ -76,8 +76,7 @@ class AdminController {
 
             return res.status(201).json({
               success: true,
-              message: "Пароль успешно обновлён",
-              token,
+              message: "Пароль успешно обновлён"
             });
           });
         });
