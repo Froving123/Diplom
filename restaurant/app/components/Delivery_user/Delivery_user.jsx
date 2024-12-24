@@ -70,7 +70,9 @@ export const Delivery_user = () => {
       const result = await response.json();
       if (result.success) {
         console.log("Заказ успешно удален");
-        await fetchUserOrders();
+        setUserOrders((prevOrders) =>
+          prevOrders.filter((order) => order.orderId !== orderId)
+        );
       } else {
         console.error(result.message);
       }

@@ -23,11 +23,7 @@ export const AdminAuthForm = (props) => {
   const createPassword = (e) => {
     e.preventDefault();
     // Проверка на заполнение всех полей
-    if (
-      !login ||
-      !password ||
-      !copyPassword
-    ) {
+    if (!login || !password || !copyPassword) {
       setError("Пожалуйста, заполните все поля");
       setTimeout(() => {
         setError("");
@@ -99,49 +95,61 @@ export const AdminAuthForm = (props) => {
       setTimeout(() => {
         setError("");
       }, 3000);
-    } else {
-      fetch("http://localhost:5000/api/admin/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          login,
-          password,
-        }),
-      })
-        .then((response) => response.json())
-        .then((result) => {
-          if (!result.success) {
-            setError(result.message || "Ошибка при авторизации");
-            setTimeout(() => {
-              setError("");
-            }, 3000);
-            return;
-          }
+      return;
+    }
 
-          // Сохраняем токен в localStorage
-          localStorage.setItem("authTokenAdmin", result.token);
-
-          // Обновляем состояние в Header
-          props.updateAuthAdmin({ token: result.token });
-
-          // Очищаем формы
-          setError("");
-          setLogin("");
-          setPassword("");
-          alert("Сотрудник успешно авторизован");
-          props.close();
-          router.push("/Contman/Menu");
-        })
-        .catch((error) => {
-          console.error("Ошибка при отправке данных на сервер:", error);
-          setError("Ошибка при авторизации");
+    fetch("http://localhost:5000/api/admin/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        login,
+        password,
+      }),
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (!result.success) {
+          setError(result.message || "Ошибка при авторизации");
           setTimeout(() => {
             setError("");
           }, 3000);
-        });
-    }
+          return;
+        }
+
+        // Сохраняем токен в localStorage
+        localStorage.setItem("authTokenAdmin", result.token);
+
+        // Обновляем состояние в Header
+        props.updateAuthAdmin({ token: result.token });
+
+        // Очищаем формы
+        setError("");
+        setLogin("");
+        setPassword("");
+        alert("Сотрудник успешно авторизован");
+        props.close();
+
+        // Перенаправляем пользователя на нужную страницу в зависимости от логина
+        if (login.toLowerCase() === "contman") {
+          router.push("/Contman/Menu");
+        } else if (login.toLowerCase() === "manord") {
+          router.push("/Manord/NewOrder");
+        } else {
+          setError("Неизвестный пользователь");
+          setTimeout(() => {
+            setError("");
+          }, 3000);
+        }
+      })
+      .catch((error) => {
+        console.error("Ошибка при отправке данных на сервер:", error);
+        setError("Ошибка при авторизации");
+        setTimeout(() => {
+          setError("");
+        }, 3000);
+      });
   };
 
   const handleClear = () => {

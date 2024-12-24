@@ -6,8 +6,9 @@ const deliveryRouter = require("./deliveryRouter");
 const bucketRouter = require("./bucketRouter");
 const orderRouter = require("./orderRouter");
 const backRouter = require("./backRouter");
-const adminRouter = require("./adminRouter")
-const contmanRouter = require("./contmanRouter")
+const adminRouter = require("./adminRouter");
+const contmanRouter = require("./contmanRouter");
+const manordRouter = require("./manordRouter");
 
 router.use("/user", userRouter);
 router.use("/reservation", reservationRouter);
@@ -16,6 +17,7 @@ router.use("/bucket", bucketRouter);
 router.use("/order", orderRouter);
 router.use("/feedback", backRouter);
 router.use("/admin", adminRouter);
-router.use("/contman", contmanRouter)
+router.use("/contman", contmanRouter);
+router.use("/manord", manordRouter);
 
 module.exports = router;

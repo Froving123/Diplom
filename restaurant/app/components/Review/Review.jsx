@@ -7,7 +7,7 @@ export const Review = () => {
   const [reviews, setReviews] = useState([]);
   const [error, setError] = useState("");
 
-  // Получение всех специальных предложений
+  // Получение всех отзывов
   const fetchReviews = async () => {
     try {
       const response = await fetch(
@@ -29,7 +29,7 @@ export const Review = () => {
     }
   };
 
-  // Удаление специального предложения
+  // Удаление отзыва
   const deleteReview = async (reviewId) => {
     const confirmDelete = window.confirm(
       "Вы уверены, что хотите удалить этот отзыв?"
@@ -67,47 +67,47 @@ export const Review = () => {
   }, []);
 
   return (
-    <div className={Styles.special_offers}>
-        {error && <p className={Styles.error_message}>{error}</p>}
-        {reviews.length > 0 ? (
-          <ul className={Styles.ul_offers}>
-            {reviews.map((review) => (
-              <li key={review.ID} className={Styles.offer}>
-                <div className={Styles.offer_text}>
-                  <p className={Styles.offer_textrev}>
-                    {review.Текст_отзыва}
-                  </p>
-                  <p className={Styles.offer_description}>
-                    Пользователь: {review.Имя_пользователя}
-                  </p>
-                  <p className={Styles.offer_description}>
-                    Оценка: {review.Оценка}
-                  </p>
-                  <p className={Styles.offer_date}>
-                    Дата:{" "}
-                    {new Date(review.Дата).toLocaleString("ru-RU", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    })}
-                  </p>
-                </div>
-                <div className={Styles.offer_controls}>
-                  <button
-                    className={Styles.button_delete}
-                    onClick={() => deleteReview(review.ID)}
-                  >
-                    <p className={Styles.button_text}> Удалить</p>
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <div className={Styles.empty_offers}>
-            <p className={Styles.empty_description}>Нет отзывов</p>
-          </div>
-        )}
+    <div className={Styles.review_container}>
+      {error && <p className={Styles.error_message}>{error}</p>}
+      {reviews.length > 0 ? (
+        <ul className={Styles.review_list}>
+          {reviews.map((review) => (
+            <li key={review.ID} className={Styles.review_item}>
+              <div className={Styles.review_text}>
+                <p className={Styles.review_text_content}>
+                  {review.Текст_отзыва}
+                </p>
+                <p className={Styles.review_user_info}>
+                  Пользователь: {review.Имя_пользователя}
+                </p>
+                <p className={Styles.review_user_info}>
+                  Оценка: {review.Оценка}
+                </p>
+                <p className={Styles.review_date}>
+                  Дата:{" "}
+                  {new Date(review.Дата).toLocaleString("ru-RU", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  })}
+                </p>
+              </div>
+              <div className={Styles.review_controls}>
+                <button
+                  className={Styles.review_button_delete}
+                  onClick={() => deleteReview(review.ID)}
+                >
+                  <p className={Styles.button_text}> Удалить</p>
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className={Styles.review_empty_state}>
+          <p className={Styles.review_empty_text}>Нет отзывов</p>
+        </div>
+      )}
     </div>
   );
 };
