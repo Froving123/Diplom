@@ -8,8 +8,8 @@ import { ContmanHeader } from "./components/Header/ContmanHeader";
 import { ContmanFooter } from "./components/Footer/ContmanFooter";
 import { ManordHeader } from "./components/Header/ManordHeader";
 import { ManordFooter } from "./components/Footer/ManordFooter";
-//import { DeliverHeader } from "./components/Header/DeliverHeader";
-//import { DeliverFooter } from "./components/Header/DeliverFooter";
+import { CourHeader } from "./components/Header/CourHeader";
+import { CourFooter } from "./components/Footer/CourFooter";
 import "./globals.css";
 
 export default function RootLayout({ children }) {
@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
   } else if (isManordPage) {
     header = <ManordHeader />;
   } else if (isDeliverPage) {
-    header = <DeliverHeader />;
+    header = <CourHeader />;
   } else {
     header = <Header />;
   }
@@ -39,7 +39,7 @@ export default function RootLayout({ children }) {
   } else if (isManordPage) {
     footer = <ManordFooter />;
   } else if (isDeliverPage) {
-    footer = <DeliverFooter />;
+    footer = <CourFooter />;
   } else {
     footer = <Footer />;
   }

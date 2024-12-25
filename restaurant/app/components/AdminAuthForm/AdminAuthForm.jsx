@@ -136,6 +136,8 @@ export const AdminAuthForm = (props) => {
           router.push("/Contman/Menu");
         } else if (login.toLowerCase() === "manord") {
           router.push("/Manord/NewOrder");
+        } else if (login.toLowerCase() === "deliver") {
+          router.push("/Cour/ReadyOrder");
         } else {
           setError("Неизвестный пользователь");
           setTimeout(() => {
