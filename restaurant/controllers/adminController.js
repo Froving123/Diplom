@@ -15,15 +15,15 @@ class AdminController {
   // Метод для создания пароля
   async createPassword(req, res) {
     try {
-      const { login, password } = req.body;
+      const { email, password } = req.body;
 
       // Проверка, существует ли пользователь с таким логином
       const checkUserSql = `
         SELECT * FROM Сотрудники
-        WHERE Логин = ? AND Пароль != ''
+        WHERE Email = ? AND Пароль != ''
       `;
 
-      conn.query(checkUserSql, [login], (err, results) => {
+      conn.query(checkUserSql, [email], (err, results) => {
         if (err) {
           console.error("Ошибка при проверке пользователя:", err);
           return res.status(500).json({
@@ -36,7 +36,7 @@ class AdminController {
         if (results.length > 0) {
           return res.status(400).json({
             success: false,
-            message: "Пользователь с таким логином уже имеет пароль",
+            message: "Пользователь с таким Email уже имеет пароль",
           });
         }
 
@@ -54,10 +54,10 @@ class AdminController {
           const addUserSql = `
             UPDATE Сотрудники
             SET Пароль = ?
-            WHERE Логин = ?
+            WHERE Email = ?
           `;
 
-          conn.query(addUserSql, [hashedPassword, login], (addErr, result) => {
+          conn.query(addUserSql, [hashedPassword, email], (addErr, result) => {
             if (addErr) {
               console.error("Ошибка при создании пароля:", addErr);
               return res.status(500).json({
@@ -70,13 +70,13 @@ class AdminController {
               // Если ни одна строка не была обновлена, значит пользователя с таким логином нет
               return res.status(404).json({
                 success: false,
-                message: "Пользователь с таким логином не найден",
+                message: "Пользователь с таким Email не найден",
               });
             }
 
             return res.status(201).json({
               success: true,
-              message: "Пароль успешно обновлён"
+              message: "Пароль успешно обновлён",
             });
           });
         });
@@ -92,15 +92,15 @@ class AdminController {
 
   async login(req, res) {
     try {
-      const { login, password } = req.body;
+      const { email, password, role } = req.body; // добавлено поле role
 
       // Проверка, существует ли пользователь с таким email
       const checkUserSql = `
         SELECT * FROM Сотрудники
-        WHERE Логин= ?
+        WHERE Email = ?
       `;
 
-      conn.query(checkUserSql, [login], (err, results) => {
+      conn.query(checkUserSql, [email], (err, results) => {
         if (err) {
           console.error("Ошибка при проверке пользователя:", err);
           return res.status(500).json({
@@ -112,11 +112,19 @@ class AdminController {
         if (results.length === 0) {
           return res.status(404).json({
             success: false,
-            message: "Пользователь с таким логином не найден",
+            message: "Пользователь с таким Email не найден",
           });
         }
 
         const user = results[0];
+
+        // Проверяем, соответствует ли выбранная роль роли пользователя
+        if (parseInt(role) !== user.ID_должности_сотрудника) {
+          return res.status(403).json({
+            success: false,
+            message: "Выбранная роль не соответствует вашей роли",
+          });
+        }
 
         // Сравниваем введённый пароль с хешем пароля, который хранится в базе
         bcrypt.compare(password, user.Пароль, (compareErr, isMatch) => {
@@ -136,9 +144,9 @@ class AdminController {
           }
 
           const token = jwt.sign(
-            { login: user.Логин, id: user.ID },
+            { email: user.Email, id: user.ID, role: user.ID_должности_сотрудника },
             jwtSecret,
-            { expiresIn: "19h" } // Срок действия токена 3 часа
+            { expiresIn: "19h" } // Срок действия токена 19 часов
           );
 
           return res.status(200).json({
@@ -165,7 +173,10 @@ class AdminController {
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
         return res
           .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+          .json({
+            success: false,
+            message: "Сессия была закончена, авторизуйтесь заново",
+          });
       }
 
       const token = authHeader.split(" ")[1];
@@ -177,7 +188,10 @@ class AdminController {
       } catch (err) {
         return res
           .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+          .json({
+            success: false,
+            message: "Сессия была закончена, авторизуйтесь заново",
+          });
       }
 
       const userId = decodedToken.id;
@@ -205,7 +219,8 @@ class AdminController {
           success: true,
           user: {
             id: user.ID,
-            login: user.Логин
+            email: user.Email,
+            role: user.ID_должности_сотрудника,
           },
         });
       });
@@ -214,6 +229,34 @@ class AdminController {
       return res
         .status(500)
         .json({ success: false, message: "Ошибка сервера" });
+    }
+  }
+
+  async roleAdmins(req, res) {
+    try {
+      // SQL-запрос для получения всех столов
+      const query = `SELECT ID, Наименование FROM Должность_сотрудника`;
+
+      conn.query(query, (err, results) => {
+        if (err) {
+          console.error("Ошибка при получении столов:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при получении столов",
+          });
+        }
+
+        res.status(200).json({
+          success: true,
+          role: results,
+        });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({
+        success: false,
+        message: "Произошла ошибка на сервере",
+      });
     }
   }
 }

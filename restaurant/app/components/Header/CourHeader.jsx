@@ -24,7 +24,7 @@ export const CourHeader = () => {
         .then((data) => {
           if (data.success) {
             // Проверяем логин на соответствие
-            if (data.user.login === "Deliver") {
+            if (data.user.role.toString() === "3") {
               setAuthAdmin(data.user);
             } else {
               localStorage.removeItem("authTokenAdmin");

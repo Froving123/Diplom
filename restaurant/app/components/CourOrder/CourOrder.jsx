@@ -10,12 +10,15 @@ export const CourOrder = () => {
   // Функция для загрузки новых заказов
   const fetchCourOrders = async () => {
     try {
+      const token = localStorage.getItem("authTokenAdmin");
+
       const response = await fetch(
         "http://localhost:5000/api/cour/courOrdersGet",
         {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+             Authorization: `Bearer ${token}`
           },
         }
       );

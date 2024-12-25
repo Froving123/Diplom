@@ -24,7 +24,7 @@ export const ContmanHeader = () => {
         .then((data) => {
           if (data.success) {
             // Проверяем логин на соответствие
-            if (data.user.login === "Contman") {
+            if (data.user.role.toString() === "1") {
               setAuthAdmin(data.user);
             } else {
               localStorage.removeItem("authTokenAdmin");

@@ -9,7 +9,7 @@ export const Delivery_user = () => {
 
   // Функция для загрузки заказов
   const fetchUserOrders = async () => {
-    const token = localStorage.getItem("authToken"); // Получаем токен из localStorage
+    const token = localStorage.getItem("authToken");
 
     if (!token) {
       setError("Вы не авторизованы. Пожалуйста, войдите в систему.");
@@ -28,7 +28,7 @@ export const Delivery_user = () => {
       const result = await response.json();
 
       if (response.ok) {
-        setUserOrders(result.orders || []); // Устанавливаем заказы
+        setUserOrders(result.orders || []);
       } else {
         console.error("Ошибка от сервера:", result.message);
         setError(result.message);
@@ -88,14 +88,22 @@ export const Delivery_user = () => {
       {userOrders.length > 0 ? (
         <ul className={Styles.ul_delivery}>
           {userOrders.map((order) => {
+            const isOrderIssued =
+              order.status === "Получен" || order.statusId === 5;
+
             return (
-              <li key={order.orderId} className={Styles.li_delivery}>
+              <li
+                key={order.orderId}
+                className={`${Styles.li_delivery} ${
+                  isOrderIssued ? Styles.li_no_cancel : Styles.li_with_cancel
+                }`}
+              >
                 <div>
                   <p className={Styles.delivery_description}>
                     <strong className={Styles.delivery_description_h}>
                       Дата заказа:{" "}
                     </strong>
-                    <br></br>
+                    <br />
                     {new Date(order.orderDate).toLocaleString("ru-RU", {
                       day: "2-digit",
                       month: "2-digit",
@@ -106,64 +114,66 @@ export const Delivery_user = () => {
                     <strong className={Styles.delivery_description_h}>
                       Время заказа:{" "}
                     </strong>
-                    <br></br>
+                    <br />
                     {order.orderTime.split(":").slice(0, 2).join(":")}
                   </p>
                   <p className={Styles.delivery_description}>
                     <strong className={Styles.delivery_description_h}>
                       Адрес:{" "}
                     </strong>
-                    <br></br>
+                    <br />
                     {order.address}
                   </p>
                   <p className={Styles.delivery_description}>
                     <strong className={Styles.delivery_description_h}>
                       Способ оплаты:{" "}
                     </strong>
-                    <br></br>
+                    <br />
                     {order.paymentMethod}
                   </p>
                   <p className={Styles.delivery_description}>
                     <strong className={Styles.delivery_description_h}>
                       Стоимость заказа:{" "}
                     </strong>
-                    <br></br> {order.totalPrice} ₽
+                    <br /> {order.totalPrice} ₽
                   </p>
                   <p className={Styles.delivery_description}>
                     <strong className={Styles.delivery_description_h}>
                       Статус заказа:{" "}
                     </strong>
-                    <br></br>
+                    <br />
                     {order.status}
                   </p>
-                  <p className={Styles.delivery_description}>
-                    <strong className={Styles.delivery_description_h}>
-                      Время доставки:{" "}
-                    </strong>
-                    <br></br>
-                    {order.deliveryTime.split(":").slice(0, 2).join(":")}
-                  </p>
+                  {!isOrderIssued && (
+                    <p className={Styles.delivery_description}>
+                      <strong className={Styles.delivery_description_h}>
+                        Время доставки:{" "}
+                      </strong>
+                      <br />
+                      {order.deliveryTime.split(":").slice(0, 2).join(":")}
+                    </p>
+                  )}
                 </div>
                 <div className={Styles.delivery_ul_foods}>
                   <p className={Styles.delivery_description_h}>
                     Список блюд в заказе:
                   </p>
                   <ul className={Styles.food_list}>
-                    {order.foods.map((food, index) => {
-                      return (
-                        <li key={index} className={Styles.food_item}>
-                          {food.foodName} — {food.quantity} шт.
-                        </li>
-                      );
-                    })}
+                    {order.foods.map((food, index) => (
+                      <li key={index} className={Styles.food_item}>
+                        {food.foodName} — {food.quantity} шт.
+                      </li>
+                    ))}
                   </ul>
                 </div>
-                <button
-                  className={Styles.button_remove}
-                  onClick={() => removeOrder(order.orderId)}
-                >
-                  <p className={Styles.remove_text}>Отменить</p>
-                </button>
+                {!isOrderIssued && (
+                  <button
+                    className={Styles.button_remove}
+                    onClick={() => removeOrder(order.orderId)}
+                  >
+                    <p className={Styles.remove_text}>Отменить</p>
+                  </button>
+                )}
               </li>
             );
           })}

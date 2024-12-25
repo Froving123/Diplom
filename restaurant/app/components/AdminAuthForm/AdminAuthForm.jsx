@@ -1,16 +1,48 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Styles from "./AdminAuthForm.module.css";
 import { useRouter } from "next/navigation";
 
 export const AdminAuthForm = (props) => {
+  const [availableRole, setAvailableRole] = useState([]);
   const [isLoginForm, setIsLoginForm] = useState(true);
-  const [login, setLogin] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [copyPassword, setCopyPassword] = useState("");
+  const [role, setRole] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchAllRole = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/admin/roleGet",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        const result = await response.json();
+        if (response.ok) {
+          setAvailableRole(result.role);
+        } else {
+          setError(result.message || "Ошибка при получении всех должностей");
+          setTimeout(() => setError(""), 3000);
+        }
+      } catch (error) {
+        console.error("Ошибка при получении всех должностей:", error);
+        setError("Ошибка при получении всех должностей");
+        setTimeout(() => setError(""), 3000);
+      }
+    };
+
+    fetchAllRole();
+  }, []);
 
   const toggleForm = (e) => {
     e.preventDefault();
@@ -18,12 +50,15 @@ export const AdminAuthForm = (props) => {
     setError("");
   };
 
+  const validateEmail = (email) =>
+    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/.test(email); // пример для почты
+
   const validatePassword = (password) => password.length >= 6; // Пример для пароля
 
   const createPassword = (e) => {
     e.preventDefault();
     // Проверка на заполнение всех полей
-    if (!login || !password || !copyPassword) {
+    if (!email || !password || !copyPassword) {
       setError("Пожалуйста, заполните все поля");
       setTimeout(() => {
         setError("");
@@ -34,6 +69,14 @@ export const AdminAuthForm = (props) => {
     // проверка на корректность поля password
     if (!validatePassword(password)) {
       setError("Пароль должен быть не менее 6 символов");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError("Неверный формат email");
       setTimeout(() => {
         setError("");
       }, 3000);
@@ -55,7 +98,7 @@ export const AdminAuthForm = (props) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        login,
+        email,
         password,
       }),
     })
@@ -90,8 +133,24 @@ export const AdminAuthForm = (props) => {
   const logIn = (e) => {
     e.preventDefault();
 
-    if (!login || !password) {
+    if (!email || !password || !role) {
       setError("Пожалуйста, заполните все поля");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setError("Неверный формат email");
+      setTimeout(() => {
+        setError("");
+      }, 3000);
+      return;
+    }
+
+    if (!validatePassword(password)) {
+      setError("Пароль должен быть не менее 6 символов");
       setTimeout(() => {
         setError("");
       }, 3000);
@@ -104,8 +163,9 @@ export const AdminAuthForm = (props) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        login,
+        email,
         password,
+        role, // добавлено поле role
       }),
     })
       .then((response) => response.json())
@@ -126,23 +186,19 @@ export const AdminAuthForm = (props) => {
 
         // Очищаем формы
         setError("");
-        setLogin("");
+        setEmail("");
         setPassword("");
+        setRole("");
         alert("Сотрудник успешно авторизован");
         props.close();
 
-        // Перенаправляем пользователя на нужную страницу в зависимости от логина
-        if (login.toLowerCase() === "contman") {
+        // Перенаправляем пользователя на нужную страницу в зависимости от роли
+        if (role.toString() === "1") {
           router.push("/Contman/Menu");
-        } else if (login.toLowerCase() === "manord") {
+        } else if (role.toString() === "2") {
           router.push("/Manord/NewOrder");
-        } else if (login.toLowerCase() === "deliver") {
+        } else if (role.toString() === "3") {
           router.push("/Cour/ReadyOrder");
-        } else {
-          setError("Неизвестный пользователь");
-          setTimeout(() => {
-            setError("");
-          }, 3000);
         }
       })
       .catch((error) => {
@@ -167,12 +223,13 @@ export const AdminAuthForm = (props) => {
           <h2 className={Styles["form__title"]}>Авторизация</h2>
           <div className={Styles["form__fields"]}>
             <label className={Styles["form__field"]}>
-              <span className={Styles["form__field-title"]}>Логин</span>
+              <span className={Styles["form__field-title"]}>Email</span>
               <input
                 className={Styles["form__field-input"]}
-                type="text"
-                value={login}
-                onChange={(e) => setLogin(e.target.value)}
+                type="email"
+                placeholder="example@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </label>
             <label className={Styles["form__field"]}>
@@ -184,6 +241,23 @@ export const AdminAuthForm = (props) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
+            </label>
+            <label className={Styles["form__field"]}>
+              <span className={Styles["form__field-title"]}>
+                Выберите должность
+              </span>
+              <select
+                className={Styles["form__field-input"]}
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <option value="">Выберите должность</option>
+                {availableRole.map((role) => (
+                  <option key={role.ID} value={role.ID}>
+                    {role.Наименование}
+                  </option>
+                ))}
+              </select>
             </label>
           </div>
           {error && <p className={Styles.error_message}>{error}</p>}
@@ -208,12 +282,13 @@ export const AdminAuthForm = (props) => {
           <h2 className={Styles["form__title"]}>Создание пароля</h2>
           <div className={Styles["form__fields"]}>
             <label className={Styles["form__field"]}>
-              <span className={Styles["form__field-title"]}>Логин</span>
+              <span className={Styles["form__field-title"]}>Email</span>
               <input
                 className={Styles["form__field-input"]}
-                type="text"
-                value={login}
-                onChange={(e) => setLogin(e.target.value)}
+                type="email"
+                placeholder="example@gmail.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </label>
             <label className={Styles["form__field"]}>

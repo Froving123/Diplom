@@ -24,7 +24,7 @@ export const ManordHeader = () => {
         .then((data) => {
           if (data.success) {
             // Проверяем логин на соответствие
-            if (data.user.login === "Manord") {
+            if (data.user.role.toString() === "2") {
               setAuthAdmin(data.user);
             } else {
               localStorage.removeItem("authTokenAdmin");
