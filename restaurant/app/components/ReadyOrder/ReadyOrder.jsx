@@ -49,7 +49,7 @@ export const ReadyOrder = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-             Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ orderId }),
         }
@@ -77,7 +77,14 @@ export const ReadyOrder = () => {
           {orders.map((order) => {
             return (
               <li key={order.orderId} className={Styles.li_new_order}>
-                <div>
+                <div className={Styles.li_content_order}>
+                  <p className={Styles.new_order_description}>
+                    <strong className={Styles.new_order_description_h}>
+                      Номер заказа:{" "}
+                    </strong>
+                    <br />
+                    {order.orderId}
+                  </p>
                   <p className={Styles.new_order_description}>
                     <strong className={Styles.new_order_description_h}>
                       Пользователь:
@@ -103,6 +110,13 @@ export const ReadyOrder = () => {
                     </strong>
                     <br />
                     {order.orderTime.split(":").slice(0, 2).join(":")}
+                  </p>
+                  <p className={Styles.new_order_description}>
+                    <strong className={Styles.new_order_description_h}>
+                      Время доставки:
+                    </strong>
+                    <br />
+                    {order.deliveryTime.split(":").slice(0, 2).join(":")}
                   </p>
                   <p className={Styles.new_order_description}>
                     <strong className={Styles.new_order_description_h}>
@@ -161,9 +175,7 @@ export const ReadyOrder = () => {
       ) : (
         <ul className={Styles.ul_new_order}>
           <li className={Styles.li_new_order}>
-            <p className={Styles.new_order_empty}>
-              Сейчас нет готовых заказов
-            </p>
+            <p className={Styles.new_order_empty}>Сейчас нет готовых заказов</p>
           </li>
         </ul>
       )}

@@ -101,6 +101,13 @@ export const Delivery_user = () => {
                 <div>
                   <p className={Styles.delivery_description}>
                     <strong className={Styles.delivery_description_h}>
+                      Номер заказа:{" "}
+                    </strong>
+                    <br />
+                    {order.orderId}
+                  </p>
+                  <p className={Styles.delivery_description}>
+                    <strong className={Styles.delivery_description_h}>
                       Дата заказа:{" "}
                     </strong>
                     <br />

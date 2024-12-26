@@ -77,6 +77,13 @@ export const ConfirmedOrder = () => {
                 <div className={Styles.li_content_order}>
                   <p className={Styles.new_order_description}>
                     <strong className={Styles.new_order_description_h}>
+                      Номер заказа:{" "}
+                    </strong>
+                    <br />
+                    {order.orderId}
+                  </p>
+                  <p className={Styles.new_order_description}>
+                    <strong className={Styles.new_order_description_h}>
                       Пользователь:
                     </strong>
                     <br />

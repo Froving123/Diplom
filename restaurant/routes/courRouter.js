@@ -6,5 +6,6 @@ router.get("/readyOrdersGet", courController.getReadyOrders);
 router.post("/acceptOrder", courController.acceptOrder);
 router.get("/courOrdersGet", courController.getCourOrders);
 router.post("/completeOrder", courController.completeOrder);
+router.get("/storyOrdersGet", courController.getStoryOrders);
 
 module.exports = router;

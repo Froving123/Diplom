@@ -92,7 +92,7 @@ export const Contman_menu = () => {
                       className={Styles.button_menu_delivery}
                       onClick={() => openPriceForm(dish)}
                     >
-                      Изменить цену блюда
+                      Изменить блюдо
                     </button>
                   </div>
                 ))}
@@ -100,6 +100,12 @@ export const Contman_menu = () => {
           </div>
         ))}
       </div>
+      <button
+        className={Styles.button_create}
+        //onClick={() => openPriceForm(dish)}
+      >
+        Добавить блюдо
+      </button>
       <Overlay isOpened={popupIsOpen} close={() => setPopupIsOpen(false)} />
       <Popup isOpened={popupIsOpen} close={() => setPopupIsOpen(false)}>
         <PriceForm

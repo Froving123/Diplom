@@ -144,7 +144,7 @@
   .special_offers_ul {
     display: flex;
     justify-content: center;
-    width: 100%
+    width: 100%;
   }
 
   .ul_offers {
@@ -180,13 +180,13 @@
   .offer_controls {
     border: 1px solid black;
   }
-  
+
   .button_text {
     margin: 0%;
     font-size: 13px;
     font-weight: 600;
   }
-  
+
   .button_delete {
     font-size: 13px;
     padding: 0px 5px;
@@ -211,7 +211,7 @@
     margin: 0%;
     font-size: 22px;
     font-weight: 600;
-  }  
+  }
 }
 
 @media screen and (min-width: 501px) and (max-width: 750px) {

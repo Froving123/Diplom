@@ -1,19 +1,19 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Styles from "./CourOrder.module.css";
+import Styles from "./StoryOrder.module.css";
 
-export const CourOrder = () => {
+export const StoryOrder = () => {
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
 
   // Функция для загрузки новых заказов
-  const fetchCourOrders = async () => {
+  const fetchStoryOrders = async () => {
     try {
       const token = localStorage.getItem("authTokenAdmin");
 
       const response = await fetch(
-        "http://localhost:5000/api/cour/courOrdersGet",
+        "http://localhost:5000/api/cour/storyOrdersGet",
         {
           method: "GET",
           headers: {
@@ -38,39 +38,8 @@ export const CourOrder = () => {
   };
 
   useEffect(() => {
-    fetchCourOrders();
+    fetchStoryOrders();
   }, []);
-
-  // Функция для принятия заказа
-  const completeOrder = async (orderId) => {
-    try {
-      const token = localStorage.getItem("authTokenAdmin");
-
-      const response = await fetch(
-        "http://localhost:5000/api/cour/completeOrder",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ orderId }),
-        }
-      );
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setOrders((prevOrders) =>
-          prevOrders.filter((order) => order.orderId !== orderId)
-        );
-      } else {
-        console.error(result.message);
-      }
-    } catch (err) {
-      console.error("Ошибка при измене статуса заказа:", err);
-    }
-  };
 
   return (
     <div className={Styles.NewOrder}>
@@ -116,13 +85,6 @@ export const CourOrder = () => {
                   </p>
                   <p className={Styles.new_order_description}>
                     <strong className={Styles.new_order_description_h}>
-                      Время доставки:
-                    </strong>
-                    <br />
-                    {order.deliveryTime.split(":").slice(0, 2).join(":")}
-                  </p>
-                  <p className={Styles.new_order_description}>
-                    <strong className={Styles.new_order_description_h}>
                       Адрес:
                     </strong>
                     <br />
@@ -163,14 +125,6 @@ export const CourOrder = () => {
                     })}
                   </ul>
                 </div>
-                <div className={Styles.buttons}>
-                  <button
-                    className={Styles.button_accept}
-                    onClick={() => completeOrder(order.orderId)}
-                  >
-                    <p className={Styles.accept_text}>Доставлен</p>
-                  </button>
-                </div>
               </li>
             );
           })}
@@ -179,7 +133,7 @@ export const CourOrder = () => {
         <ul className={Styles.ul_new_order}>
           <li className={Styles.li_new_order}>
             <p className={Styles.new_order_empty}>
-              Сейчас нет принятых заказов
+              Сейчас нет выполненых заказов
             </p>
           </li>
         </ul>

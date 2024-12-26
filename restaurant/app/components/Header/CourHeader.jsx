@@ -11,7 +11,7 @@ export const CourHeader = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("authTokenAdmin");
-  
+
     if (token) {
       // Отправляем запрос на сервер, чтобы получить данные пользователя
       fetch("http://localhost:5000/api/admin/profile", {
@@ -29,7 +29,7 @@ export const CourHeader = () => {
             } else {
               localStorage.removeItem("authTokenAdmin");
               setAuthAdmin(null);
-              window.location.href = "/Admin"; 
+              window.location.href = "/Admin";
             }
           } else {
             localStorage.removeItem("authTokenAdmin");
@@ -41,13 +41,13 @@ export const CourHeader = () => {
           console.error("Ошибка при получении данных пользователя:", err);
           localStorage.removeItem("authTokenAdmin");
           setAuthAdmin(null);
-          window.location.href = "/Admin"; 
+          window.location.href = "/Admin";
         });
     } else {
       setAuthAdmin(null);
-      window.location.href = "/Admin"; 
+      window.location.href = "/Admin";
     }
-  }, []);  
+  }, []);
 
   const adminSignOut = () => {
     localStorage.removeItem("authTokenAdmin");
@@ -78,6 +78,16 @@ export const CourHeader = () => {
               }`}
             >
               Взятые заказы
+            </Link>
+          </li>
+          <li className={Styles.nav_p}>
+            <Link
+              href="/Cour/StoryOrder"
+              className={`${Styles.nav_link} ${
+                pathname === "/Cour/StoryOrder" ? Styles.nav_link_active : ""
+              }`}
+            >
+              Выполненые заказы
             </Link>
           </li>
           <li className={Styles.nav_p}>
