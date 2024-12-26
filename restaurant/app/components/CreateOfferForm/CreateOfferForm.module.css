@@ -84,9 +84,14 @@
 
 @media screen and (max-width: 500px) {
   .form__title {
-    margin-bottom: 14px;
-    font-size: 28px;
+    margin-bottom: 10px;
+    line-height: 30px;
+    font-size: 25px;
   }
+
+  .form__fields {
+    margin: 0%;
+  }  
 
   .form__field {
     margin-bottom: 15px;
@@ -99,7 +104,7 @@
 
   .form__field-input {
     padding: 10px 12px;
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .form__reset {

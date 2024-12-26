@@ -107,18 +107,41 @@
     width: 90%;
   }
 
+  .review_item {
+    margin-bottom: 20px;
+    padding: 0px 0px 0px 10px;
+    gap: 40px;
+  }
+
+  .review_text {
+    gap: 10px;
+  }
+
   .review_content {
     padding-left: 10px;
   }
 
-  .review_user_info {
-    font-size: 13px;
-    margin: 10px;
+  .review_text_content {
+    font-weight: 600;
+    font-size: 10px;
+    line-height: 15px;
+    margin-top: 10px;
   }
 
+  .review_user_info {
+    font-size: 13px;
+  }
+
+  .review_date {
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 10px;
+  }
+  
+
   .review_button_delete {
-    font-size: 12px;
-    padding: 5px 10px;
+    font-size: 13px;
+    padding: 0px 5px;
   }
 
   .review_empty_state {

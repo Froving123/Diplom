@@ -74,7 +74,7 @@ export const ConfirmedOrder = () => {
           {orders.map((order) => {
             return (
               <li key={order.orderId} className={Styles.li_new_order}>
-                <div>
+                <div className={Styles.li_content_order}>
                   <p className={Styles.new_order_description}>
                     <strong className={Styles.new_order_description_h}>
                       Пользователь:

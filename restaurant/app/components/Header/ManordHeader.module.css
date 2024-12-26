@@ -72,7 +72,7 @@
     }
   
     .ul_header {
-      gap: 10px;
+      gap: 18px;
       padding: 0%;
     }
   
@@ -80,7 +80,7 @@
       font-size: 13px;
     }
   
-    .button_profile {
+    .button_logout {
       font-size: 13px;
     }
   }
