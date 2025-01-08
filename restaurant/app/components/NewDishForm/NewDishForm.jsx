@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import Styles from "./PriceForm.module.css";
+import Styles from "./NewDishForm.module.css";
 
-export const PriceForm = ({ close, dish }) => {
+export const NewDishForm = ({ close }) => {
   const [price, setPrice] = useState("");
   const [error, setError] = useState("");
 
-  const priceInput = (input) => (e) => {
+  const priceInput = (e) => {
     const value = e.target.value.replace(/\D/g, ""); // Удаляем все символы, кроме цифр
-    if (value.length <= 5) {
-      input(value);
+    if (value.length <= 4) {
+      setPrice(value);
     }
   };
 
@@ -29,48 +29,41 @@ export const PriceForm = ({ close, dish }) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          dishId: dish.ID, // Идентификатор выбранного блюда
-          price,
-        }),
+        body: JSON.stringify({ price }),
       });
 
       const result = await response.json();
       if (!response.ok) {
-        setError(result.message || "Ошибка при изменении");
+        setError(result.message || "Ошибка при добавлении блюда");
         setTimeout(() => setError(""), 3000);
         return;
       }
 
-      alert("Цена успешно изменена");
+      alert("Блюдо успешно добавлено");
       close();
       window.location.reload();
     } catch (error) {
-      console.error("Ошибка при изменении цены:", error);
-      setError("Ошибка при изменении цены");
+      console.error("Ошибка при добавлении блюда:", error);
+      setError("Ошибка при добавлении блюда");
       setTimeout(() => setError(""), 3000);
     }
   };
 
   return (
     <form className={Styles["form"]}>
-      <h2 className={Styles["form__title"]}>Изменение цены</h2>
+      <h2 className={Styles["form__title"]}>Добавление блюда</h2>
       <div className={Styles["form__fields"]}>
         <label className={Styles["form__field"]}>
-          <span className={Styles["form__field-title"]}>Новая цена (в рублях)</span>
+          <span className={Styles["form__field-title"]}>
+            Цена блюда (в рублях)
+          </span>
           <input
             className={Styles["form__field-input"]}
             type="text"
             value={price}
-            onChange={priceInput(setPrice)}
+            onChange={priceInput}
           />
         </label>
-        <div className={Styles.price}>
-          <p className={Styles.price_content}>Текущая цена</p>
-          <p className={Styles.price_content}>
-            {dish ? `${dish.Цена_без_скидки}₽` : "Неизвестно"}
-          </p>
-        </div>
       </div>
       {error && <p className={Styles.error_message}>{error}</p>}
       <div className={Styles["form__actions"]}>
@@ -82,9 +75,9 @@ export const PriceForm = ({ close, dish }) => {
           Очистить
         </button>
         <button onClick={priceChange} className={Styles["form__submit"]}>
-          Изменить
+          Добавить
         </button>
       </div>
     </form>
   );
-};  
+};

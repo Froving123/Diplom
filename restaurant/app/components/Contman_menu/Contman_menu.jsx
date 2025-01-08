@@ -4,12 +4,14 @@ import React, { useState, useEffect } from "react";
 import Styles from "./Contman_menu.module.css";
 import { Overlay } from "../Overlay/Overlay";
 import { Popup } from "../Popup/Popup";
-import { PriceForm } from "../PriceForm/PriceForm";
+import { ChangeDishForm } from "../ChangeDishForm/ChangeDishForm";
+import { NewDishForm } from "../NewDishForm/NewDishForm";
 
 export const Contman_menu = () => {
   const [categories, setCategories] = useState([]);
   const [dishes, setDishes] = useState([]);
   const [popupIsOpen, setPopupIsOpen] = useState(false);
+  const [popupIsOpened, setPopupIsOpened] = useState(false);
   const [selectedDish, setSelectedDish] = useState(null);
 
   useEffect(() => {
@@ -49,10 +51,15 @@ export const Contman_menu = () => {
     fetchDishes();
   }, []);
 
-  // Открыть форму изменения цены с выбранным блюдом
-  const openPriceForm = (dish) => {
+  // Открыть форму изменения блюда
+  const openChangeDishForm = (dish) => {
     setSelectedDish(dish);
     setPopupIsOpen(true);
+  };
+
+  // Открыть форму добавления нового блюда
+  const openNewDishForm = () => {
+    setPopupIsOpened(true);
   };
 
   return (
@@ -90,7 +97,7 @@ export const Contman_menu = () => {
                     </p>
                     <button
                       className={Styles.button_menu_delivery}
-                      onClick={() => openPriceForm(dish)}
+                      onClick={() => openChangeDishForm(dish)}
                     >
                       Изменить блюдо
                     </button>
@@ -100,18 +107,19 @@ export const Contman_menu = () => {
           </div>
         ))}
       </div>
-      <button
-        className={Styles.button_create}
-        //onClick={() => openPriceForm(dish)}
-      >
+      <button className={Styles.button_create} onClick={openNewDishForm}>
         Добавить блюдо
       </button>
       <Overlay isOpened={popupIsOpen} close={() => setPopupIsOpen(false)} />
       <Popup isOpened={popupIsOpen} close={() => setPopupIsOpen(false)}>
-        <PriceForm
+        <ChangeDishForm
           close={() => setPopupIsOpen(false)}
           dish={selectedDish} // Передаем выбранное блюдо
         />
+      </Popup>
+      <Overlay isOpened={popupIsOpened} close={() => setPopupIsOpened(false)} />
+      <Popup isOpened={popupIsOpened} close={() => setPopupIsOpened(false)}>
+        <NewDishForm close={() => setPopupIsOpened(false)} />
       </Popup>
     </div>
   );

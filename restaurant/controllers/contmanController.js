@@ -1,5 +1,9 @@
 const mysql = require("mysql");
+const path = require("path");
+const fs = require("fs");
+const multer = require("multer");
 
+// Настройка подключения к базе данных
 const conn = mysql.createConnection({
   host: "MySQL-8.0",
   user: "root",
@@ -7,57 +11,112 @@ const conn = mysql.createConnection({
   database: "Best-Rest",
 });
 
+// Папка для хранения изображений (public/images)
+const imagesDir = path.join(__dirname, "..", "public", "images");
+
+// Проверка, существует ли папка, если нет — создание
+if (!fs.existsSync(imagesDir)) {
+  fs.mkdirSync(imagesDir, { recursive: true }); // Создаем папку, если не существует
+}
+
+// Настройка multer для загрузки изображений
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, imagesDir); // Папка для хранения изображений
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname)); // Генерация уникального имени для файла
+  },
+});
+
+const upload = multer({ storage: storage });
+
 class ContmanController {
-  async newPrice(req, res) {
-    try {
-      const { dishId, price } = req.body;
+  // Обновление блюда
+  updateDish = [
+    // Загружаем одно изображение, поле "image"
+    upload.single("image"),
+    async (req, res) => {
+      try {
+        const { dishId, price } = req.body; // Получаем dishId и price из formData
+        const image = req.file; // Получаем изображение из formData
 
-      // Проверка входных данных
-      if (!dishId || !price) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Неверные данные" });
-      }
+        if (!dishId || (!price && !image)) {
+          return res
+            .status(400)
+            .json({ success: false, message: "Данные не указаны" });
+        }
 
-      const query = `
+        let updatedFields = [];
+        let errors = [];
+
+        // Обновление цены
+        if (price) {
+          const queryPrice = `
             UPDATE 
               Прайс_лист
             SET 
               Цена = ?,
               Дата = CURDATE()
             WHERE 
-              ID_блюда = ?
+              ID_блюда = ?;
           `;
-
-      conn.query(query, [price, dishId], (err, result) => {
-        if (err) {
-          console.error(
-            "Ошибка при обновлении цены в таблице Прайс_лист:",
-            err
-          );
-          return res.status(500).json({
-            success: false,
-            message: "Ошибка при обновлении цены",
+          await new Promise((resolve, reject) => {
+            conn.query(queryPrice, [price, dishId], (err, result) => {
+              if (err) {
+                errors.push("Ошибка при обновлении цены");
+                return reject(err);
+              }
+              if (result.affectedRows === 0) {
+                errors.push("Блюдо не найдено в Прайс_листе");
+                return resolve();
+              }
+              updatedFields.push("цена");
+              resolve();
+            });
           });
         }
 
-        if (result.affectedRows === 0) {
-          return res.status(404).json({
-            success: false,
-            message: "Блюдо не найдено в Прайс_листе",
+        // Обновление фото
+        if (image) {
+          const photoPath = `/images/${image.filename}`; // Путь к загруженному изображению
+          const queryPhoto = `
+            UPDATE Блюда
+            SET Фото = ?
+            WHERE ID = ?
+          `;
+          await new Promise((resolve, reject) => {
+            conn.query(queryPhoto, [photoPath, dishId], (err, result) => {
+              if (err) {
+                errors.push("Ошибка при обновлении фото блюда");
+                return reject(err);
+              }
+              if (result.affectedRows === 0) {
+                errors.push("Блюдо с указанным ID не найдено");
+                return resolve();
+              }
+              updatedFields.push("фото");
+              resolve();
+            });
           });
+        }
+
+        if (errors.length > 0) {
+          return res
+            .status(500)
+            .json({ success: false, message: errors.join(", ") });
         }
 
         res.json({
           success: true,
-          message: "Цена успешно обновлена",
+          message: `Данные успешно обновлены: ${updatedFields.join(", ")}`,
         });
-      });
-    } catch (error) {
-      console.error("Ошибка на сервере:", error);
-      res.status(500).json({ success: false, message: "Ошибка на сервере" });
-    }
-  }
+      } catch (error) {
+        console.error("Ошибка на сервере:", error);
+        res.status(500).json({ success: false, message: "Ошибка на сервере" });
+      }
+    },
+  ];
 
   async getAllOffers(req, res) {
     try {
