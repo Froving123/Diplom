@@ -118,6 +118,214 @@ class ContmanController {
     },
   ];
 
+  async removeDish(req, res) {
+    try {
+      const { dishId } = req.body;
+      if (!dishId) {
+        return res
+          .status(400)
+          .json({ success: false, message: "ID блюда обязателен" });
+      }
+
+      // Получаем детали блюда
+      const getDishDetailsQuery = `
+        SELECT 
+          Блюда.ID AS dishId,
+          Блюда.ID_категории AS categoryId
+        FROM Блюда
+        WHERE Блюда.ID = ? 
+      `;
+
+      const dishDetails = await new Promise((resolve, reject) => {
+        conn.query(getDishDetailsQuery, [dishId], (err, results) => {
+          if (err) return reject(err);
+          resolve(results[0]);
+        });
+      });
+
+      if (!dishDetails) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Блюдо не найдено" });
+      }
+
+      const { categoryId } = dishDetails;
+
+      // Проверяем, сколько блюд в категории
+      const countDishesInCategoryQuery = `
+        SELECT COUNT(*) AS count
+        FROM Блюда
+        WHERE ID_категории = ?
+      `;
+
+      const { count } = await new Promise((resolve, reject) => {
+        conn.query(countDishesInCategoryQuery, [categoryId], (err, results) => {
+          if (err) return reject(err);
+          resolve(results[0]);
+        });
+      });
+
+      // Если в категории одно блюдо, не разрешаем удаление
+      if (count <= 1) {
+        return res.status(400).json({
+          success: false,
+          message: "Нельзя удалить блюдо, так как оно единственное в категории",
+        });
+      }
+
+      // Удаляем блюдо из других таблиц
+      await new Promise((resolve, reject) => {
+        conn.query(
+          "DELETE FROM Прайс_лист WHERE ID_блюда = ?",
+          [dishId],
+          (err) => (err ? reject(err) : resolve())
+        );
+      });
+
+      await new Promise((resolve, reject) => {
+        conn.query(
+          "DELETE FROM Спец_предложения WHERE ID_блюда = ?",
+          [dishId],
+          (err) => (err ? reject(err) : resolve())
+        );
+      });
+
+      // Удаляем само блюдо
+      await new Promise((resolve, reject) => {
+        conn.query("DELETE FROM Блюда WHERE ID = ?", [dishId], (err) =>
+          err ? reject(err) : resolve()
+        );
+      });
+
+      res.status(200).json({ success: true, message: "Блюдо успешно удалено" });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false });
+    }
+  }
+
+  async getCategories(req, res) {
+    try {
+      // SQL-запрос для получения всех столов
+      const query = `SELECT ID, Наименование FROM Категория_блюда`;
+
+      conn.query(query, (err, results) => {
+        if (err) {
+          console.error("Ошибка при получении категорий:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при получении категорий",
+          });
+        }
+
+        res.status(200).json({
+          success: true,
+          categories: results,
+        });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({
+        success: false,
+        message: "Произошла ошибка на сервере",
+      });
+    }
+  }
+
+  async addDish(req, res) {
+    // Обрабатываем загрузку изображения
+    upload.single("image")(req, res, async (err) => {
+      if (err) {
+        console.error("Ошибка при загрузке изображения:", err);
+        return res.status(500).json({
+          success: false,
+          message: "Ошибка при загрузке изображения",
+        });
+      }
+
+      const { name, price, category } = req.body;
+      const image = req.file;
+
+      if (!name || !price || !category || !image) {
+        return res.status(400).json({
+          success: false,
+          message: "Не указаны обязательные данные",
+        });
+      }
+
+      // Проверяем, что категория — это число
+      const categoryId = parseInt(category, 10);
+      if (isNaN(categoryId)) {
+        return res.status(400).json({
+          success: false,
+          message: "ID категории должен быть числом",
+        });
+      }
+
+      let updatedFields = [];
+      let errors = [];
+
+      try {
+        // Добавление блюда
+        const photoPath = `/images/${image.filename}`; // Путь к загруженному изображению
+        const insertDishQuery = `
+          INSERT INTO Блюда (ID_категории, Название, Фото)
+          VALUES (?, ?, ?)
+        `;
+
+        const dishId = await new Promise((resolve, reject) => {
+          conn.query(
+            insertDishQuery,
+            [categoryId, name, photoPath],
+            (err, result) => {
+              if (err) {
+                errors.push("Ошибка при добавлении блюда");
+                return reject(err);
+              }
+              updatedFields.push("блюдо");
+              resolve(result.insertId);
+            }
+          );
+        });
+
+        // Добавление цены
+        const insertPriceQuery = `
+          INSERT INTO Прайс_лист (ID_блюда, Цена, Дата)
+          VALUES (?, ?, CURDATE())
+        `;
+
+        await new Promise((resolve, reject) => {
+          conn.query(insertPriceQuery, [dishId, price], (err, result) => {
+            if (err) {
+              errors.push("Ошибка при добавлении цены блюда");
+              return reject(err);
+            }
+            updatedFields.push("цена");
+            resolve();
+          });
+        });
+
+        if (errors.length > 0) {
+          return res.status(500).json({
+            success: false,
+            message: errors.join(", "),
+          });
+        }
+
+        res.status(201).json({
+          success: true,
+          message: `Данные успешно добавлены: ${updatedFields.join(", ")}`,
+        });
+      } catch (error) {
+        console.error("Ошибка на сервере:", error);
+        res.status(500).json({
+          success: false,
+          message: "Ошибка на сервере",
+        });
+      }
+    });
+  }
+
   async getAllOffers(req, res) {
     try {
       const query = `

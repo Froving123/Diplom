@@ -62,6 +62,43 @@ export const Contman_menu = () => {
     setPopupIsOpened(true);
   };
 
+  const removeDish = async (dishId) => {
+    const confirmDelete = window.confirm(
+      "Вы уверены, что хотите удалить блюдо?"
+    );
+    if (!confirmDelete) {
+      return; // Отмена удаления
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/contman/removeDish",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ dishId }), // Отправляем dishId
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Если успешное удаление, обновляем блюда локально
+        setDishes((prevDishes) =>
+          prevDishes.filter((dish) => dish.ID !== dishId)
+        );
+      } else {
+        // Если ошибка, выводим сообщение из ответа сервера
+        alert(result.message || "Ошибка при удалении блюда");
+      }
+    } catch (err) {
+      console.error("Ошибка при удалении блюда:", err);
+      alert("Произошла ошибка при попытке удалить блюдо. Попробуйте снова.");
+    }
+  };
+
   return (
     <div className={Styles.delivery_menu}>
       <h2 className={Styles.delivery_h}>Меню доставки</h2>
@@ -75,6 +112,12 @@ export const Contman_menu = () => {
                 .filter((dish) => dish.Категория === category.Наименование)
                 .map((dish) => (
                   <div key={dish.ID} className={Styles.food}>
+                    <button
+                      className={Styles.button_remove}
+                      onClick={() => removeDish(dish.ID)}
+                    >
+                      <p className={Styles.remove_text}>Удалить</p>
+                    </button>
                     <img
                       className={Styles.img_food}
                       src={dish.Фото}

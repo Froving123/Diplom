@@ -55,6 +55,32 @@
   font-weight: 600;
 }
 
+.form__input-wrapper {
+  width: 100%;
+  display: flex;
+}
+
+.form__field-input-file {
+  border: 1px solid #000000;
+  border-radius: 4px 0px 0px 4px;
+  padding: 16px 24px;
+  font-family: inherit;
+  font-size: 22px;
+  width: 70%;
+}
+
+.form__file {
+  font-family: "Tinos-Regular";
+  background-color: rgb(255, 106, 43);
+  border: 1px solid #000000;
+  color: white;
+  font-size: 15px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 0px 10px;
+  transition: 0.3s;
+}
+
 .form__actions {
   display: flex;
   justify-content: center;
@@ -88,7 +114,8 @@
 
 .form__reset:hover,
 .form__submit:hover,
-.form__transition:hover {
+.form__transition:hover,
+.form__file:hover {
   background-color: rgb(253, 116, 57);
   color: black;
 }
@@ -115,8 +142,29 @@
   }
 
   .form__field-input {
-    padding: 10px 12px;
-    font-size: 18 px;
+    padding: 5px 12px;
+    font-size: 18px;
+  }
+
+  .form__field-input-file {
+    border: 1px solid #000000;
+    border-radius: 4px 0px 0px 4px;
+    padding: 5px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    width: 70%;
+  }
+
+  .form__file {
+    font-family: "Tinos-Regular";
+    background-color: rgb(255, 106, 43);
+    border: 1px solid #000000;
+    color: white;
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    transition: 0.3s;
   }
 
   .price {
@@ -157,8 +205,29 @@
   }
 
   .form__field-input {
-    padding: 15px 17px;
-    font-size: 15px;
+    padding: 5px 12px;
+    font-size: 18px;
+  }
+
+  .form__field-input-file {
+    border: 1px solid #000000;
+    border-radius: 4px 0px 0px 4px;
+    padding: 5px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    width: 70%;
+  }
+
+  .form__file {
+    font-family: "Tinos-Regular";
+    background-color: rgb(255, 106, 43);
+    border: 1px solid #000000;
+    color: white;
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    transition: 0.3s;
   }
 
   .form__reset {

@@ -72,6 +72,17 @@
   width: 250px;
 }
 
+.button_remove {
+  background-color: rgb(255, 106, 43);
+  border-radius: 8px;
+  color: white;
+  padding: 0px;
+  font-weight: bold;
+  font-size: 18px;
+  width: 100%;
+  transition: 0.5s;
+}
+
 .img_food {
   height: 250px;
   width: 250px;
@@ -120,11 +131,12 @@
   padding: 20px 25px;
   font-weight: bold;
   font-size: 18px;
-  width: max-content;
+  width: 100%;
   transition: 0.5s;
 }
 
-.button_menu_delivery:hover {
+.button_menu_delivery:hover,
+.button_remove:hover {
   background-color: rgb(253, 116, 57);
   color: black;
 }
@@ -225,6 +237,10 @@
   .lowprice_menu {
     font-weight: 700;
     font-size: 27px;
+  }
+
+  .button_remove {
+    font-size: 12px;
   }
 
   .button_menu_delivery {

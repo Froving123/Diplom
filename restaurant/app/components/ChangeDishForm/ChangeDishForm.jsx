@@ -89,10 +89,25 @@ export const ChangeDishForm = ({ close, dish }) => {
       <div className={Styles["form__fields"]}>
         <label className={Styles["form__field"]}>
           <span className={Styles["form__field-title"]}>Новое фото</span>
+          <div className={Styles["form__input-wrapper"]}>
+            <input
+              className={Styles["form__field-input-file"]}
+              type="text"
+              readOnly
+              value={image ? image.name : "Файл не выбран"} // Отображение имени файла
+            />
+            <button
+              type="button" // Предотвращаем отправку формы
+              className={Styles["form__file"]}
+              onClick={() => fileInputRef.current.click()}
+            >
+              Выберите файл
+            </button>
+          </div>
           <input
-            className={Styles["form__field-input"]}
             type="file"
             accept="image/*"
+            style={{ display: "none" }}
             onChange={handleImageChange}
             ref={fileInputRef}
           />
