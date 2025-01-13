@@ -11,7 +11,7 @@ const conn = mysql.createConnection({
   database: "Best-Rest",
 });
 
-class manordController {
+class courController {
   async getReadyOrders(req, res) {
     try {
       // SQL-запрос для получения заказов с данными пользователя, только с ID_статуса = 3
@@ -468,4 +468,4 @@ class manordController {
   }
 }
 
-module.exports = new manordController();
+module.exports = new courController();
