@@ -9,7 +9,7 @@ const PORT = 5000;
 server.use(cors());
 server.use(bodyParser.json());
 server.use("/api", router);
-server.use(bodyParser.json({ limit: "50mb" })); // Устанавливаем лимит на 10 МБ
+server.use(bodyParser.json({ limit: "50mb" })); 
 server.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 const conn = mysql.createConnection({
