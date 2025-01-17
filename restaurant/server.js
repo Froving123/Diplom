@@ -23,12 +23,12 @@ const conn = mysql.createConnection({
   database: "Best-Rest",
 });
 
-// Функция для резервного копирования бд
-const backupDatabase = () => {
-  const backupFileName = `backup_${new Date().toISOString().replace(/:/g, '-')}.sql`;
-  const backupPath = path.join(__dirname, 'backups', backupFileName);
+// Резервное копирование бд
+const backupDB = () => {
+  const backupFile = `backup_${new Date().toISOString().replace(/:/g, '-')}.sql`;
+  const backupPath = path.join(__dirname, 'backups', backupFile);
 
-  // Проверка наличия папки для резервных копий
+  // Проверка наличия папки копий
   if (!fs.existsSync(path.join(__dirname, 'backups'))) {
     fs.mkdirSync(path.join(__dirname, 'backups'));
   }
@@ -38,17 +38,17 @@ const backupDatabase = () => {
 
   exec(dumpCommand, (error, stdout, stderr) => {
     if (error) {
-      console.error(`Ошибка при резервном копировании базы данных: ${error.message}`);
+      console.error(`Ошибка при резервном копировании бд: ${error.message}`);
       return;
     }
-    console.log(`Резервная копия базы данных создана: ${backupPath}`);
+    console.log(`Резервная копия базы данных сохранена: ${backupPath}`);
   });
 };
 
 // Автоматическое резервное копирование каждый день в 02:00
 schedule.scheduleJob('0 3 * * *', () => {
-  console.log('Запуск автоматического резервного копирования базы данных...');
-  backupDatabase();
+  console.log('Запуск резервного копирования бд');
+  backupDB();
 });
 
 conn.connect((err) => {
