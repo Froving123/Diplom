@@ -45,46 +45,24 @@ class FeedbackController {
         });
       }
 
-      // Проверяем, есть ли уже отзыв от этого пользователя
-      const checkFeedbackQuery = `
-                    SELECT * FROM Отзыв WHERE ID_пользователя = ?
-                `;
-
-      conn.query(checkFeedbackQuery, [userId], (err, result) => {
-        if (err) {
-          console.error("Ошибка при проверке отзыва:", err);
-          return res.status(500).json({
-            success: false,
-            message: "Ошибка при проверке отзыва",
-          });
-        }
-
-        if (result.length > 0) {
-          return res.status(400).json({
-            success: false,
-            message: "Вы уже оставили отзыв",
-          });
-        }
-
-        // Если отзыва нет, создаем новый
-        const feedbackQuery = `
+      // Создаем новый отзыв
+      const feedbackQuery = `
                         INSERT INTO Отзыв (ID_пользователя, Оценка, Текст_отзыва, Дата)
                         VALUES (?, ?, ?, CURRENT_DATE)
                     `;
 
-        conn.query(feedbackQuery, [userId, score, text], (err, result) => {
-          if (err) {
-            console.error("Ошибка при создании отзыва:", err);
-            return res.status(500).json({
-              success: false,
-              message: "Ошибка при создании отзыва",
-            });
-          }
-
-          return res.status(200).json({
-            success: true,
-            message: "Отзыв успешно создан",
+      conn.query(feedbackQuery, [userId, score, text], (err, result) => {
+        if (err) {
+          console.error("Ошибка при создании отзыва:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при создании отзыва",
           });
+        }
+
+        return res.status(200).json({
+          success: true,
+          message: "Отзыв успешно создан",
         });
       });
     } catch (error) {
