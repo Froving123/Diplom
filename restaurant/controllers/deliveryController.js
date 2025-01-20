@@ -32,15 +32,22 @@ class DeliveryController {
   async getPriceList(req, res) {
     try {
       const query = `
-        SELECT 
-          Прайс_лист.ID, 
-          Прайс_лист.ID_блюда, 
-          Прайс_лист.Цена
-        FROM 
-          Прайс_лист
-        ORDER BY 
-          Прайс_лист.ID_блюда;
-      `;
+            SELECT 
+                Прайс_лист.ID, 
+                Прайс_лист.ID_блюда, 
+                Прайс_лист.Цена, 
+                Прайс_лист.Дата
+            FROM 
+                Прайс_лист
+            WHERE 
+                Прайс_лист.ID IN (
+                    SELECT MAX(Прайс_лист.ID)
+                    FROM Прайс_лист
+                    GROUP BY Прайс_лист.ID_блюда
+                )
+            ORDER BY 
+                Прайс_лист.ID_блюда;
+        `;
 
       conn.query(query, (err, results) => {
         if (err) {
@@ -64,21 +71,26 @@ class DeliveryController {
   async getDiscountedItem(req, res) {
     try {
       const query = `
-        SELECT 
-          COALESCE(Прайс_лист.Цена - Спец_предложения.Размер_скидки, Прайс_лист.Цена) AS DiscountedPrice,
-          Блюда.Название AS DishName
-        FROM 
-          Прайс_лист
-        LEFT JOIN 
-          Спец_предложения ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
-        JOIN 
-          Блюда ON Прайс_лист.ID_блюда = Блюда.ID
-        WHERE 
-          Спец_предложения.Размер_скидки IS NOT NULL
-        ORDER BY 
-          DiscountedPrice ASC
-        LIMIT 1;
-      `;
+            SELECT 
+                COALESCE(Прайс_лист.Цена - Спец_предложения.Размер_скидки, Прайс_лист.Цена) AS DiscountedPrice,
+                Блюда.Название AS DishName
+            FROM 
+                Прайс_лист
+            LEFT JOIN 
+                Спец_предложения ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+            JOIN 
+                Блюда ON Прайс_лист.ID_блюда = Блюда.ID
+            WHERE 
+                Спец_предложения.Размер_скидки IS NOT NULL
+                AND Прайс_лист.ID = (
+                    SELECT MAX(Прайс_лист.ID)
+                    FROM Прайс_лист
+                    WHERE Прайс_лист.ID_блюда = Прайс_лист.ID_блюда
+                )
+            ORDER BY 
+                DiscountedPrice ASC
+            LIMIT 1;
+        `;
 
       conn.query(query, (err, results) => {
         if (err) {
@@ -116,25 +128,29 @@ class DeliveryController {
   async getMenu(req, res) {
     try {
       const query = `
-        SELECT 
-          Блюда.ID,
-          Блюда.Название,
-          Блюда.Фото,
-          Категория_блюда.Наименование AS Категория,
-          Прайс_лист.Цена AS Цена_без_скидки,
-          COALESCE(Прайс_лист.Цена - Спец_предложения.Размер_скидки, Прайс_лист.Цена) AS Цена_со_скидкой,
-          Спец_предложения.Размер_скидки AS Скидка
-        FROM 
-          Блюда
-        JOIN 
-          Категория_блюда ON Блюда.ID_категории = Категория_блюда.ID
-        JOIN 
-          Прайс_лист ON Блюда.ID = Прайс_лист.ID_блюда
-        LEFT JOIN 
-          Спец_предложения ON Блюда.ID = Спец_предложения.ID_блюда
-        ORDER BY 
-          Категория_блюда.ID, Блюда.ID;
-      `;
+            SELECT 
+                Блюда.ID,
+                Блюда.Название,
+                Блюда.Фото,
+                Категория_блюда.Наименование AS Категория,
+                Прайс_лист.Цена AS Цена_без_скидки,
+                COALESCE(Прайс_лист.Цена - Спец_предложения.Размер_скидки, Прайс_лист.Цена) AS Цена_со_скидкой,
+                Спец_предложения.Размер_скидки AS Скидка
+            FROM 
+                Блюда
+            JOIN 
+                Категория_блюда ON Блюда.ID_категории = Категория_блюда.ID
+            JOIN 
+                Прайс_лист ON Прайс_лист.ID = (
+                    SELECT MAX(Прайс_лист.ID)
+                    FROM Прайс_лист 
+                    WHERE Прайс_лист.ID_блюда = Блюда.ID
+                )
+            LEFT JOIN 
+                Спец_предложения ON Блюда.ID = Спец_предложения.ID_блюда
+            ORDER BY 
+                Категория_блюда.ID, Блюда.ID;
+        `;
 
       conn.query(query, (err, results) => {
         if (err) {
@@ -158,19 +174,26 @@ class DeliveryController {
       const { userId } = req.query;
 
       const query = `
-        SELECT 
-          Заказ.ID AS ID_заказа, Заказы.Дата, Блюда.Название, Прайс_лист.Цена
-        FROM 
-          Заказы
-        JOIN 
-          Блюда_в_заказе ON Заказы.ID = Блюда_в_заказе.ID_заказа
-        JOIN 
-          Блюда ON Блюда_в_заказе.ID_блюда = Блюда.ID
-        JOIN 
-          Прайс_лист ON Блюда.ID = Прайс_лист.ID_блюда
-        WHERE 
-          Заказы.ID_пользователя = ?
-      `;
+            SELECT 
+                Заказ.ID AS ID_заказа, 
+                Заказы.Дата, 
+                Блюда.Название, 
+                Прайс_лист.Цена
+            FROM 
+                Заказы
+            JOIN 
+                Блюда_в_заказе ON Заказы.ID = Блюда_в_заказе.ID_заказа
+            JOIN 
+                Блюда ON Блюда_в_заказе.ID_блюда = Блюда.ID
+            JOIN 
+                Прайс_лист ON Прайс_лист.ID = (
+                    SELECT MAX(Прайс_лист.ID)
+                    FROM Прайс_лист
+                    WHERE Прайс_лист.ID_блюда = Блюда.ID
+                )
+            WHERE 
+                Заказы.ID_пользователя = ?
+        `;
 
       conn.query(query, [userId], (err, results) => {
         if (err) {

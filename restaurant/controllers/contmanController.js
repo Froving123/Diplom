@@ -53,16 +53,13 @@ class ContmanController {
         // Обновление цены
         if (price) {
           const queryPrice = `
-            UPDATE 
-              Прайс_лист
-            SET 
-              Цена = ?,
-              Дата = CURDATE()
-            WHERE 
-              ID_блюда = ?;
-          `;
+    INSERT INTO 
+        Прайс_лист (ID_блюда, Цена, Дата)
+    VALUES 
+        (?, ?, CURDATE());
+`;
           await new Promise((resolve, reject) => {
-            conn.query(queryPrice, [price, dishId], (err, result) => {
+            conn.query(queryPrice, [dishId, price], (err, result) => {
               if (err) {
                 errors.push("Ошибка при обновлении цены");
                 return reject(err);

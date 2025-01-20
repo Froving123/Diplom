@@ -16,9 +16,10 @@ class BucketController {
       const authHeader = req.headers.authorization;
 
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       const token = authHeader.split(" ")[1];
@@ -27,9 +28,10 @@ class BucketController {
       try {
         decodedToken = jwt.verify(token, jwtSecret);
       } catch (err) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       const userId = decodedToken.userId;
@@ -111,9 +113,10 @@ class BucketController {
       const authHeader = req.headers.authorization;
 
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       const token = authHeader.split(" ")[1];
@@ -122,9 +125,10 @@ class BucketController {
       try {
         decodedToken = jwt.verify(token, jwtSecret);
       } catch (err) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       const userId = decodedToken.userId;
@@ -159,16 +163,20 @@ class BucketController {
           // Запрос для получения цены блюда
           const getDiscountedPriceQuery = `
           SELECT 
-            CASE 
-              WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
-                THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
-              ELSE Прайс_лист.Цена
-            END AS Цена
+              CASE 
+                  WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
+                      THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
+                  ELSE Прайс_лист.Цена
+              END AS Цена
           FROM Прайс_лист
           LEFT JOIN Спец_предложения 
-            ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
-          WHERE Прайс_лист.ID_блюда = ?
-        `;
+              ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+          WHERE Прайс_лист.ID = (
+              SELECT MAX(ID)
+              FROM Прайс_лист
+              WHERE ID_блюда = ?
+          );
+      `;
 
           conn.query(getDiscountedPriceQuery, [foodId], (err, priceResults) => {
             if (err || priceResults.length === 0) {
@@ -292,9 +300,10 @@ class BucketController {
       const authHeader = req.headers.authorization;
 
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       const token = authHeader.split(" ")[1];
@@ -302,9 +311,10 @@ class BucketController {
       try {
         decodedToken = jwt.verify(token, jwtSecret);
       } catch (err) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       const userId = decodedToken.userId;
@@ -363,16 +373,20 @@ class BucketController {
 
               const getDiscountedPriceQuery = `
               SELECT 
-                CASE 
-                  WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
-                    THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
-                  ELSE Прайс_лист.Цена
-                END AS Цена
+                  CASE 
+                      WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
+                          THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
+                      ELSE Прайс_лист.Цена
+                  END AS Цена
               FROM Прайс_лист
               LEFT JOIN Спец_предложения 
-                ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
-              WHERE Прайс_лист.ID_блюда = ?
-            `;
+                  ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+              WHERE Прайс_лист.ID = (
+                  SELECT MAX(ID)
+                  FROM Прайс_лист
+                  WHERE ID_блюда = ?
+              );
+          `;
 
               conn.query(
                 getDiscountedPriceQuery,
@@ -436,9 +450,10 @@ class BucketController {
       const authHeader = req.headers.authorization;
 
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       const token = authHeader.split(" ")[1];
@@ -446,9 +461,10 @@ class BucketController {
       try {
         decodedToken = jwt.verify(token, jwtSecret);
       } catch (err) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       const userId = decodedToken.userId;
@@ -507,16 +523,20 @@ class BucketController {
 
               const getDiscountedPriceQuery = `
               SELECT 
-                CASE 
-                  WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
-                    THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
-                  ELSE Прайс_лист.Цена
-                END AS Цена
+                  CASE 
+                      WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
+                          THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
+                      ELSE Прайс_лист.Цена
+                  END AS Цена
               FROM Прайс_лист
               LEFT JOIN Спец_предложения 
-                ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
-              WHERE Прайс_лист.ID_блюда = ?
-            `;
+                  ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+              WHERE Прайс_лист.ID = (
+                  SELECT MAX(ID)
+                  FROM Прайс_лист
+                  WHERE ID_блюда = ?
+              );
+          `;
 
               conn.query(
                 getDiscountedPriceQuery,
@@ -581,9 +601,10 @@ class BucketController {
       const authHeader = req.headers.authorization;
 
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       const token = authHeader.split(" ")[1];
@@ -591,9 +612,10 @@ class BucketController {
       try {
         decodedToken = jwt.verify(token, jwtSecret);
       } catch (err) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       const userId = decodedToken.userId;
@@ -650,16 +672,20 @@ class BucketController {
 
               const getDiscountedPriceQuery = `
               SELECT 
-                CASE 
-                  WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
-                    THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
-                  ELSE Прайс_лист.Цена
-                END AS Цена
+                  CASE 
+                      WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
+                          THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
+                      ELSE Прайс_лист.Цена
+                  END AS Цена
               FROM Прайс_лист
               LEFT JOIN Спец_предложения 
-                ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
-              WHERE Прайс_лист.ID_блюда = ?
-            `;
+                  ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+              WHERE Прайс_лист.ID = (
+                  SELECT MAX(ID)
+                  FROM Прайс_лист
+                  WHERE ID_блюда = ?
+              );
+          `;
 
               conn.query(
                 getDiscountedPriceQuery,
@@ -717,9 +743,10 @@ class BucketController {
 
       // Проверка наличия токена в заголовке
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       // Извлекаем сам токен из заголовка
@@ -730,9 +757,10 @@ class BucketController {
       try {
         decodedToken = jwt.verify(token, jwtSecret);
       } catch (err) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       // Получаем userId из декодированного токена
@@ -754,24 +782,28 @@ class BucketController {
 
         // Теперь получаем блюда из этой корзины
         const getFoodsQuery = `
-          SELECT 
+        SELECT 
             Блюда_в_корзине.ID,
             Блюда_в_корзине.Количество,
             Блюда.Название,
             Блюда_в_корзине.ID_блюда,
             COALESCE(Прайс_лист.Цена - Спец_предложения.Размер_скидки, Прайс_лист.Цена) AS Цена,
             Блюда_в_корзине.ID_корзины
-          FROM 
+        FROM 
             Блюда_в_корзине
-          INNER JOIN 
+        INNER JOIN 
             Блюда ON Блюда_в_корзине.ID_блюда = Блюда.ID
-          INNER JOIN 
-            Прайс_лист ON Блюда.ID = Прайс_лист.ID_блюда
-          LEFT JOIN 
+        INNER JOIN 
+            Прайс_лист ON Прайс_лист.ID = (
+                SELECT MAX(ID)
+                FROM Прайс_лист
+                WHERE ID_блюда = Блюда.ID
+            )
+        LEFT JOIN 
             Спец_предложения ON Блюда.ID = Спец_предложения.ID_блюда
-          WHERE 
+        WHERE 
             Блюда_в_корзине.ID_корзины = ?
-        `;
+    `;
 
         conn.query(getFoodsQuery, [bucketId], (err, foods) => {
           if (err) {
@@ -801,9 +833,10 @@ class BucketController {
       const authHeader = req.headers.authorization;
 
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       const token = authHeader.split(" ")[1];
@@ -811,9 +844,10 @@ class BucketController {
       try {
         decodedToken = jwt.verify(token, jwtSecret);
       } catch (err) {
-        return res
-          .status(401)
-          .json({ success: false, message: "Сессия была закончена, авторизуйтесь заново" });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       const userId = decodedToken.userId;
