@@ -41,16 +41,8 @@ export const AuthForm = (props) => {
   const register = (e) => {
     e.preventDefault();
     // Проверка на заполнение всех полей
-    if (
-      !email ||
-      !password ||
-      !copyPassword ||
-      !last_name ||
-      !name ||
-      !surname ||
-      !phone
-    ) {
-      setError("Пожалуйста, заполните все поля");
+    if (!email || !password || !copyPassword || !last_name || !name || !phone) {
+      setError("Пожалуйста, заполните все обязательные поля");
       setTimeout(() => {
         setError("");
       }, 3000);
@@ -257,7 +249,9 @@ export const AuthForm = (props) => {
           <h2 className={Styles["form__title"]}>Регистрация</h2>
           <div className={Styles["form__fields"]}>
             <label className={Styles["form__field"]}>
-              <span className={Styles["form__field-title"]}>Фамилия</span>
+              <span className={Styles["form__field-title"]}>
+                Фамилия<span className={Styles["required"]}>*</span>
+              </span>
               <input
                 className={Styles["form__field-input"]}
                 type="text"
@@ -267,7 +261,9 @@ export const AuthForm = (props) => {
               />
             </label>
             <label className={Styles["form__field"]}>
-              <span className={Styles["form__field-title"]}>Имя</span>
+              <span className={Styles["form__field-title"]}>
+                Имя<span className={Styles["required"]}>*</span>
+              </span>
               <input
                 className={Styles["form__field-input"]}
                 type="text"
@@ -288,7 +284,7 @@ export const AuthForm = (props) => {
             </label>
             <label className={Styles["form__field"]}>
               <span className={Styles["form__field-title"]}>
-                Номер телефона
+                Номер телефона<span className={Styles["required"]}>*</span>
               </span>
               <input
                 className={Styles["form__field-input"]}
@@ -299,7 +295,9 @@ export const AuthForm = (props) => {
               />
             </label>
             <label className={Styles["form__field"]}>
-              <span className={Styles["form__field-title"]}>Email</span>
+              <span className={Styles["form__field-title"]}>
+                Email<span className={Styles["required"]}>*</span>
+              </span>
               <input
                 className={Styles["form__field-input"]}
                 type="email"
@@ -309,7 +307,9 @@ export const AuthForm = (props) => {
               />
             </label>
             <label className={Styles["form__field"]}>
-              <span className={Styles["form__field-title"]}>Пароль</span>
+              <span className={Styles["form__field-title"]}>
+                Пароль<span className={Styles["required"]}>*</span>
+              </span>
               <input
                 className={Styles["form__field-input"]}
                 type="password"
@@ -320,7 +320,7 @@ export const AuthForm = (props) => {
             </label>
             <label className={Styles["form__field"]}>
               <span className={Styles["form__field-title"]}>
-                Подтвердите пароль
+                Подтвердите пароль<span className={Styles["required"]}>*</span>
               </span>
               <input
                 className={Styles["form__field-input"]}
