@@ -181,7 +181,14 @@ class ContmanController {
 
       await new Promise((resolve, reject) => {
         conn.query(
-          "DELETE FROM Спец_предложения WHERE ID_блюда = ?",
+          `
+          DELETE FROM Спец_предложения 
+          WHERE ID = (
+              SELECT MAX(ID)
+              FROM Спец_предложения
+              WHERE ID_блюда = ?
+          )
+          `,
           [dishId],
           (err) => (err ? reject(err) : resolve())
         );
@@ -326,18 +333,21 @@ class ContmanController {
   async getAllOffers(req, res) {
     try {
       const query = `
-        SELECT 
-          Спец_предложения.ID, 
-          Спец_предложения.Описание, 
-          Спец_предложения.Дата_начала, 
-          Спец_предложения.Дата_окончания, 
-          Спец_предложения.Размер_скидки, 
-          Блюда.Название AS Название_блюда
-        FROM 
-          Спец_предложения
-        JOIN 
-          Блюда ON Спец_предложения.ID_блюда = Блюда.ID
-      `;
+            SELECT 
+              Спец_предложения.ID, 
+              Спец_предложения.Описание, 
+              Спец_предложения.Дата_начала, 
+              Спец_предложения.Дата_окончания, 
+              Спец_предложения.Размер_скидки, 
+              Блюда.Название AS Название_блюда
+            FROM 
+              Спец_предложения
+            JOIN 
+              Блюда ON Спец_предложения.ID_блюда = Блюда.ID
+            WHERE 
+              Спец_предложения.Дата_окончания >= CURRENT_DATE
+          `;
+
       conn.query(query, (err, results) => {
         if (err) {
           console.error("Ошибка при получении предложений:", err);
@@ -432,13 +442,21 @@ class ContmanController {
   async activeDish(req, res) {
     try {
       const query = `
-            SELECT ID, Название
-            FROM Блюда
-            WHERE ID NOT IN (
-                SELECT ID_Блюда
-                FROM Спец_предложения
-            )
-        `;
+      SELECT 
+        Блюда.ID, 
+        Блюда.Название
+      FROM 
+        Блюда
+      WHERE 
+        Блюда.ID NOT IN (
+          SELECT 
+            Спец_предложения.ID_блюда
+          FROM 
+            Спец_предложения
+          WHERE 
+            Спец_предложения.Дата_окончания >= CURRENT_DATE
+        )
+    `;
 
       conn.query(query, (err, results) => {
         if (err) {

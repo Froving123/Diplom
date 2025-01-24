@@ -171,12 +171,13 @@ class BucketController {
           FROM Прайс_лист
           LEFT JOIN Спец_предложения 
               ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+              AND Спец_предложения.Дата_окончания >= CURRENT_DATE
           WHERE Прайс_лист.ID = (
               SELECT MAX(ID)
               FROM Прайс_лист
               WHERE ID_блюда = ?
           );
-      `;
+        `;
 
           conn.query(getDiscountedPriceQuery, [foodId], (err, priceResults) => {
             if (err || priceResults.length === 0) {
@@ -372,21 +373,22 @@ class BucketController {
               }
 
               const getDiscountedPriceQuery = `
-              SELECT 
-                  CASE 
-                      WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
-                          THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
-                      ELSE Прайс_лист.Цена
-                  END AS Цена
-              FROM Прайс_лист
-              LEFT JOIN Спец_предложения 
-                  ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
-              WHERE Прайс_лист.ID = (
-                  SELECT MAX(ID)
+                  SELECT 
+                      CASE 
+                          WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
+                              THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
+                          ELSE Прайс_лист.Цена
+                      END AS Цена
                   FROM Прайс_лист
-                  WHERE ID_блюда = ?
-              );
-          `;
+                  LEFT JOIN Спец_предложения 
+                      ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+                      AND Спец_предложения.Дата_окончания >= CURRENT_DATE
+                  WHERE Прайс_лист.ID = (
+                      SELECT MAX(ID)
+                      FROM Прайс_лист
+                      WHERE ID_блюда = ?
+                  );
+                `;
 
               conn.query(
                 getDiscountedPriceQuery,
@@ -531,12 +533,13 @@ class BucketController {
               FROM Прайс_лист
               LEFT JOIN Спец_предложения 
                   ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+                  AND Спец_предложения.Дата_окончания >= CURRENT_DATE
               WHERE Прайс_лист.ID = (
                   SELECT MAX(ID)
                   FROM Прайс_лист
                   WHERE ID_блюда = ?
               );
-          `;
+            `;
 
               conn.query(
                 getDiscountedPriceQuery,
@@ -680,12 +683,13 @@ class BucketController {
               FROM Прайс_лист
               LEFT JOIN Спец_предложения 
                   ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+                  AND Спец_предложения.Дата_окончания >= CURRENT_DATE
               WHERE Прайс_лист.ID = (
                   SELECT MAX(ID)
                   FROM Прайс_лист
                   WHERE ID_блюда = ?
               );
-          `;
+            `;
 
               conn.query(
                 getDiscountedPriceQuery,
@@ -787,7 +791,10 @@ class BucketController {
             Блюда_в_корзине.Количество,
             Блюда.Название,
             Блюда_в_корзине.ID_блюда,
-            COALESCE(Прайс_лист.Цена - Спец_предложения.Размер_скидки, Прайс_лист.Цена) AS Цена,
+            COALESCE(
+                Прайс_лист.Цена - Спец_предложения.Размер_скидки, 
+                Прайс_лист.Цена
+            ) AS Цена,
             Блюда_в_корзине.ID_корзины
         FROM 
             Блюда_в_корзине
@@ -800,10 +807,12 @@ class BucketController {
                 WHERE ID_блюда = Блюда.ID
             )
         LEFT JOIN 
-            Спец_предложения ON Блюда.ID = Спец_предложения.ID_блюда
+            Спец_предложения 
+            ON Блюда.ID = Спец_предложения.ID_блюда
+            AND Спец_предложения.Дата_окончания >= CURRENT_DATE
         WHERE 
-            Блюда_в_корзине.ID_корзины = ?
-    `;
+            Блюда_в_корзине.ID_корзины = ?;
+      `;
 
         conn.query(getFoodsQuery, [bucketId], (err, foods) => {
           if (err) {
