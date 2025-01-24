@@ -149,25 +149,24 @@ class courController {
           });
         }
 
-        // Добавляем запись в таблицу принятых заказов
-        const insertAcceptedOrderQuery =
-          "INSERT INTO Заказы_доставщиков (ID_заказа, ID_сотрудника) VALUES (?, ?)";
+        // Обновляем запись в таблице "Заказ", устанавливая ID_сотрудника
+        const updateOrderQuery = `
+                UPDATE Заказ
+                SET ID_сотрудника = ?
+                WHERE ID = ?
+                `;
 
         conn.query(
-          insertAcceptedOrderQuery,
-          [orderId, adminId],
+          updateOrderQuery,
+          [adminId, orderId], // adminId - ID сотрудника, orderId - ID заказа
           (err, results) => {
             if (err) {
-              console.error(
-                "Ошибка при добавлении записи о принятом заказе:",
-                err
-              );
+              console.error("Ошибка при обновлении заказа:", err);
               return res.status(500).json({
                 success: false,
-                message: "Ошибка при добавлении записи о принятом заказе",
+                message: "Ошибка при обновлении заказа",
               });
             }
-
             res.status(200).json({
               success: true,
               message: "Заказ принят и запись о принятии добавлена",
@@ -210,36 +209,36 @@ class courController {
       }
 
       const adminId = decodedToken.id; // Извлекаем ID сотрудника из токена
+
       // SQL-запрос для получения заказов, принадлежащих текущему сотруднику
       const getOrdersQuery = `
-        SELECT 
-            Заказ.ID AS orderId,
-            Заказ.Дата_заказа AS orderDate,
-            Заказ.Время_заказа AS orderTime,
-            Заказ.Время_доставки AS deliveryTime,
-            CONCAT(Адрес.Улица, ', дом ', Адрес.Дом, 
-                IF(Адрес.Квартира IS NOT NULL, CONCAT(', кв. ', Адрес.Квартира), '')) AS address,
-            Статус_заказа.Наименование AS status,
-            (Содержание_заказа.Общая_цена + Доставка.Цена) AS totalPrice,
-            Способ_оплаты.Наименование AS paymentMethod,
-            Содержание_заказа.ID AS contentId,
-            Пользователь.ID AS userId,
-            Пользователь.Имя AS userName,
-            Пользователь.Фамилия AS userSurname,
-            Пользователь.Email AS userEmail,
-            Пользователь.Номер_телефона AS userPhone
-        FROM Заказ
-        INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
-        INNER JOIN Адрес ON Заказ.ID_адреса = Адрес.ID
-        INNER JOIN Статус_заказа ON Заказ.ID_статуса = Статус_заказа.ID
-        INNER JOIN Содержание_заказа ON Заказ.ID_содержания_заказа = Содержание_заказа.ID
-        INNER JOIN Способ_оплаты ON Заказ.ID_способа = Способ_оплаты.ID
-        INNER JOIN Пользователь ON Содержание_заказа.ID_пользователя = Пользователь.ID
-        INNER JOIN Заказы_доставщиков ON Заказ.ID = Заказы_доставщиков.ID_заказа
-        WHERE Статус_заказа.ID = 4 
-        AND Заказы_доставщиков.ID_сотрудника = ? 
-        ORDER BY Заказ.Дата_заказа, Заказ.Время_заказа;
-        `;
+      SELECT 
+          Заказ.ID AS orderId,
+          Заказ.Дата_заказа AS orderDate,
+          Заказ.Время_заказа AS orderTime,
+          Заказ.Время_доставки AS deliveryTime,
+          CONCAT(Адрес.Улица, ', дом ', Адрес.Дом, 
+              IF(Адрес.Квартира IS NOT NULL, CONCAT(', кв. ', Адрес.Квартира), '')) AS address,
+          Статус_заказа.Наименование AS status,
+          (Содержание_заказа.Общая_цена + Доставка.Цена) AS totalPrice,
+          Способ_оплаты.Наименование AS paymentMethod,
+          Содержание_заказа.ID AS contentId,
+          Пользователь.ID AS userId,
+          Пользователь.Имя AS userName,
+          Пользователь.Фамилия AS userSurname,
+          Пользователь.Email AS userEmail,
+          Пользователь.Номер_телефона AS userPhone
+      FROM Заказ
+      INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
+      INNER JOIN Адрес ON Заказ.ID_адреса = Адрес.ID
+      INNER JOIN Статус_заказа ON Заказ.ID_статуса = Статус_заказа.ID
+      INNER JOIN Содержание_заказа ON Заказ.ID_содержания_заказа = Содержание_заказа.ID
+      INNER JOIN Способ_оплаты ON Заказ.ID_способа = Способ_оплаты.ID
+      INNER JOIN Пользователь ON Содержание_заказа.ID_пользователя = Пользователь.ID
+      WHERE Статус_заказа.ID = 4 
+      AND Заказ.ID_сотрудника = ? 
+      ORDER BY Заказ.Дата_заказа, Заказ.Время_заказа;
+    `;
 
       const orders = await new Promise((resolve, reject) => {
         conn.query(getOrdersQuery, [adminId], (err, results) => {
@@ -386,36 +385,36 @@ class courController {
       }
 
       const adminId = decodedToken.id; // Извлекаем ID сотрудника из токена
+
       // SQL-запрос для получения заказов, принадлежащих текущему сотруднику
       const getOrdersQuery = `
-        SELECT 
-            Заказ.ID AS orderId,
-            Заказ.Дата_заказа AS orderDate,
-            Заказ.Время_заказа AS orderTime,
-            Заказ.Время_доставки AS deliveryTime,
-            CONCAT(Адрес.Улица, ', дом ', Адрес.Дом, 
-                IF(Адрес.Квартира IS NOT NULL, CONCAT(', кв. ', Адрес.Квартира), '')) AS address,
-            Статус_заказа.Наименование AS status,
-            (Содержание_заказа.Общая_цена + Доставка.Цена) AS totalPrice,
-            Способ_оплаты.Наименование AS paymentMethod,
-            Содержание_заказа.ID AS contentId,
-            Пользователь.ID AS userId,
-            Пользователь.Имя AS userName,
-            Пользователь.Фамилия AS userSurname,
-            Пользователь.Email AS userEmail,
-            Пользователь.Номер_телефона AS userPhone
-        FROM Заказ
-        INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
-        INNER JOIN Адрес ON Заказ.ID_адреса = Адрес.ID
-        INNER JOIN Статус_заказа ON Заказ.ID_статуса = Статус_заказа.ID
-        INNER JOIN Содержание_заказа ON Заказ.ID_содержания_заказа = Содержание_заказа.ID
-        INNER JOIN Способ_оплаты ON Заказ.ID_способа = Способ_оплаты.ID
-        INNER JOIN Пользователь ON Содержание_заказа.ID_пользователя = Пользователь.ID
-        INNER JOIN Заказы_доставщиков ON Заказ.ID = Заказы_доставщиков.ID_заказа
-        WHERE Статус_заказа.ID = 5 
-        AND Заказы_доставщиков.ID_сотрудника = ? 
-        ORDER BY Заказ.Дата_заказа, Заказ.Время_заказа;
-        `;
+            SELECT 
+                Заказ.ID AS orderId,
+                Заказ.Дата_заказа AS orderDate,
+                Заказ.Время_заказа AS orderTime,
+                Заказ.Время_доставки AS deliveryTime,
+                CONCAT(Адрес.Улица, ', дом ', Адрес.Дом, 
+                    IF(Адрес.Квартира IS NOT NULL, CONCAT(', кв. ', Адрес.Квартира), '')) AS address,
+                Статус_заказа.Наименование AS status,
+                (Содержание_заказа.Общая_цена + Доставка.Цена) AS totalPrice,
+                Способ_оплаты.Наименование AS paymentMethod,
+                Содержание_заказа.ID AS contentId,
+                Пользователь.ID AS userId,
+                Пользователь.Имя AS userName,
+                Пользователь.Фамилия AS userSurname,
+                Пользователь.Email AS userEmail,
+                Пользователь.Номер_телефона AS userPhone
+            FROM Заказ
+            INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
+            INNER JOIN Адрес ON Заказ.ID_адреса = Адрес.ID
+            INNER JOIN Статус_заказа ON Заказ.ID_статуса = Статус_заказа.ID
+            INNER JOIN Содержание_заказа ON Заказ.ID_содержания_заказа = Содержание_заказа.ID
+            INNER JOIN Способ_оплаты ON Заказ.ID_способа = Способ_оплаты.ID
+            INNER JOIN Пользователь ON Содержание_заказа.ID_пользователя = Пользователь.ID
+            WHERE Статус_заказа.ID = 5 
+            AND Заказ.ID_сотрудника = ? 
+            ORDER BY Заказ.Дата_заказа, Заказ.Время_заказа;
+          `;
 
       const orders = await new Promise((resolve, reject) => {
         conn.query(getOrdersQuery, [adminId], (err, results) => {
