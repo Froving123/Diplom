@@ -42,12 +42,10 @@ class OrderController {
     try {
       const authHeader = req.headers.authorization;
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res
-          .status(401)
-          .json({
-            success: false,
-            message: "Сессия была закончена, авторизуйтесь заново",
-          });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       const token = authHeader.split(" ")[1];
@@ -56,20 +54,18 @@ class OrderController {
       try {
         decodedToken = jwt.verify(token, jwtSecret);
       } catch (err) {
-        return res
-          .status(401)
-          .json({
-            success: false,
-            message: "Сессия была закончена, авторизуйтесь заново",
-          });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       const userId = decodedToken.userId;
       const { address, deliveryPrice, totalPrice, payment } = req.body;
 
       const currentTime = new Date();
-      const hours = currentTime.getHours(); 
-      const minutes = currentTime.getMinutes(); 
+      const hours = currentTime.getHours();
+      const minutes = currentTime.getMinutes();
 
       // Проверка, находится ли текущее время в пределах 07:00 - 22:00
       if (hours < 7 || (hours === 22 && minutes > 0) || hours > 22) {
@@ -111,24 +107,25 @@ class OrderController {
 
               const deliveryId = deliveryResult.insertId;
 
-              // Добавление содержания заказа
-              const insertContentQuery = `INSERT INTO Содержание_заказа (ID_пользователя, Общая_цена) VALUES (?, ?)`;
+              const insertOrderQuery = `
+                INSERT INTO 
+                  Заказ (ID_статуса, ID_доставки, ID_адреса, ID_пользователя, Общая_цена_блюд, ID_способа, Дата_заказа, Время_заказа) 
+                  VALUES ((SELECT ID FROM Статус_заказа WHERE ID = 1), ?, ?, ?, ?, ?, CURDATE(), CURTIME())
+              `;
+
               conn.query(
-                insertContentQuery,
-                [userId, totalPrice],
-                (err, contentResult) => {
+                insertOrderQuery,
+                [deliveryId, addressId, userId, totalPrice, payment],
+                (err, orderResult) => {
                   if (err) {
-                    console.error(
-                      "Ошибка при добавлении содержания заказа:",
-                      err
-                    );
+                    console.error("Ошибка при добавлении заказа:", err);
                     return res.status(500).json({
                       success: false,
-                      message: "Ошибка при добавлении содержания заказа",
+                      message: "Ошибка при добавлении заказа",
                     });
                   }
 
-                  const contentId = contentResult.insertId;
+                  const orderId = orderResult.insertId;
 
                   // Получение корзины пользователя
                   const findBucketQuery = `SELECT ID FROM Корзина WHERE ID_пользователя = ?`;
@@ -160,12 +157,11 @@ class OrderController {
                             });
                           }
 
-                          // Добавление блюд в заказ
-                          const insertFoodQuery = `INSERT INTO Блюда_в_заказе (ID_блюда, Количество, ID_содержания_заказа) VALUES ?`;
+                          const insertFoodQuery = `INSERT INTO Блюда_в_заказе (ID_блюда, Количество, ID_заказа) VALUES ?`;
                           const foodValues = foodResults.map((food) => [
                             food.ID_блюда,
                             food.Количество,
-                            contentId,
+                            orderId,
                           ]);
 
                           conn.query(insertFoodQuery, [foodValues], (err) => {
@@ -196,7 +192,8 @@ class OrderController {
                               }
 
                               // Удаление корзины
-                              const deleteBucketQuery = `DELETE FROM Корзина WHERE ID_пользователя = ?`;
+                              const deleteBucketQuery =
+                                "DELETE FROM Корзина WHERE ID_пользователя = ?";
                               conn.query(deleteBucketQuery, [userId], (err) => {
                                 if (err) {
                                   console.error(
@@ -210,30 +207,11 @@ class OrderController {
                                   });
                                 }
 
-                                // Добавление заказа
-                                const insertOrderQuery = `INSERT INTO Заказ (ID_статуса, ID_доставки, ID_адреса, ID_содержания_заказа, ID_способа, Дата_заказа, Время_заказа) VALUES ((SELECT ID FROM Статус_заказа WHERE ID = 1), ?, ?, ?, ?, CURDATE(), CURTIME())`;
-                                conn.query(
-                                  insertOrderQuery,
-                                  [deliveryId, addressId, contentId, payment],
-                                  (err, orderResult) => {
-                                    if (err) {
-                                      console.error(
-                                        "Ошибка при добавлении заказа:",
-                                        err
-                                      );
-                                      return res.status(500).json({
-                                        success: false,
-                                        message: "Ошибка при добавлении заказа",
-                                      });
-                                    }
-
-                                    res.status(201).json({
-                                      success: true,
-                                      message: "Заказ успешно создан",
-                                      orderId: orderResult.insertId,
-                                    });
-                                  }
-                                );
+                                res.status(201).json({
+                                  success: true,
+                                  message: "Заказ успешно создан",
+                                  orderId: orderId,
+                                });
                               });
                             });
                           });
@@ -267,7 +245,6 @@ class OrderController {
         SELECT 
           Заказ.ID AS orderId,
           Заказ.ID_доставки AS deliveryId,
-          Заказ.ID_содержания_заказа AS contentId,
           Заказ.ID_адреса AS addressId
         FROM Заказ
         WHERE Заказ.ID = ? 
@@ -286,13 +263,13 @@ class OrderController {
           .json({ success: false, message: "Заказ не найден" });
       }
 
-      const { deliveryId, contentId, addressId } = orderDetails;
+      const { deliveryId, addressId } = orderDetails;
 
       // Удаляем блюда из заказа
       await new Promise((resolve, reject) => {
         conn.query(
-          "DELETE FROM Блюда_в_заказе WHERE ID_содержания_заказа = ?",
-          [contentId],
+          "DELETE FROM Блюда_в_заказе WHERE ID_заказа = ?",
+          [orderId],
           (err) => (err ? reject(err) : resolve())
         );
       });
@@ -301,15 +278,6 @@ class OrderController {
       await new Promise((resolve, reject) => {
         conn.query("DELETE FROM Заказ WHERE ID = ?", [orderId], (err) =>
           err ? reject(err) : resolve()
-        );
-      });
-
-      // Удаляем содержание заказа
-      await new Promise((resolve, reject) => {
-        conn.query(
-          "DELETE FROM Содержание_заказа WHERE ID = ?",
-          [contentId],
-          (err) => (err ? reject(err) : resolve())
         );
       });
 
@@ -339,12 +307,10 @@ class OrderController {
     try {
       const authHeader = req.headers.authorization;
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res
-          .status(401)
-          .json({
-            success: false,
-            message: "Сессия была закончена, авторизуйтесь заново",
-          });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       const token = authHeader.split(" ")[1];
@@ -353,12 +319,10 @@ class OrderController {
       try {
         decodedToken = jwt.verify(token, jwtSecret);
       } catch (err) {
-        return res
-          .status(401)
-          .json({
-            success: false,
-            message: "Сессия была закончена, авторизуйтесь заново",
-          });
+        return res.status(401).json({
+          success: false,
+          message: "Сессия была закончена, авторизуйтесь заново",
+        });
       }
 
       const userId = decodedToken.userId;
@@ -372,17 +336,15 @@ class OrderController {
           CONCAT(Адрес.Улица, ', дом ', Адрес.Дом, 
             IF(Адрес.Квартира IS NOT NULL, CONCAT(', кв. ', Адрес.Квартира), '')) AS address,
           Статус_заказа.Наименование AS status,
-          (Содержание_заказа.Общая_цена + Доставка.Цена) AS totalPrice,
+          (Заказ.Общая_цена_блюд + Доставка.Цена) AS totalPrice,
           Способ_оплаты.Наименование AS paymentMethod,
-          Заказ.Время_доставки AS deliveryTime,
-          Содержание_заказа.ID AS contentId
+          Заказ.Время_доставки AS deliveryTime
         FROM Заказ
         INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
         INNER JOIN Адрес ON Заказ.ID_адреса = Адрес.ID
         INNER JOIN Статус_заказа ON Заказ.ID_статуса = Статус_заказа.ID
-        INNER JOIN Содержание_заказа ON Заказ.ID_содержания_заказа = Содержание_заказа.ID
         INNER JOIN Способ_оплаты ON Заказ.ID_способа = Способ_оплаты.ID
-        WHERE Содержание_заказа.ID_пользователя = ? 
+        WHERE Заказ.ID_пользователя = ?
         ORDER BY Заказ.Дата_заказа DESC, Заказ.Время_заказа DESC
       `;
 
@@ -405,13 +367,13 @@ class OrderController {
           Блюда_в_заказе.Количество AS quantity
         FROM Блюда_в_заказе
         INNER JOIN Блюда ON Блюда_в_заказе.ID_блюда = Блюда.ID
-        WHERE Блюда_в_заказе.ID_содержания_заказа = ?
+        WHERE Блюда_в_заказе.ID_заказа = ?
       `;
 
       const ordersWithFoods = await Promise.all(
         orders.map(async (order) => {
           const foods = await new Promise((resolve, reject) => {
-            conn.query(getFoodsQuery, [order.contentId], (err, results) => {
+            conn.query(getFoodsQuery, [order.orderId], (err, results) => {
               if (err) {
                 return reject(err);
               }

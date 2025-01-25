@@ -24,9 +24,8 @@ class courController {
               CONCAT(Адрес.Улица, ', дом ', Адрес.Дом, 
                   IF(Адрес.Квартира IS NOT NULL, CONCAT(', кв. ', Адрес.Квартира), '')) AS address,
               Статус_заказа.Наименование AS status,
-              (Содержание_заказа.Общая_цена + Доставка.Цена) AS totalPrice,
+              (Заказ.Общая_цена_блюд + Доставка.Цена) AS totalPrice,
               Способ_оплаты.Наименование AS paymentMethod,
-              Содержание_заказа.ID AS contentId,
               Пользователь.ID AS userId,
               Пользователь.Имя AS userName,
               Пользователь.Фамилия AS userSurname,
@@ -36,9 +35,8 @@ class courController {
             INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
             INNER JOIN Адрес ON Заказ.ID_адреса = Адрес.ID
             INNER JOIN Статус_заказа ON Заказ.ID_статуса = Статус_заказа.ID
-            INNER JOIN Содержание_заказа ON Заказ.ID_содержания_заказа = Содержание_заказа.ID
             INNER JOIN Способ_оплаты ON Заказ.ID_способа = Способ_оплаты.ID
-            INNER JOIN Пользователь ON Содержание_заказа.ID_пользователя = Пользователь.ID
+            INNER JOIN Пользователь ON Заказ.ID_пользователя = Пользователь.ID
             WHERE Статус_заказа.ID = 3
             ORDER BY Заказ.Дата_заказа, Заказ.Время_заказа;
           `;
@@ -63,13 +61,13 @@ class courController {
               Блюда_в_заказе.Количество AS quantity
             FROM Блюда_в_заказе
             INNER JOIN Блюда ON Блюда_в_заказе.ID_блюда = Блюда.ID
-            WHERE Блюда_в_заказе.ID_содержания_заказа = ?
+            WHERE Блюда_в_заказе.ID_заказа = ?
           `;
 
       const ordersWithFoods = await Promise.all(
         orders.map(async (order) => {
           const foods = await new Promise((resolve, reject) => {
-            conn.query(getFoodsQuery, [order.contentId], (err, results) => {
+            conn.query(getFoodsQuery, [order.orderId], (err, results) => {
               if (err) {
                 return reject(err);
               }
@@ -220,9 +218,8 @@ class courController {
           CONCAT(Адрес.Улица, ', дом ', Адрес.Дом, 
               IF(Адрес.Квартира IS NOT NULL, CONCAT(', кв. ', Адрес.Квартира), '')) AS address,
           Статус_заказа.Наименование AS status,
-          (Содержание_заказа.Общая_цена + Доставка.Цена) AS totalPrice,
+          (Заказ.Общая_цена_блюд + Доставка.Цена) AS totalPrice,
           Способ_оплаты.Наименование AS paymentMethod,
-          Содержание_заказа.ID AS contentId,
           Пользователь.ID AS userId,
           Пользователь.Имя AS userName,
           Пользователь.Фамилия AS userSurname,
@@ -232,9 +229,8 @@ class courController {
       INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
       INNER JOIN Адрес ON Заказ.ID_адреса = Адрес.ID
       INNER JOIN Статус_заказа ON Заказ.ID_статуса = Статус_заказа.ID
-      INNER JOIN Содержание_заказа ON Заказ.ID_содержания_заказа = Содержание_заказа.ID
       INNER JOIN Способ_оплаты ON Заказ.ID_способа = Способ_оплаты.ID
-      INNER JOIN Пользователь ON Содержание_заказа.ID_пользователя = Пользователь.ID
+      INNER JOIN Пользователь ON Заказ.ID_пользователя = Пользователь.ID
       WHERE Статус_заказа.ID = 4 
       AND Заказ.ID_сотрудника = ? 
       ORDER BY Заказ.Дата_заказа, Заказ.Время_заказа;
@@ -260,13 +256,13 @@ class courController {
               Блюда_в_заказе.Количество AS quantity
             FROM Блюда_в_заказе
             INNER JOIN Блюда ON Блюда_в_заказе.ID_блюда = Блюда.ID
-            WHERE Блюда_в_заказе.ID_содержания_заказа = ?
+            WHERE Блюда_в_заказе.ID_заказа = ?
           `;
 
       const ordersWithFoods = await Promise.all(
         orders.map(async (order) => {
           const foods = await new Promise((resolve, reject) => {
-            conn.query(getFoodsQuery, [order.contentId], (err, results) => {
+            conn.query(getFoodsQuery, [order.orderId], (err, results) => {
               if (err) {
                 return reject(err);
               }
@@ -396,9 +392,8 @@ class courController {
                 CONCAT(Адрес.Улица, ', дом ', Адрес.Дом, 
                     IF(Адрес.Квартира IS NOT NULL, CONCAT(', кв. ', Адрес.Квартира), '')) AS address,
                 Статус_заказа.Наименование AS status,
-                (Содержание_заказа.Общая_цена + Доставка.Цена) AS totalPrice,
+                (Заказ.Общая_цена_блюд + Доставка.Цена) AS totalPrice,
                 Способ_оплаты.Наименование AS paymentMethod,
-                Содержание_заказа.ID AS contentId,
                 Пользователь.ID AS userId,
                 Пользователь.Имя AS userName,
                 Пользователь.Фамилия AS userSurname,
@@ -408,9 +403,8 @@ class courController {
             INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
             INNER JOIN Адрес ON Заказ.ID_адреса = Адрес.ID
             INNER JOIN Статус_заказа ON Заказ.ID_статуса = Статус_заказа.ID
-            INNER JOIN Содержание_заказа ON Заказ.ID_содержания_заказа = Содержание_заказа.ID
             INNER JOIN Способ_оплаты ON Заказ.ID_способа = Способ_оплаты.ID
-            INNER JOIN Пользователь ON Содержание_заказа.ID_пользователя = Пользователь.ID
+            INNER JOIN Пользователь ON Заказ.ID_пользователя = Пользователь.ID
             WHERE Статус_заказа.ID = 5 
             AND Заказ.ID_сотрудника = ? 
             ORDER BY Заказ.Дата_заказа, Заказ.Время_заказа;
@@ -436,13 +430,13 @@ class courController {
               Блюда_в_заказе.Количество AS quantity
             FROM Блюда_в_заказе
             INNER JOIN Блюда ON Блюда_в_заказе.ID_блюда = Блюда.ID
-            WHERE Блюда_в_заказе.ID_содержания_заказа = ?
+            WHERE Блюда_в_заказе.ID_заказа = ?
           `;
 
       const ordersWithFoods = await Promise.all(
         orders.map(async (order) => {
           const foods = await new Promise((resolve, reject) => {
-            conn.query(getFoodsQuery, [order.contentId], (err, results) => {
+            conn.query(getFoodsQuery, [order.orderId], (err, results) => {
               if (err) {
                 return reject(err);
               }

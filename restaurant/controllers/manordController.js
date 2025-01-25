@@ -19,9 +19,8 @@ class manordController {
               CONCAT(Адрес.Улица, ', дом ', Адрес.Дом, 
                   IF(Адрес.Квартира IS NOT NULL, CONCAT(', кв. ', Адрес.Квартира), '')) AS address,
               Статус_заказа.Наименование AS status,
-              (Содержание_заказа.Общая_цена + Доставка.Цена) AS totalPrice,
+              (Заказ.Общая_цена_блюд + Доставка.Цена) AS totalPrice,
               Способ_оплаты.Наименование AS paymentMethod,
-              Содержание_заказа.ID AS contentId,
               Пользователь.ID AS userId,
               Пользователь.Имя AS userName,
               Пользователь.Фамилия AS userSurname,
@@ -31,9 +30,8 @@ class manordController {
             INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
             INNER JOIN Адрес ON Заказ.ID_адреса = Адрес.ID
             INNER JOIN Статус_заказа ON Заказ.ID_статуса = Статус_заказа.ID
-            INNER JOIN Содержание_заказа ON Заказ.ID_содержания_заказа = Содержание_заказа.ID
             INNER JOIN Способ_оплаты ON Заказ.ID_способа = Способ_оплаты.ID
-            INNER JOIN Пользователь ON Содержание_заказа.ID_пользователя = Пользователь.ID
+            INNER JOIN Пользователь ON Заказ.ID_пользователя = Пользователь.ID
             WHERE Статус_заказа.ID = 1
             ORDER BY Заказ.Дата_заказа, Заказ.Время_заказа;
           `;
@@ -58,13 +56,13 @@ class manordController {
               Блюда_в_заказе.Количество AS quantity
             FROM Блюда_в_заказе
             INNER JOIN Блюда ON Блюда_в_заказе.ID_блюда = Блюда.ID
-            WHERE Блюда_в_заказе.ID_содержания_заказа = ?
+            WHERE Блюда_в_заказе.ID_заказа = ?
           `;
 
       const ordersWithFoods = await Promise.all(
         orders.map(async (order) => {
           const foods = await new Promise((resolve, reject) => {
-            conn.query(getFoodsQuery, [order.contentId], (err, results) => {
+            conn.query(getFoodsQuery, [order.orderId], (err, results) => {
               if (err) {
                 return reject(err);
               }
@@ -147,7 +145,6 @@ class manordController {
           SELECT 
             Заказ.ID AS orderId,
             Заказ.ID_доставки AS deliveryId,
-            Заказ.ID_содержания_заказа AS contentId,
             Заказ.ID_адреса AS addressId
           FROM Заказ
           WHERE Заказ.ID = ? 
@@ -171,8 +168,8 @@ class manordController {
       // Удаляем блюда из заказа
       await new Promise((resolve, reject) => {
         conn.query(
-          "DELETE FROM Блюда_в_заказе WHERE ID_содержания_заказа = ?",
-          [contentId],
+          "DELETE FROM Блюда_в_заказе WHERE ID_заказа = ?",
+          [orderId],
           (err) => (err ? reject(err) : resolve())
         );
       });
@@ -181,15 +178,6 @@ class manordController {
       await new Promise((resolve, reject) => {
         conn.query("DELETE FROM Заказ WHERE ID = ?", [orderId], (err) =>
           err ? reject(err) : resolve()
-        );
-      });
-
-      // Удаляем содержание заказа
-      await new Promise((resolve, reject) => {
-        conn.query(
-          "DELETE FROM Содержание_заказа WHERE ID = ?",
-          [contentId],
-          (err) => (err ? reject(err) : resolve())
         );
       });
 
@@ -225,9 +213,8 @@ class manordController {
               CONCAT(Адрес.Улица, ', дом ', Адрес.Дом, 
                   IF(Адрес.Квартира IS NOT NULL, CONCAT(', кв. ', Адрес.Квартира), '')) AS address,
               Статус_заказа.Наименование AS status,
-              (Содержание_заказа.Общая_цена + Доставка.Цена) AS totalPrice,
+              (Заказ.Общая_цена_блюд + Доставка.Цена) AS totalPrice,
               Способ_оплаты.Наименование AS paymentMethod,
-              Содержание_заказа.ID AS contentId,
               Пользователь.ID AS userId,
               Пользователь.Имя AS userName,
               Пользователь.Фамилия AS userSurname,
@@ -237,9 +224,8 @@ class manordController {
             INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
             INNER JOIN Адрес ON Заказ.ID_адреса = Адрес.ID
             INNER JOIN Статус_заказа ON Заказ.ID_статуса = Статус_заказа.ID
-            INNER JOIN Содержание_заказа ON Заказ.ID_содержания_заказа = Содержание_заказа.ID
             INNER JOIN Способ_оплаты ON Заказ.ID_способа = Способ_оплаты.ID
-            INNER JOIN Пользователь ON Содержание_заказа.ID_пользователя = Пользователь.ID
+            INNER JOIN Пользователь ON Заказ.ID_пользователя = Пользователь.ID
             WHERE Статус_заказа.ID = 2
             ORDER BY Заказ.Дата_заказа, Заказ.Время_заказа;
           `;
@@ -264,13 +250,13 @@ class manordController {
               Блюда_в_заказе.Количество AS quantity
             FROM Блюда_в_заказе
             INNER JOIN Блюда ON Блюда_в_заказе.ID_блюда = Блюда.ID
-            WHERE Блюда_в_заказе.ID_содержания_заказа = ?
+            WHERE Блюда_в_заказе.ID_заказа = ?
           `;
 
       const ordersWithFoods = await Promise.all(
         orders.map(async (order) => {
           const foods = await new Promise((resolve, reject) => {
-            conn.query(getFoodsQuery, [order.contentId], (err, results) => {
+            conn.query(getFoodsQuery, [order.orderId], (err, results) => {
               if (err) {
                 return reject(err);
               }
