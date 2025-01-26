@@ -91,31 +91,15 @@ class OrderController {
 
           const addressId = addressResult.insertId;
 
-          // Добавление доставки
-          const insertDeliveryQuery = `INSERT INTO Доставка (Цена) VALUES (?)`;
-          conn.query(
-            insertDeliveryQuery,
-            [deliveryPrice],
-            (err, deliveryResult) => {
-              if (err) {
-                console.error("Ошибка при добавлении доставки:", err);
-                return res.status(500).json({
-                  success: false,
-                  message: "Ошибка при добавлении доставки",
-                });
-              }
-
-              const deliveryId = deliveryResult.insertId;
-
               const insertOrderQuery = `
                 INSERT INTO 
-                  Заказ (ID_статуса, ID_доставки, ID_адреса, ID_пользователя, Общая_цена_блюд, ID_способа, Дата_заказа, Время_заказа) 
-                  VALUES ((SELECT ID FROM Статус_заказа WHERE ID = 1), ?, ?, ?, ?, ?, CURDATE(), CURTIME())
+                  Заказ (ID_статуса, ID_адреса, ID_пользователя, Общая_цена_блюд, Цена_доставки, ID_способа, Дата_заказа, Время_заказа) 
+                  VALUES ((SELECT ID FROM Статус_заказа WHERE ID = 1), ?, ?, ?, 500, ?, CURDATE(), CURTIME())
               `;
 
               conn.query(
                 insertOrderQuery,
-                [deliveryId, addressId, userId, totalPrice, payment],
+                [addressId, userId, totalPrice, payment],
                 (err, orderResult) => {
                   if (err) {
                     console.error("Ошибка при добавлении заказа:", err);
@@ -198,8 +182,6 @@ class OrderController {
               );
             }
           );
-        }
-      );
     } catch (error) {
       console.error("Ошибка на сервере:", error);
       res.status(500).json({ success: false });
@@ -219,7 +201,6 @@ class OrderController {
       const getOrderDetailsQuery = `
         SELECT 
           Заказ.ID AS orderId,
-          Заказ.ID_доставки AS deliveryId,
           Заказ.ID_адреса AS addressId
         FROM Заказ
         WHERE Заказ.ID = ? 
@@ -238,7 +219,7 @@ class OrderController {
           .json({ success: false, message: "Заказ не найден" });
       }
 
-      const { deliveryId, addressId } = orderDetails;
+      const { addressId } = orderDetails;
 
       // Удаляем блюда из заказа
       await new Promise((resolve, reject) => {
@@ -252,13 +233,6 @@ class OrderController {
       // Удаляем сам заказ
       await new Promise((resolve, reject) => {
         conn.query("DELETE FROM Заказ WHERE ID = ?", [orderId], (err) =>
-          err ? reject(err) : resolve()
-        );
-      });
-
-      // Удаляем доставку
-      await new Promise((resolve, reject) => {
-        conn.query("DELETE FROM Доставка WHERE ID = ?", [deliveryId], (err) =>
           err ? reject(err) : resolve()
         );
       });
@@ -311,11 +285,10 @@ class OrderController {
           CONCAT(Адрес.Улица, ', дом ', Адрес.Дом, 
             IF(Адрес.Квартира IS NOT NULL, CONCAT(', кв. ', Адрес.Квартира), '')) AS address,
           Статус_заказа.Наименование AS status,
-          (Заказ.Общая_цена_блюд + Доставка.Цена) AS totalPrice,
+          (Заказ.Общая_цена_блюд + Заказ.Цена_доставки) AS totalPrice,
           Способ_оплаты.Наименование AS paymentMethod,
           Заказ.Время_доставки AS deliveryTime
         FROM Заказ
-        INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
         INNER JOIN Адрес ON Заказ.ID_адреса = Адрес.ID
         INNER JOIN Статус_заказа ON Заказ.ID_статуса = Статус_заказа.ID
         INNER JOIN Способ_оплаты ON Заказ.ID_способа = Способ_оплаты.ID

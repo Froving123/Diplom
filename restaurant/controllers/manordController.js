@@ -19,7 +19,7 @@ class manordController {
               CONCAT(Адрес.Улица, ', дом ', Адрес.Дом, 
                   IF(Адрес.Квартира IS NOT NULL, CONCAT(', кв. ', Адрес.Квартира), '')) AS address,
               Статус_заказа.Наименование AS status,
-              (Заказ.Общая_цена_блюд + Доставка.Цена) AS totalPrice,
+              (Заказ.Общая_цена_блюд + Заказ.Цена_доставки) AS totalPrice,
               Способ_оплаты.Наименование AS paymentMethod,
               Пользователь.ID AS userId,
               Пользователь.Имя AS userName,
@@ -27,7 +27,6 @@ class manordController {
               Пользователь.Email AS userEmail,
               Пользователь.Номер_телефона AS userPhone
             FROM Заказ
-            INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
             INNER JOIN Адрес ON Заказ.ID_адреса = Адрес.ID
             INNER JOIN Статус_заказа ON Заказ.ID_статуса = Статус_заказа.ID
             INNER JOIN Способ_оплаты ON Заказ.ID_способа = Способ_оплаты.ID
@@ -144,7 +143,6 @@ class manordController {
       const getOrderDetailsQuery = `
           SELECT 
             Заказ.ID AS orderId,
-            Заказ.ID_доставки AS deliveryId,
             Заказ.ID_адреса AS addressId
           FROM Заказ
           WHERE Заказ.ID = ? 
@@ -181,13 +179,6 @@ class manordController {
         );
       });
 
-      // Удаляем доставку
-      await new Promise((resolve, reject) => {
-        conn.query("DELETE FROM Доставка WHERE ID = ?", [deliveryId], (err) =>
-          err ? reject(err) : resolve()
-        );
-      });
-
       // Удаляем адрес
       await new Promise((resolve, reject) => {
         conn.query("DELETE FROM Адрес WHERE ID = ?", [addressId], (err) =>
@@ -213,7 +204,7 @@ class manordController {
               CONCAT(Адрес.Улица, ', дом ', Адрес.Дом, 
                   IF(Адрес.Квартира IS NOT NULL, CONCAT(', кв. ', Адрес.Квартира), '')) AS address,
               Статус_заказа.Наименование AS status,
-              (Заказ.Общая_цена_блюд + Доставка.Цена) AS totalPrice,
+              (Заказ.Общая_цена_блюд + Заказ.Цена_доставки) AS totalPrice,
               Способ_оплаты.Наименование AS paymentMethod,
               Пользователь.ID AS userId,
               Пользователь.Имя AS userName,
@@ -221,7 +212,6 @@ class manordController {
               Пользователь.Email AS userEmail,
               Пользователь.Номер_телефона AS userPhone
             FROM Заказ
-            INNER JOIN Доставка ON Заказ.ID_доставки = Доставка.ID
             INNER JOIN Адрес ON Заказ.ID_адреса = Адрес.ID
             INNER JOIN Статус_заказа ON Заказ.ID_статуса = Статус_заказа.ID
             INNER JOIN Способ_оплаты ON Заказ.ID_способа = Способ_оплаты.ID
