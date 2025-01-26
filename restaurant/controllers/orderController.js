@@ -127,98 +127,73 @@ class OrderController {
 
                   const orderId = orderResult.insertId;
 
-                  // Получение корзины пользователя
-                  const findBucketQuery = `SELECT ID FROM Корзина WHERE ID_пользователя = ?`;
-                  conn.query(
-                    findBucketQuery,
-                    [userId],
-                    (err, bucketResults) => {
-                      if (err || bucketResults.length === 0) {
-                        console.error("Ошибка при получении корзины:", err);
-                        return res.status(404).json({
+                  // Получение блюд в корзине
+                  const findFoodQuery = `SELECT ID_блюда, Количество FROM Блюда_в_корзине WHERE ID_пользователя = ?`;
+                  conn.query(findFoodQuery, [userId], (err, foodResults) => {
+                    if (err || foodResults.length === 0) {
+                      console.error("Ошибка при получении блюд:", err);
+                      return res.status(404).json({
+                        success: false,
+                        message: "Блюда не найдены",
+                      });
+                    }
+
+                    const insertFoodQuery = `INSERT INTO Блюда_в_заказе (ID_блюда, Количество, ID_заказа) VALUES ?`;
+                    const foodValues = foodResults.map((food) => [
+                      food.ID_блюда,
+                      food.Количество,
+                      orderId,
+                    ]);
+
+                    conn.query(insertFoodQuery, [foodValues], (err) => {
+                      if (err) {
+                        console.error(
+                          "Ошибка при добавлении блюд в заказ:",
+                          err
+                        );
+                        return res.status(500).json({
                           success: false,
-                          message: "Корзина не найдена",
+                          message: "Ошибка при добавлении блюд в заказ",
                         });
                       }
 
-                      const bucketId = bucketResults[0].ID;
+                      // Удаление блюд из корзины
+                      const deleteFoodQuery = `DELETE FROM Блюда_в_корзине WHERE ID_пользователя = ?`;
+                      conn.query(deleteFoodQuery, [userId], (err) => {
+                        if (err) {
+                          console.error(
+                            "Ошибка при удалении блюд из корзины:",
+                            err
+                          );
+                          return res.status(500).json({
+                            success: false,
+                            message: "Ошибка при удалении блюд из корзины",
+                          });
+                        }
 
-                      // Получение блюд в корзине
-                      const findFoodQuery = `SELECT ID_блюда, Количество FROM Блюда_в_корзине WHERE ID_корзины = ?`;
-                      conn.query(
-                        findFoodQuery,
-                        [bucketId],
-                        (err, foodResults) => {
-                          if (err || foodResults.length === 0) {
-                            console.error("Ошибка при получении блюд:", err);
-                            return res.status(404).json({
+                        // Обнуление цены корзины
+                        const insertQuery = `
+                              UPDATE Пользователь
+                                 SET Цена_корзины = 0 
+                                 WHERE ID = ?
+                           `;
+                        conn.query(insertQuery, [userId], (err) => {
+                          if (err) {
+                            console.error("Ошибка при обнулении цены:", err);
+                            return res.status(500).json({
                               success: false,
-                              message: "Блюда не найдены",
+                              message: "Ошибка при обнулении цены",
                             });
                           }
 
-                          const insertFoodQuery = `INSERT INTO Блюда_в_заказе (ID_блюда, Количество, ID_заказа) VALUES ?`;
-                          const foodValues = foodResults.map((food) => [
-                            food.ID_блюда,
-                            food.Количество,
-                            orderId,
-                          ]);
-
-                          conn.query(insertFoodQuery, [foodValues], (err) => {
-                            if (err) {
-                              console.error(
-                                "Ошибка при добавлении блюд в заказ:",
-                                err
-                              );
-                              return res.status(500).json({
-                                success: false,
-                                message: "Ошибка при добавлении блюд в заказ",
-                              });
-                            }
-
-                            // Удаление блюд из корзины
-                            const deleteFoodQuery = `DELETE FROM Блюда_в_корзине WHERE ID_корзины = ?`;
-                            conn.query(deleteFoodQuery, [bucketId], (err) => {
-                              if (err) {
-                                console.error(
-                                  "Ошибка при удалении блюд из корзины:",
-                                  err
-                                );
-                                return res.status(500).json({
-                                  success: false,
-                                  message:
-                                    "Ошибка при удалении блюд из корзины",
-                                });
-                              }
-
-                              // Удаление корзины
-                              const deleteBucketQuery =
-                                "DELETE FROM Корзина WHERE ID_пользователя = ?";
-                              conn.query(deleteBucketQuery, [userId], (err) => {
-                                if (err) {
-                                  console.error(
-                                    "Ошибка при удалении записи корзины:",
-                                    err
-                                  );
-                                  return res.status(500).json({
-                                    success: false,
-                                    message:
-                                      "Ошибка при удалении записи корзины",
-                                  });
-                                }
-
-                                res.status(201).json({
-                                  success: true,
-                                  message: "Заказ успешно создан",
-                                  orderId: orderId,
-                                });
-                              });
-                            });
+                          return res.status(201).json({
+                            success: true,
+                            message: "Цена корзины успешно обнулена",
                           });
-                        }
-                      );
-                    }
-                  );
+                        });
+                      });
+                    });
+                  });
                 }
               );
             }

@@ -61,24 +61,6 @@ export const Delivery_menu = () => {
     }
 
     try {
-      // Создаём корзину, если она ещё не создана
-      const createBucketResponse = await fetch(
-        "http://localhost:5000/api/bucket/create",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authUser.token}`,
-          },
-        }
-      );
-
-      const bucketResult = await createBucketResponse.json();
-      if (!createBucketResponse.ok) {
-        alert(bucketResult.message || "Ошибка при создании корзины");
-        return;
-      }
-
       // Добавляем блюдо в корзину
       const response = await fetch("http://localhost:5000/api/bucket/foot", {
         method: "POST",
