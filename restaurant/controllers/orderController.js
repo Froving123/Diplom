@@ -61,7 +61,7 @@ class OrderController {
       }
 
       const userId = decodedToken.userId;
-      const { address, deliveryPrice, totalPrice, payment } = req.body;
+      const { address, totalPrice, payment, comment } = req.body;
 
       const currentTime = new Date();
       const hours = currentTime.getHours();
@@ -91,97 +91,94 @@ class OrderController {
 
           const addressId = addressResult.insertId;
 
-              const insertOrderQuery = `
+          const insertOrderQuery = `
                 INSERT INTO 
-                  Заказ (ID_статуса, ID_адреса, ID_пользователя, Общая_цена_блюд, Цена_доставки, ID_способа, Дата_заказа, Время_заказа) 
-                  VALUES ((SELECT ID FROM Статус_заказа WHERE ID = 1), ?, ?, ?, 500, ?, CURDATE(), CURTIME())
+                  Заказ (ID_статуса, ID_адреса, ID_пользователя, Общая_цена_блюд, Цена_доставки, ID_способа, Дата_заказа, Время_заказа, Примечания) 
+                  VALUES ((SELECT ID FROM Статус_заказа WHERE ID = 1), ?, ?, ?, 500, ?, CURDATE(), CURTIME(), ?)
               `;
 
-              conn.query(
-                insertOrderQuery,
-                [addressId, userId, totalPrice, payment],
-                (err, orderResult) => {
+          conn.query(
+            insertOrderQuery,
+            [addressId, userId, totalPrice, payment, comment],
+            (err, orderResult) => {
+              if (err) {
+                console.error("Ошибка при добавлении заказа:", err);
+                return res.status(500).json({
+                  success: false,
+                  message: "Ошибка при добавлении заказа",
+                });
+              }
+
+              const orderId = orderResult.insertId;
+
+              // Получение блюд в корзине
+              const findFoodQuery = `SELECT ID_блюда, Количество FROM Блюда_в_корзине WHERE ID_пользователя = ?`;
+              conn.query(findFoodQuery, [userId], (err, foodResults) => {
+                if (err || foodResults.length === 0) {
+                  console.error("Ошибка при получении блюд:", err);
+                  return res.status(404).json({
+                    success: false,
+                    message: "Блюда не найдены",
+                  });
+                }
+
+                const insertFoodQuery = `INSERT INTO Блюда_в_заказе (ID_блюда, Количество, ID_заказа) VALUES ?`;
+                const foodValues = foodResults.map((food) => [
+                  food.ID_блюда,
+                  food.Количество,
+                  orderId,
+                ]);
+
+                conn.query(insertFoodQuery, [foodValues], (err) => {
                   if (err) {
-                    console.error("Ошибка при добавлении заказа:", err);
+                    console.error("Ошибка при добавлении блюд в заказ:", err);
                     return res.status(500).json({
                       success: false,
-                      message: "Ошибка при добавлении заказа",
+                      message: "Ошибка при добавлении блюд в заказ",
                     });
                   }
 
-                  const orderId = orderResult.insertId;
-
-                  // Получение блюд в корзине
-                  const findFoodQuery = `SELECT ID_блюда, Количество FROM Блюда_в_корзине WHERE ID_пользователя = ?`;
-                  conn.query(findFoodQuery, [userId], (err, foodResults) => {
-                    if (err || foodResults.length === 0) {
-                      console.error("Ошибка при получении блюд:", err);
-                      return res.status(404).json({
+                  // Удаление блюд из корзины
+                  const deleteFoodQuery = `DELETE FROM Блюда_в_корзине WHERE ID_пользователя = ?`;
+                  conn.query(deleteFoodQuery, [userId], (err) => {
+                    if (err) {
+                      console.error(
+                        "Ошибка при удалении блюд из корзины:",
+                        err
+                      );
+                      return res.status(500).json({
                         success: false,
-                        message: "Блюда не найдены",
+                        message: "Ошибка при удалении блюд из корзины",
                       });
                     }
 
-                    const insertFoodQuery = `INSERT INTO Блюда_в_заказе (ID_блюда, Количество, ID_заказа) VALUES ?`;
-                    const foodValues = foodResults.map((food) => [
-                      food.ID_блюда,
-                      food.Количество,
-                      orderId,
-                    ]);
-
-                    conn.query(insertFoodQuery, [foodValues], (err) => {
-                      if (err) {
-                        console.error(
-                          "Ошибка при добавлении блюд в заказ:",
-                          err
-                        );
-                        return res.status(500).json({
-                          success: false,
-                          message: "Ошибка при добавлении блюд в заказ",
-                        });
-                      }
-
-                      // Удаление блюд из корзины
-                      const deleteFoodQuery = `DELETE FROM Блюда_в_корзине WHERE ID_пользователя = ?`;
-                      conn.query(deleteFoodQuery, [userId], (err) => {
-                        if (err) {
-                          console.error(
-                            "Ошибка при удалении блюд из корзины:",
-                            err
-                          );
-                          return res.status(500).json({
-                            success: false,
-                            message: "Ошибка при удалении блюд из корзины",
-                          });
-                        }
-
-                        // Обнуление цены корзины
-                        const insertQuery = `
+                    // Обнуление цены корзины
+                    const insertQuery = `
                               UPDATE Пользователь
                                  SET Цена_корзины = 0 
                                  WHERE ID = ?
                            `;
-                        conn.query(insertQuery, [userId], (err) => {
-                          if (err) {
-                            console.error("Ошибка при обнулении цены:", err);
-                            return res.status(500).json({
-                              success: false,
-                              message: "Ошибка при обнулении цены",
-                            });
-                          }
-
-                          return res.status(201).json({
-                            success: true,
-                            message: "Цена корзины успешно обнулена",
-                          });
+                    conn.query(insertQuery, [userId], (err) => {
+                      if (err) {
+                        console.error("Ошибка при обнулении цены:", err);
+                        return res.status(500).json({
+                          success: false,
+                          message: "Ошибка при обнулении цены",
                         });
+                      }
+
+                      return res.status(201).json({
+                        success: true,
+                        message: "Цена корзины успешно обнулена",
                       });
                     });
                   });
-                }
-              );
+                });
+              });
             }
           );
+        }
+      );
     } catch (error) {
       console.error("Ошибка на сервере:", error);
       res.status(500).json({ success: false });
@@ -287,7 +284,8 @@ class OrderController {
           Статус_заказа.Наименование AS status,
           (Заказ.Общая_цена_блюд + Заказ.Цена_доставки) AS totalPrice,
           Способ_оплаты.Наименование AS paymentMethod,
-          Заказ.Время_доставки AS deliveryTime
+          Заказ.Время_доставки AS deliveryTime,
+          Заказ.Примечания AS comment
         FROM Заказ
         INNER JOIN Адрес ON Заказ.ID_адреса = Адрес.ID
         INNER JOIN Статус_заказа ON Заказ.ID_статуса = Статус_заказа.ID

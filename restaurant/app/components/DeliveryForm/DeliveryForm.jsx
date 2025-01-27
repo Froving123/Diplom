@@ -10,6 +10,7 @@ export const DeliveryForm = (props) => {
     home: "",
     flat: "",
     payment: "",
+    comment: "",
   });
   const [availablePayment, setAvailablePayment] = useState([]);
   const { totalPrice, updateCart } = useCart();
@@ -53,10 +54,10 @@ export const DeliveryForm = (props) => {
     }
   };
   const russianInput = (key) => (e) => {
-    const value = e.target.value.replace(/[^А-Яа-яЁё]/g, "");
-    const formattedValue = value.replace(/(^|\\s)([а-яё])/g, (match) =>
+    const value = e.target.value.replace(/[^А-Яа-яЁё\s]/g, ""); // Разрешаем только русские буквы и пробелы
+    const formattedValue = value.replace(/^[а-яё]/, (match) =>
       match.toUpperCase()
-    );
+    ); // Заглавная буква только у первого слова
     setNewItem((prevState) => ({
       ...prevState,
       [key]: formattedValue,
@@ -82,6 +83,7 @@ export const DeliveryForm = (props) => {
           flat: newItem.flat || "",
         },
         payment: newItem.payment,
+        comment: newItem.comment || "",
         totalPrice: totalPrice, // Общая стоимость с доставкой
         deliveryPrice: DELIVERY_PRICE,
       };
@@ -99,7 +101,13 @@ export const DeliveryForm = (props) => {
 
       if (response.ok) {
         alert("Ваш заказ успешно создан!");
-        setNewItem({ street: "", home: "", flat: "", payment: "" });
+        setNewItem({
+          street: "",
+          home: "",
+          flat: "",
+          payment: "",
+          comment: "",
+        });
         props.close(); // Закрытие формы
         window.location.reload();
       } else {
@@ -113,7 +121,7 @@ export const DeliveryForm = (props) => {
   };
 
   const handleClear = () => {
-    setNewItem({ street: "", home: "", flat: "", payment: "" });
+    setNewItem({ street: "", home: "", flat: "", payment: "", comment: "" });
   };
 
   useEffect(() => {
@@ -192,6 +200,15 @@ export const DeliveryForm = (props) => {
               </option>
             ))}
           </select>
+        </label>
+        <label className={Styles["form__field"]}>
+          <span className={Styles["form__field-title"]}>Примечания</span>
+          <textarea
+            className={Styles.input_massage}
+            value={newItem.comment}
+            maxLength="100"
+            onChange={russianInput("comment")}
+          ></textarea>
         </label>
         <div className={Styles.price}>
           <p className={Styles.price_content}>Стоимость доставки</p>

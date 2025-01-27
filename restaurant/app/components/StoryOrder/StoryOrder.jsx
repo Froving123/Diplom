@@ -111,8 +111,14 @@ export const StoryOrder = () => {
                     <br />
                     {order.status}
                   </p>
+                  <p className={Styles.new_order_description}>
+                    <strong className={Styles.new_order_description_h}>
+                      Примечания к заказу:
+                    </strong>
+                    <br />
+                    {order.comment}
+                  </p>
                 </div>
-
                 <div className={Styles.new_order_foods}>
                   <p className={Styles.new_order_description_h}>Список блюд:</p>
                   <ul className={Styles.food_list}>

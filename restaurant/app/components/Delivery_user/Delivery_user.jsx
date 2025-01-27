@@ -160,6 +160,13 @@ export const Delivery_user = () => {
                       {order.deliveryTime.split(":").slice(0, 2).join(":")}
                     </p>
                   )}
+                  <p className={Styles.delivery_description}>
+                    <strong className={Styles.delivery_description_h}>
+                      Примечания к заказу:{" "}
+                    </strong>
+                    <br />
+                    {order.comment}
+                  </p>
                 </div>
                 <div className={Styles.delivery_ul_foods}>
                   <p className={Styles.delivery_description_h}>
