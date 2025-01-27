@@ -51,118 +51,146 @@ class BucketController {
             message: "Ошибка при проверке блюда",
           });
         }
-
-        // Запрос для получения цены блюда
-        const getDiscountedPriceQuery = `
-          SELECT 
-              CASE 
-                  WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
-                      THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
-                  ELSE Прайс_лист.Цена
-              END AS Цена
-          FROM Прайс_лист
-          LEFT JOIN Спец_предложения 
-              ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
-              AND Спец_предложения.Дата_окончания >= CURRENT_DATE
-          WHERE Прайс_лист.ID = (
-              SELECT MAX(ID)
-              FROM Прайс_лист
-              WHERE ID_блюда = ?
-          );
-        `;
-
-        conn.query(getDiscountedPriceQuery, [foodId], (err, priceResults) => {
-          if (err || priceResults.length === 0) {
-            console.error("Ошибка при получении цены блюда:", err);
-            return res.status(500).json({
-              success: false,
-              message: "Ошибка при получении цены блюда",
-            });
-          }
-
-          const foodPrice = priceResults[0].Цена;
-
-          if (foodResults.length > 0) {
-            // Блюдо уже есть в корзине, увеличиваем количество
-            const updateFoodQuery = `
+        if (foodResults.length > 0) {
+          // Блюдо уже есть в корзине, увеличиваем количество
+          const updateFoodQuery = `
                 UPDATE Блюда_в_корзине 
                 SET Количество = Количество + 1 
                 WHERE ID = ?
               `;
-            conn.query(updateFoodQuery, [foodResults[0].ID], (err) => {
-              if (err) {
-                console.error("Ошибка при обновлении количества:", err);
-                return res.status(500).json({
-                  success: false,
-                  message: "Ошибка при обновлении количества",
-                });
-              }
+          conn.query(updateFoodQuery, [foodResults[0].ID], (err) => {
+            if (err) {
+              console.error("Ошибка при обновлении количества:", err);
+              return res.status(500).json({
+                success: false,
+                message: "Ошибка при обновлении количества",
+              });
+            }
 
-              // Пересчитываем общую цену корзины
-              const updateTotalPriceQuery = `
-                  UPDATE Пользователь 
-                  SET Цена_корзины = Цена_корзины + ? 
-                  WHERE ID = ?
-                `;
-              conn.query(updateTotalPriceQuery, [foodPrice, userId], (err) => {
+            // Функция для пересчёта общей цены корзины
+            const calculateCartPriceQuery = `
+              SELECT 
+                SUM(
+                  (CASE 
+                    WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
+                        THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
+                    ELSE Прайс_лист.Цена
+                  END) * Блюда_в_корзине.Количество
+                ) AS Цена_корзины
+              FROM 
+                Блюда_в_корзине
+              JOIN 
+                Прайс_лист 
+                ON Блюда_в_корзине.ID_блюда = Прайс_лист.ID_блюда
+                AND Прайс_лист.ID = (
+                  SELECT 
+                    MAX(ID)
+                  FROM 
+                    Прайс_лист AS SubPriceList
+                  WHERE 
+                    SubPriceList.ID_блюда = Прайс_лист.ID_блюда
+                )
+              LEFT JOIN 
+                Спец_предложения 
+                ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+                AND Спец_предложения.Дата_окончания >= CURRENT_DATE
+              WHERE 
+                Блюда_в_корзине.ID_пользователя = ?;
+            `;
+
+            conn.query(
+              calculateCartPriceQuery,
+              [userId],
+              (err, bucketResults) => {
                 if (err) {
-                  console.error(
-                    "Ошибка при обновлении общей цены корзины:",
-                    err
-                  );
+                  console.error("Ошибка при пересчёте цены корзины:", err);
                   return res.status(500).json({
                     success: false,
-                    message: "Ошибка при обновлении общей цены корзины",
+                    message: "Ошибка при пересчёте цены корзины",
                   });
                 }
 
-                res.status(201).json({
+                const totalPrice = bucketResults[0].Цена_корзины || 0;
+                const hasItems = totalPrice > 0;
+
+                res.status(200).json({
                   success: true,
-                  message: "Блюдо добавлено в корзину",
+                  hasItems,
+                  totalPrice,
                 });
-              });
-            });
-          } else {
-            // Блюда нет в корзине, добавляем с количеством 1
-            const insertFoodQuery = `
+              }
+            );
+          });
+        } else {
+          // Блюда нет в корзине, добавляем с количеством 1
+          const insertFoodQuery = `
                 INSERT INTO Блюда_в_корзине (ID_блюда, ID_пользователя, Количество) 
                 VALUES (?, ?, 1)
               `;
-            conn.query(insertFoodQuery, [foodId, userId], (err) => {
-              if (err) {
-                console.error("Ошибка при добавлении блюда:", err);
-                return res.status(500).json({
-                  success: false,
-                  message: "Ошибка при добавлении блюда",
-                });
-              }
+          conn.query(insertFoodQuery, [foodId, userId], (err) => {
+            if (err) {
+              console.error("Ошибка при добавлении блюда:", err);
+              return res.status(500).json({
+                success: false,
+                message: "Ошибка при добавлении блюда",
+              });
+            }
 
-              // Пересчитываем общую цену корзины
-              const updateTotalPriceQuery = `
-                  UPDATE Пользователь 
-                  SET Цена_корзины = Цена_корзины + ? 
-                  WHERE ID = ?
-                `;
-              conn.query(updateTotalPriceQuery, [foodPrice, userId], (err) => {
+            // Функция для пересчёта общей цены корзины
+            const calculateCartPriceQuery = `
+              SELECT 
+                SUM(
+                  (CASE 
+                    WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
+                        THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
+                    ELSE Прайс_лист.Цена
+                  END) * Блюда_в_корзине.Количество
+                ) AS Цена_корзины
+              FROM 
+                Блюда_в_корзине
+              JOIN 
+                Прайс_лист 
+                ON Блюда_в_корзине.ID_блюда = Прайс_лист.ID_блюда
+                AND Прайс_лист.ID = (
+                  SELECT 
+                    MAX(ID)
+                  FROM 
+                    Прайс_лист AS SubPriceList
+                  WHERE 
+                    SubPriceList.ID_блюда = Прайс_лист.ID_блюда
+                )
+              LEFT JOIN 
+                Спец_предложения 
+                ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+                AND Спец_предложения.Дата_окончания >= CURRENT_DATE
+              WHERE 
+                Блюда_в_корзине.ID_пользователя = ?;
+            `;
+
+            conn.query(
+              calculateCartPriceQuery,
+              [userId],
+              (err, bucketResults) => {
                 if (err) {
-                  console.error(
-                    "Ошибка при обновлении общей цены корзины:",
-                    err
-                  );
+                  console.error("Ошибка при пересчёте цены корзины:", err);
                   return res.status(500).json({
                     success: false,
-                    message: "Ошибка при обновлении общей цены корзины",
+                    message: "Ошибка при пересчёте цены корзины",
                   });
                 }
 
-                res.status(201).json({
+                const totalPrice = bucketResults[0].Цена_корзины || 0;
+                const hasItems = totalPrice > 0;
+
+                res.status(200).json({
                   success: true,
-                  message: "Блюдо добавлено в корзину",
+                  hasItems,
+                  totalPrice,
                 });
-              });
-            });
-          }
-        });
+              }
+            );
+          });
+        }
       });
     } catch (error) {
       console.error("Ошибка на сервере:", error);
@@ -244,62 +272,55 @@ class BucketController {
               });
             }
 
-            const getDiscountedPriceQuery = `
+            // Пересчитываем общую стоимость корзины
+            const calculateCartPriceQuery = `
+              SELECT 
+                SUM(
+                  (CASE 
+                    WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
+                        THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
+                    ELSE Прайс_лист.Цена
+                  END) * Блюда_в_корзине.Количество
+                ) AS Цена_корзины
+              FROM 
+                Блюда_в_корзине
+              JOIN 
+                Прайс_лист 
+                ON Блюда_в_корзине.ID_блюда = Прайс_лист.ID_блюда
+                AND Прайс_лист.ID = (
                   SELECT 
-                      CASE 
-                          WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
-                              THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
-                          ELSE Прайс_лист.Цена
-                      END AS Цена
-                  FROM Прайс_лист
-                  LEFT JOIN Спец_предложения 
-                      ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
-                      AND Спец_предложения.Дата_окончания >= CURRENT_DATE
-                  WHERE Прайс_лист.ID = (
-                      SELECT MAX(ID)
-                      FROM Прайс_лист
-                      WHERE ID_блюда = ?
-                  );
-                `;
+                    MAX(ID)
+                  FROM 
+                    Прайс_лист AS SubPriceList
+                  WHERE 
+                    SubPriceList.ID_блюда = Прайс_лист.ID_блюда
+                )
+              LEFT JOIN 
+                Спец_предложения 
+                ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+                AND Спец_предложения.Дата_окончания >= CURRENT_DATE
+              WHERE 
+                Блюда_в_корзине.ID_пользователя = ?;
+            `;
 
-            conn.query(
-              getDiscountedPriceQuery,
-              [foodId],
-              (err, priceResults) => {
-                if (err || priceResults.length === 0) {
-                  console.error("Ошибка при получении цены блюда:", err);
-                  return res.status(500).json({
-                    success: false,
-                    message: "Ошибка при получении цены блюда",
-                  });
-                }
-
-                const foodPrice = priceResults[0].Цена;
-                // Обновляем общую цену корзины
-                const updateTotalPriceQuery = `
-                  UPDATE Пользователь 
-                  SET Цена_корзины = Цена_корзины + ? 
-                  WHERE ID = ?
-                `;
-                conn.query(
-                  updateTotalPriceQuery,
-                  [foodPrice, userId],
-                  (err) => {
-                    if (err) {
-                      return res.status(500).json({
-                        success: false,
-                        message: "Ошибка при обновлении общей цены корзины",
-                      });
-                    }
-
-                    res.status(200).json({
-                      success: true,
-                      message: "Количество блюда увеличено",
-                    });
-                  }
-                );
+            conn.query(calculateCartPriceQuery, [userId], (err, bucketResults) => {
+              if (err) {
+                console.error("Ошибка при пересчёте общей цены корзины:", err);
+                return res.status(500).json({
+                  success: false,
+                  message: "Ошибка при пересчёте общей цены корзины",
+                });
               }
-            );
+
+              const totalPrice = bucketResults[0].Цена_корзины || 0;
+              const hasItems = totalPrice > 0;
+
+              res.status(200).json({
+                success: true,
+                hasItems,
+                totalPrice,
+              });
+            });
           });
         });
       });
@@ -368,79 +389,143 @@ class BucketController {
           }
 
           const foodInCartId = foodResults[0].ID;
+          const currentQuantity = foodResults[0].Количество;
 
-          // Увеличиваем количество блюда
-          const updateQuantityQuery = `
-              UPDATE Блюда_в_корзине 
-              SET Количество = Количество - 1 
-              WHERE ID = ?
-            `;
-          conn.query(updateQuantityQuery, [foodInCartId], (err) => {
-            if (err) {
-              return res.status(500).json({
-                success: false,
-                message: "Ошибка при уменьшении количества блюда",
-              });
-            }
+          // Если количество равно 1, удаляем блюдо из корзины
+          if (currentQuantity === 1) {
+            const deleteFoodQuery = `DELETE FROM Блюда_в_корзине WHERE ID = ?`;
+            conn.query(deleteFoodQuery, [foodInCartId], (err) => {
+              if (err) {
+                return res.status(500).json({
+                  success: false,
+                  message: "Ошибка при удалении блюда из корзины",
+                });
+              }
 
-            const getDiscountedPriceQuery = `
-              SELECT 
-                  CASE 
+              // Пересчитываем общую стоимость корзины
+              const calculateCartPriceQuery = `
+                SELECT 
+                  SUM(
+                    (CASE 
                       WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
                           THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
                       ELSE Прайс_лист.Цена
-                  END AS Цена
-              FROM Прайс_лист
-              LEFT JOIN Спец_предложения 
+                    END) * Блюда_в_корзине.Количество
+                  ) AS Цена_корзины
+                FROM 
+                  Блюда_в_корзине
+                JOIN 
+                  Прайс_лист 
+                  ON Блюда_в_корзине.ID_блюда = Прайс_лист.ID_блюда
+                  AND Прайс_лист.ID = (
+                    SELECT 
+                      MAX(ID)
+                    FROM 
+                      Прайс_лист AS SubPriceList
+                    WHERE 
+                      SubPriceList.ID_блюда = Прайс_лист.ID_блюда
+                  )
+                LEFT JOIN 
+                  Спец_предложения 
                   ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
                   AND Спец_предложения.Дата_окончания >= CURRENT_DATE
-              WHERE Прайс_лист.ID = (
-                  SELECT MAX(ID)
-                  FROM Прайс_лист
-                  WHERE ID_блюда = ?
-              );
-            `;
+                WHERE 
+                  Блюда_в_корзине.ID_пользователя = ?;
+              `;
 
-            conn.query(
-              getDiscountedPriceQuery,
-              [foodId],
-              (err, priceResults) => {
-                if (err || priceResults.length === 0) {
-                  console.error("Ошибка при получении цены блюда:", err);
-                  return res.status(500).json({
-                    success: false,
-                    message: "Ошибка при получении цены блюда",
-                  });
-                }
-
-                const foodPrice = priceResults[0].Цена;
-
-                // Обновляем общую цену корзины
-                const updateTotalPriceQuery = `
-                  UPDATE Пользователь 
-                  SET Цена_корзины = Цена_корзины - ? 
-                  WHERE ID = ?
-                `;
-                conn.query(
-                  updateTotalPriceQuery,
-                  [foodPrice, userId],
-                  (err) => {
-                    if (err) {
-                      return res.status(500).json({
-                        success: false,
-                        message: "Ошибка при обновлении общей цены корзины",
-                      });
-                    }
-
-                    res.status(200).json({
-                      success: true,
-                      message: "Количество блюда увеличено",
+              conn.query(
+                calculateCartPriceQuery,
+                [userId],
+                (err, bucketResults) => {
+                  if (err) {
+                    console.error("Ошибка при пересчёте цены корзины:", err);
+                    return res.status(500).json({
+                      success: false,
+                      message: "Ошибка при пересчёте цены корзины",
                     });
                   }
-                );
+
+                  const totalPrice = bucketResults[0].Цена_корзины || 0;
+                  const hasItems = totalPrice > 0;
+
+                  res.status(200).json({
+                    success: true,
+                    hasItems,
+                    totalPrice,
+                  });
+                }
+              );
+            });
+          } else {
+            // Уменьшаем количество блюда
+            const updateQuantityQuery = `
+                UPDATE Блюда_в_корзине 
+                SET Количество = Количество - 1 
+                WHERE ID = ?
+              `;
+            conn.query(updateQuantityQuery, [foodInCartId], (err) => {
+              if (err) {
+                return res.status(500).json({
+                  success: false,
+                  message: "Ошибка при уменьшении количества блюда",
+                });
               }
-            );
-          });
+
+              // Пересчитываем общую стоимость корзины
+              const calculateCartPriceQuery = `
+                SELECT 
+                  SUM(
+                    (CASE 
+                      WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
+                          THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
+                      ELSE Прайс_лист.Цена
+                    END) * Блюда_в_корзине.Количество
+                  ) AS Цена_корзины
+                FROM 
+                  Блюда_в_корзине
+                JOIN 
+                  Прайс_лист 
+                  ON Блюда_в_корзине.ID_блюда = Прайс_лист.ID_блюда
+                  AND Прайс_лист.ID = (
+                    SELECT 
+                      MAX(ID)
+                    FROM 
+                      Прайс_лист AS SubPriceList
+                    WHERE 
+                      SubPriceList.ID_блюда = Прайс_лист.ID_блюда
+                  )
+                LEFT JOIN 
+                  Спец_предложения 
+                  ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+                  AND Спец_предложения.Дата_окончания >= CURRENT_DATE
+                WHERE 
+                  Блюда_в_корзине.ID_пользователя = ?;
+              `;
+
+              conn.query(
+                calculateCartPriceQuery,
+                [userId],
+                (err, bucketResults) => {
+                  if (err) {
+                    console.error("Ошибка при пересчёте цены корзины:", err);
+                    return res.status(500).json({
+                      success: false,
+                      message: "Ошибка при пересчёте цены корзины",
+                    });
+                  }
+
+                  const totalPrice = bucketResults[0].Цена_корзины || 0;
+                  const hasItems = totalPrice > 0;
+
+                  res.status(200).json({
+                    success: true,
+                    hasItems,
+                    totalPrice,
+                  });
+                }
+              );
+            });
+          }
         });
       });
     } catch (error) {
@@ -482,6 +567,7 @@ class BucketController {
 
       const userId = decodedToken.userId;
 
+      // Получаем ID блюда по названию
       const getFoodIdQuery = `SELECT ID FROM Блюда WHERE Название = ?`;
       conn.query(getFoodIdQuery, [foodName], (err, foodIdResults) => {
         if (err || foodIdResults.length === 0) {
@@ -494,10 +580,10 @@ class BucketController {
 
         // Проверяем, есть ли блюдо в корзине
         const checkFoodQuery = `
-          SELECT ID, ID_блюда, Количество
-          FROM Блюда_в_корзине 
-          WHERE ID_блюда = ? AND ID_пользователя = ?
-        `;
+            SELECT ID, Количество
+            FROM Блюда_в_корзине
+            WHERE ID_блюда = ? AND ID_пользователя = ?
+          `;
         conn.query(checkFoodQuery, [foodId, userId], (err, foodResults) => {
           if (err || foodResults.length === 0) {
             return res.status(404).json({
@@ -506,14 +592,14 @@ class BucketController {
             });
           }
 
-          const foodQuantity = foodResults[0].Количество;
+          const foodInCartId = foodResults[0].ID;
 
           // Удаляем блюдо из корзины
           const deleteFoodQuery = `
-            DELETE FROM Блюда_в_корзине 
-            WHERE ID_блюда = ?
+            DELETE FROM Блюда_в_корзине
+            WHERE ID = ?
           `;
-          conn.query(deleteFoodQuery, [foodId], (err) => {
+          conn.query(deleteFoodQuery, [foodInCartId], (err) => {
             if (err) {
               return res.status(500).json({
                 success: false,
@@ -521,61 +607,57 @@ class BucketController {
               });
             }
 
-            const getDiscountedPriceQuery = `
+            // Пересчитываем общую стоимость корзины
+            const calculateCartPriceQuery = `
               SELECT 
-                  CASE 
-                      WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
-                          THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
-                      ELSE Прайс_лист.Цена
-                  END AS Цена
-              FROM Прайс_лист
-              LEFT JOIN Спец_предложения 
-                  ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
-                  AND Спец_предложения.Дата_окончания >= CURRENT_DATE
-              WHERE Прайс_лист.ID = (
-                  SELECT MAX(ID)
-                  FROM Прайс_лист
-                  WHERE ID_блюда = ?
-              );
+                SUM(
+                  (CASE 
+                    WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
+                        THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
+                    ELSE Прайс_лист.Цена
+                  END) * Блюда_в_корзине.Количество
+                ) AS Цена_корзины
+              FROM 
+                Блюда_в_корзине
+              JOIN 
+                Прайс_лист 
+                ON Блюда_в_корзине.ID_блюда = Прайс_лист.ID_блюда
+                AND Прайс_лист.ID = (
+                  SELECT 
+                    MAX(ID)
+                  FROM 
+                    Прайс_лист AS SubPriceList
+                  WHERE 
+                    SubPriceList.ID_блюда = Прайс_лист.ID_блюда
+                )
+              LEFT JOIN 
+                Спец_предложения 
+                ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+                AND Спец_предложения.Дата_окончания >= CURRENT_DATE
+              WHERE 
+                Блюда_в_корзине.ID_пользователя = ?;
             `;
 
             conn.query(
-              getDiscountedPriceQuery,
-              [foodId],
-              (err, priceResults) => {
-                if (err || priceResults.length === 0) {
-                  console.error("Ошибка при получении цены блюда:", err);
+              calculateCartPriceQuery,
+              [userId],
+              (err, bucketResults) => {
+                if (err) {
+                  console.error("Ошибка при пересчёте цены корзины:", err);
                   return res.status(500).json({
                     success: false,
-                    message: "Ошибка при получении цены блюда",
+                    message: "Ошибка при пересчёте цены корзины",
                   });
                 }
 
-                const foodPrice = priceResults[0].Цена;
+                const totalPrice = bucketResults[0].Цена_корзины || 0;
+                const hasItems = totalPrice > 0;
 
-                // Обновляем общую цену корзины
-                const updateTotalPriceQuery = `
-                  UPDATE Пользователь 
-                  SET Цена_корзины = Цена_корзины - (? * ?) 
-                  WHERE ID = ?
-                `;
-                conn.query(
-                  updateTotalPriceQuery,
-                  [foodPrice, foodQuantity, userId],
-                  (err) => {
-                    if (err) {
-                      return res.status(500).json({
-                        success: false,
-                        message: "Ошибка при обновлении общей цены корзины",
-                      });
-                    }
-
-                    res.status(200).json({
-                      success: true,
-                      message: "Блюдо удалено из корзины",
-                    });
-                  }
-                );
+                res.status(200).json({
+                  success: true,
+                  hasItems,
+                  totalPrice,
+                });
               }
             );
           });
@@ -693,13 +775,44 @@ class BucketController {
 
       const userId = decodedToken.userId;
 
-      // Получаем цену корзины пользователя
-      const findBucketQuery = `SELECT ID, Цена_корзины FROM Пользователь WHERE ID = ?`;
-      conn.query(findBucketQuery, [userId], (err, bucketResults) => {
-        if (err || bucketResults.length === 0) {
-          return res
-            .status(404)
-            .json({ success: false, message: "Корзина пуста" });
+      // Пересчитываем общую стоимость корзины
+      const calculateCartPriceQuery = `
+        SELECT 
+          SUM(
+            (CASE 
+              WHEN Спец_предложения.ID_блюда = Прайс_лист.ID_блюда 
+                  THEN Прайс_лист.Цена - Спец_предложения.Размер_скидки
+              ELSE Прайс_лист.Цена
+            END) * Блюда_в_корзине.Количество
+          ) AS Цена_корзины
+        FROM 
+          Блюда_в_корзине
+        JOIN 
+          Прайс_лист 
+          ON Блюда_в_корзине.ID_блюда = Прайс_лист.ID_блюда
+          AND Прайс_лист.ID = (
+            SELECT 
+              MAX(ID)
+            FROM 
+              Прайс_лист AS SubPriceList
+            WHERE 
+              SubPriceList.ID_блюда = Прайс_лист.ID_блюда
+          )
+        LEFT JOIN 
+          Спец_предложения 
+          ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
+          AND Спец_предложения.Дата_окончания >= CURRENT_DATE
+        WHERE 
+          Блюда_в_корзине.ID_пользователя = ?;
+      `;
+
+      conn.query(calculateCartPriceQuery, [userId], (err, bucketResults) => {
+        if (err) {
+          console.error("Ошибка при пересчёте цены корзины:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при пересчёте цены корзины",
+          });
         }
 
         const totalPrice = bucketResults[0].Цена_корзины || 0;

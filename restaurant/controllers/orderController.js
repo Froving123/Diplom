@@ -151,34 +151,12 @@ class OrderController {
                         message: "Ошибка при удалении блюд из корзины",
                       });
                     }
-
-                    // Обнуление цены корзины
-                    const insertQuery = `
-                              UPDATE Пользователь
-                                 SET Цена_корзины = 0 
-                                 WHERE ID = ?
-                           `;
-                    conn.query(insertQuery, [userId], (err) => {
-                      if (err) {
-                        console.error("Ошибка при обнулении цены:", err);
-                        return res.status(500).json({
-                          success: false,
-                          message: "Ошибка при обнулении цены",
-                        });
-                      }
-
-                      return res.status(201).json({
-                        success: true,
-                        message: "Цена корзины успешно обнулена",
-                      });
                     });
                   });
                 });
               });
             }
           );
-        }
-      );
     } catch (error) {
       console.error("Ошибка на сервере:", error);
       res.status(500).json({ success: false });
