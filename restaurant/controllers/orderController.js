@@ -151,12 +151,13 @@ class OrderController {
                         message: "Ошибка при удалении блюд из корзины",
                       });
                     }
-                    });
                   });
                 });
               });
             }
           );
+        }
+      );
     } catch (error) {
       console.error("Ошибка на сервере:", error);
       res.status(500).json({ success: false });

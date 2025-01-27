@@ -303,24 +303,31 @@ class BucketController {
                 Блюда_в_корзине.ID_пользователя = ?;
             `;
 
-            conn.query(calculateCartPriceQuery, [userId], (err, bucketResults) => {
-              if (err) {
-                console.error("Ошибка при пересчёте общей цены корзины:", err);
-                return res.status(500).json({
-                  success: false,
-                  message: "Ошибка при пересчёте общей цены корзины",
+            conn.query(
+              calculateCartPriceQuery,
+              [userId],
+              (err, bucketResults) => {
+                if (err) {
+                  console.error(
+                    "Ошибка при пересчёте общей цены корзины:",
+                    err
+                  );
+                  return res.status(500).json({
+                    success: false,
+                    message: "Ошибка при пересчёте общей цены корзины",
+                  });
+                }
+
+                const totalPrice = bucketResults[0].Цена_корзины || 0;
+                const hasItems = totalPrice > 0;
+
+                res.status(200).json({
+                  success: true,
+                  hasItems,
+                  totalPrice,
                 });
               }
-
-              const totalPrice = bucketResults[0].Цена_корзины || 0;
-              const hasItems = totalPrice > 0;
-
-              res.status(200).json({
-                success: true,
-                hasItems,
-                totalPrice,
-              });
-            });
+            );
           });
         });
       });
