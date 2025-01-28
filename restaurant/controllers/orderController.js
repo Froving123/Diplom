@@ -91,12 +91,12 @@ class OrderController {
 
           const addressId = addressResult.insertId;
 
+          // Добавление адреса
           const insertOrderQuery = `
                 INSERT INTO 
                   Заказ (ID_статуса, ID_адреса, ID_пользователя, Общая_цена_блюд, Цена_доставки, ID_способа, Дата_заказа, Время_заказа, Примечания) 
                   VALUES ((SELECT ID FROM Статус_заказа WHERE ID = 1), ?, ?, ?, 500, ?, CURDATE(), CURTIME(), ?)
               `;
-
           conn.query(
             insertOrderQuery,
             [addressId, userId, totalPrice, payment, comment],
@@ -122,13 +122,13 @@ class OrderController {
                   });
                 }
 
+                // добавление блюд в заказ
                 const insertFoodQuery = `INSERT INTO Блюда_в_заказе (ID_блюда, Количество, ID_заказа) VALUES ?`;
                 const foodValues = foodResults.map((food) => [
                   food.ID_блюда,
                   food.Количество,
                   orderId,
                 ]);
-
                 conn.query(insertFoodQuery, [foodValues], (err) => {
                   if (err) {
                     console.error("Ошибка при добавлении блюд в заказ:", err);
