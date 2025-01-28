@@ -68,13 +68,25 @@ export const DeliveryForm = (props) => {
   const submitOrder = async (e) => {
     e.preventDefault();
 
+    const currentTime = new Date();
+    const hours = currentTime.getHours();
+    const minutes = currentTime.getMinutes();
+
+    // Проверка: можно заказывать только с 07:00 до 22:00
+    if (hours < 7 || (hours === 22 && minutes > 0) || hours > 22) {
+      setError("Заказать можно только с 07:00 до 22:00");
+      setTimeout(() => setError(""), 3000);
+      return;
+    }
+
     // Проверяем, что все обязательные поля заполнены
     if (!newItem.street || !newItem.home || !newItem.payment) {
       setError("Пожалуйста, заполните все обязательные поля!");
       setTimeout(() => setError(""), 3000);
-      return; // Не выполняем дальнейшие действия, если обязательные поля не заполнены
+      return;
     }
 
+    // Очистка формы после отправки
     setNewItem({
       street: "",
       home: "",
@@ -82,6 +94,7 @@ export const DeliveryForm = (props) => {
       payment: "",
       comment: "",
     });
+
     props.close(); // Закрытие формы
     window.location.reload(); // Перезагрузка страницы
 
@@ -110,7 +123,6 @@ export const DeliveryForm = (props) => {
         body: JSON.stringify(orderData),
       });
 
-      // Вывод ошибки, если запрос не успешен
       if (!response.ok) {
         const result = await response.json();
         setError(result.message || "Ошибка при создании заказа");
