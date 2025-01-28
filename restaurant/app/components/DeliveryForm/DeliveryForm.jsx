@@ -53,6 +53,7 @@ export const DeliveryForm = (props) => {
       setState(value);
     }
   };
+
   const russianInput = (key) => (e) => {
     const value = e.target.value.replace(/[^А-Яа-яЁё\s]/g, ""); // Разрешаем только русские буквы и пробелы
     const formattedValue = value.replace(/^[а-яё]/, (match) =>
@@ -67,29 +68,39 @@ export const DeliveryForm = (props) => {
   const submitOrder = async (e) => {
     e.preventDefault();
 
+    // Проверяем, что все обязательные поля заполнены
     if (!newItem.street || !newItem.home || !newItem.payment) {
-      setError("Пожалуйста, заполните все обязательные поля");
-      setTimeout(() => {
-        setError("");
-      }, 3000);
-      return;
+      setError("Пожалуйста, заполните все обязательные поля!");
+      setTimeout(() => setError(""), 3000);
+      return; // Не выполняем дальнейшие действия, если обязательные поля не заполнены
     }
 
+    setNewItem({
+      street: "",
+      home: "",
+      flat: "",
+      payment: "",
+      comment: "",
+    });
+    props.close(); // Закрытие формы
+    window.location.reload(); // Перезагрузка страницы
+
+    // Данные для отправки
+    const orderData = {
+      address: {
+        street: newItem.street,
+        home: newItem.home,
+        flat: newItem.flat || "",
+      },
+      payment: newItem.payment,
+      comment: newItem.comment || "",
+      totalPrice: totalPrice, // Общая стоимость с доставкой
+      deliveryPrice: DELIVERY_PRICE,
+    };
+
+    const token = localStorage.getItem("authToken");
+
     try {
-      const orderData = {
-        address: {
-          street: newItem.street,
-          home: newItem.home,
-          flat: newItem.flat || "",
-        },
-        payment: newItem.payment,
-        comment: newItem.comment || "",
-        totalPrice: totalPrice, // Общая стоимость с доставкой
-        deliveryPrice: DELIVERY_PRICE,
-      };
-
-      const token = localStorage.getItem("authToken");
-
       const response = await fetch("http://localhost:5000/api/order/create", {
         method: "POST",
         headers: {
@@ -99,24 +110,16 @@ export const DeliveryForm = (props) => {
         body: JSON.stringify(orderData),
       });
 
-      if (response.ok) {
-        alert("Ваш заказ успешно создан!");
-        setNewItem({
-          street: "",
-          home: "",
-          flat: "",
-          payment: "",
-          comment: "",
-        });
-        props.close(); // Закрытие формы
-        window.location.reload();
-      } else {
+      // Вывод ошибки, если запрос не успешен
+      if (!response.ok) {
         const result = await response.json();
         setError(result.message || "Ошибка при создании заказа");
+        setTimeout(() => setError(""), 3000);
       }
     } catch (error) {
       console.error("Ошибка отправки заказа:", error);
       setError("Произошла ошибка. Повторите попытку позже.");
+      setTimeout(() => setError(""), 3000);
     }
   };
 
@@ -184,7 +187,7 @@ export const DeliveryForm = (props) => {
           </span>
           <select
             className={`${Styles["form__field-input"]} ${
-              !newItem.street && error ? Styles["error-border"] : ""
+              !newItem.payment && error ? Styles["error-border"] : ""
             }`}
             aria-required="true"
             disabled={availablePayment.length === 0}
@@ -207,7 +210,9 @@ export const DeliveryForm = (props) => {
             className={Styles.input_massage}
             value={newItem.comment}
             maxLength="100"
-            onChange={russianInput("comment")}
+            onChange={(e) =>
+              setNewItem({ ...newItem, comment: e.target.value })
+            }
           ></textarea>
         </label>
         <div className={Styles.price}>

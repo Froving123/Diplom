@@ -91,7 +91,7 @@ class OrderController {
 
           const addressId = addressResult.insertId;
 
-          // Добавление адреса
+          // Добавление заказа
           const insertOrderQuery = `
                 INSERT INTO 
                   Заказ (ID_статуса, ID_адреса, ID_пользователя, Общая_цена_блюд, Цена_доставки, ID_способа, Дата_заказа, Время_заказа, Примечания) 
