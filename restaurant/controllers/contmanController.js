@@ -237,6 +237,104 @@ class ContmanController {
     }
   }
 
+  async removeCategory(req, res) {
+    try {
+      const { categoryId } = req.body;
+      if (!categoryId) {
+        return res
+          .status(400)
+          .json({ success: false, message: "ID категории обязателен" });
+      }
+
+      // Получаем все блюда, принадлежащие категории
+      const getDishesQuery = `
+        SELECT ID FROM Блюда WHERE ID_категории = ?
+      `;
+
+      const dishes = await new Promise((resolve, reject) => {
+        conn.query(getDishesQuery, [categoryId], (err, results) => {
+          if (err) return reject(err);
+          resolve(results.map((row) => row.ID)); // массив ID блюд
+        });
+      });
+
+      if (dishes.length > 0) {
+        // Удаляем блюда из всех связанных таблиц
+        const deleteFromTables = async (table, column) => {
+          await new Promise((resolve, reject) => {
+            conn.query(
+              `DELETE FROM ${table} WHERE ${column} IN (?)`,
+              [dishes],
+              (err) => (err ? reject(err) : resolve())
+            );
+          });
+        };
+
+        await deleteFromTables("Прайс_лист", "ID_блюда");
+        await deleteFromTables("Спец_предложения", "ID_блюда");
+        await deleteFromTables("Блюда_в_корзине", "ID_блюда");
+
+        // Удаляем сами блюда
+        await new Promise((resolve, reject) => {
+          conn.query("DELETE FROM Блюда WHERE ID IN (?)", [dishes], (err) =>
+            err ? reject(err) : resolve()
+          );
+        });
+      }
+
+      // Удаляем категорию
+      await new Promise((resolve, reject) => {
+        conn.query(
+          "DELETE FROM Категория_блюда WHERE ID = ?",
+          [categoryId],
+          (err) => (err ? reject(err) : resolve())
+        );
+      });
+
+      res.status(200).json({
+        success: true,
+        message: "Категория и все связанные блюда удалены",
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
+  async updateCategory(req, res) {
+    console.log("Полученные данные:", req.body);
+    const { categoryId, name } = req.body;
+
+    if (!categoryId || !name) {
+      return res.status(400).json({
+        success: false,
+        message: "Заполните поле",
+      });
+    }
+
+    try {
+      const query = `
+        UPDATE Категория_блюда 
+        SET Наименование = ? 
+        WHERE ID = ?
+      `;
+
+      conn.query(query, [name, categoryId], (err, result) => {
+        if (err) {
+          console.error("Ошибка при обновлении категории:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при обновлении категории",
+          });
+        }
+        res.json({ success: true, message: "Категория обновлена" });
+      });
+    } catch (error) {
+      console.error("Ошибка при обновлении категории:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
   async addDish(req, res) {
     // Обрабатываем загрузку изображения
     upload.single("image")(req, res, async (err) => {
@@ -329,6 +427,36 @@ class ContmanController {
         });
       }
     });
+  }
+
+  async addCategory(req, res) {
+    const { name } = req.body;
+
+    if (!name) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Данные не указаны" });
+    }
+
+    try {
+      const query = `
+        INSERT INTO Категория_блюда (Наименование) 
+        VALUES (?)
+      `;
+      conn.query(query, [name], (err, result) => {
+        if (err) {
+          console.error("Ошибка при создании категории:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при создании категории",
+          });
+        }
+        res.json({ success: true, message: "Новая категория создана" });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
   }
 
   async getAllOffers(req, res) {

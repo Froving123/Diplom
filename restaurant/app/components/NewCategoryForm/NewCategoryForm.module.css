@@ -1,0 +1,242 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form__title {
+  color: rgb(82, 82, 82);
+  font-family: "Pacifico";
+  margin-bottom: 24px;
+  font-size: 36px;
+}
+
+.form__fields {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form__field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.form__field-title {
+  color: rgb(82, 82, 82);
+  margin-bottom: 8px;
+  margin-top: 12px;
+  font-size: 22px;
+}
+
+.form__field-input {
+  border: 1px solid #000000;
+  border-radius: 4px;
+  padding: 16px 24px;
+  font-family: inherit;
+  font-size: 22px;
+}
+
+.price {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 10px;
+  border-radius: 4px;
+  border: 3px solid rgb(93, 93, 93);
+  background-color: rgb(253, 127, 73);
+}
+
+.price_content {
+  font-size: 30px;
+  margin: 0%;
+  font-weight: 600;
+}
+
+.form__input-wrapper {
+  width: 100%;
+  display: flex;
+}
+
+.form__field-input-file {
+  border: 1px solid #000000;
+  border-radius: 4px 0px 0px 4px;
+  padding: 16px 24px;
+  font-family: inherit;
+  font-size: 22px;
+  width: 70%;
+}
+
+.form__file {
+  font-family: "Tinos-Regular";
+  background-color: rgb(255, 106, 43);
+  border: 1px solid #000000;
+  color: white;
+  font-size: 15px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 0px 10px;
+  transition: 0.3s;
+}
+
+.form__actions {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  gap: 8px;
+}
+
+.form__reset {
+  font-family: "Tinos-Regular";
+  background-color: rgb(255, 106, 43);
+  color: white;
+  border-radius: 7px;
+  font-size: 20px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 16px 24px;
+  transition: 0.3s;
+}
+
+.form__submit {
+  background-color: rgb(255, 106, 43);
+  color: #ffffff;
+  font-family: "Tinos-Regular";
+  border-radius: 7px;
+  font-size: 20px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 16px 24px;
+  transition: 0.3s;
+}
+
+.form__reset:hover,
+.form__submit:hover,
+.form__transition:hover,
+.form__file:hover {
+  background-color: rgb(253, 116, 57);
+  color: black;
+}
+
+.error_message {
+  color: red;
+  font-weight: bold;
+  font-size: large;
+}
+
+@media screen and (max-width: 500px) {
+  .form__title {
+    margin-bottom: 10px;
+    font-size: 25px;
+  }
+
+  .form__field {
+    margin-bottom: 15px;
+  }
+
+  .form__field-title {
+    margin-bottom: 5px;
+    font-size: 15px;
+  }
+
+  .form__field-input {
+    padding: 5px 12px;
+    font-size: 18px;
+  }
+
+  .form__field-input-file {
+    border: 1px solid #000000;
+    border-radius: 4px 0px 0px 4px;
+    padding: 5px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    width: 70%;
+  }
+
+  .form__file {
+    font-family: "Tinos-Regular";
+    background-color: rgb(255, 106, 43);
+    border: 1px solid #000000;
+    color: white;
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    transition: 0.3s;
+  }
+
+  .price {
+    margin-bottom: 15px;
+    padding: 10px;
+  }
+
+  .price_content {
+    font-size: 20px;
+    margin: 0%;
+    font-weight: 600;
+  }
+
+  .form__reset {
+    font-size: 12px;
+    padding: 12px 14px;
+  }
+
+  .form__submit {
+    font-size: 12px;
+    padding: 12px 14px;
+  }
+}
+
+@media screen and (min-width: 501px) and (max-width: 750px) {
+  .form__title {
+    margin-bottom: 17px;
+    font-size: 30px;
+  }
+
+  .form__field {
+    margin-bottom: 17px;
+  }
+
+  .form__field-title {
+    margin-bottom: 8px;
+    font-size: 18px;
+  }
+
+  .form__field-input {
+    padding: 5px 12px;
+    font-size: 18px;
+  }
+
+  .form__field-input-file {
+    border: 1px solid #000000;
+    border-radius: 4px 0px 0px 4px;
+    padding: 5px 12px;
+    font-family: inherit;
+    font-size: 13px;
+    width: 70%;
+  }
+
+  .form__file {
+    font-family: "Tinos-Regular";
+    background-color: rgb(255, 106, 43);
+    border: 1px solid #000000;
+    color: white;
+    font-size: 10px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    transition: 0.3s;
+  }
+
+  .form__reset {
+    font-size: 15px;
+    padding: 12px 14px;
+  }
+
+  .form__submit {
+    font-size: 15px;
+    padding: 12px 14px;
+  }
+}

@@ -5,6 +5,8 @@ import Styles from "./Contman_menu.module.css";
 import { Overlay } from "../Overlay/Overlay";
 import { Popup } from "../Popup/Popup";
 import { ChangeDishForm } from "../ChangeDishForm/ChangeDishForm";
+import { ChangeCategoryForm } from "../ChangeCategoryForm/ChangeCategoryForm";
+import { NewCategoryForm } from "../NewCategoryForm/NewCategoryForm";
 import { NewDishForm } from "../NewDishForm/NewDishForm";
 
 export const Contman_menu = () => {
@@ -12,7 +14,10 @@ export const Contman_menu = () => {
   const [dishes, setDishes] = useState([]);
   const [popupIsOpen, setPopupIsOpen] = useState(false);
   const [popupIsOpened, setPopupIsOpened] = useState(false);
+  const [popupIsOpenNC, setPopupIsOpenNC] = useState(false);
+  const [popupIsOpenCC, setPopupIsOpenCC] = useState(false);
   const [selectedDish, setSelectedDish] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
     // Загрузка категорий
@@ -57,9 +62,19 @@ export const Contman_menu = () => {
     setPopupIsOpen(true);
   };
 
+  const openChangeCategoryForm = (category) => {
+    setSelectedCategory(category);
+    setPopupIsOpenCC(true);
+  };
+
   // Открыть форму добавления нового блюда
   const openNewDishForm = () => {
     setPopupIsOpened(true);
+  };
+
+  // Открыть форму добавления новой категории
+  const openNewCategoryForm = () => {
+    setPopupIsOpenNC(true);
   };
 
   const removeDish = async (dishId) => {
@@ -96,6 +111,45 @@ export const Contman_menu = () => {
     } catch (err) {
       console.error("Ошибка при удалении блюда:", err);
       alert("Произошла ошибка при попытке удалить блюдо. Попробуйте снова.");
+    }
+  };
+
+  const removeCategory = async (categoryId) => {
+    const confirmDelete = window.confirm(
+      "Вы уверены, что хотите удалить категорию? Она удалится со всеми блюдами"
+    );
+    if (!confirmDelete) {
+      return; // Отмена удаления
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/contman/removeCategory",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ categoryId }), // Отправляем categoryId
+        }
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Если успешное удаление, обновляем категории локально
+        setCategories((prevCategories) =>
+          prevCategories.filter((category) => category.ID !== categoryId)
+        );
+      } else {
+        // Если ошибка, выводим сообщение из ответа сервера
+        alert(result.message || "Ошибка при удалении категории");
+      }
+    } catch (err) {
+      console.error("Ошибка при удалении категории:", err);
+      alert(
+        "Произошла ошибка при попытке удалить категорию. Попробуйте снова."
+      );
     }
   };
 
@@ -165,7 +219,7 @@ export const Contman_menu = () => {
         ))}
       </div>
       <div className={Styles.create_content}>
-        <button className={Styles.button_create} onClick={openNewDishForm}>
+        <button className={Styles.button_create} onClick={openNewCategoryForm}>
           Добавить категорию
         </button>
         <hr className={Styles.hr_name} />
@@ -180,9 +234,20 @@ export const Contman_menu = () => {
           dish={selectedDish} // Передаем выбранное блюдо
         />
       </Popup>
+      <Overlay isOpened={popupIsOpenCC} close={() => setPopupIsOpenCC(false)} />
+      <Popup isOpened={popupIsOpenCC} close={() => setPopupIsOpenCC(false)}>
+        <ChangeCategoryForm
+          close={() => setPopupIsOpenCC(false)}
+          category={selectedCategory} // Передаем выбранное блюдо
+        />
+      </Popup>
       <Overlay isOpened={popupIsOpened} close={() => setPopupIsOpened(false)} />
       <Popup isOpened={popupIsOpened} close={() => setPopupIsOpened(false)}>
         <NewDishForm close={() => setPopupIsOpened(false)} />
+      </Popup>
+      <Overlay isOpened={popupIsOpenNC} close={() => setPopupIsOpenNC(false)} />
+      <Popup isOpened={popupIsOpenNC} close={() => setPopupIsOpenNC(false)}>
+        <NewCategoryForm close={() => setPopupIsOpenNC(false)} />
       </Popup>
     </div>
   );
