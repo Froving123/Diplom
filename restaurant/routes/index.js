@@ -10,6 +10,7 @@ const adminRouter = require("./adminRouter");
 const contmanRouter = require("./contmanRouter");
 const manordRouter = require("./manordRouter");
 const courRouter = require("./courRouter");
+const reservmanRouter = require("./reservmanRouter");
 
 router.use("/user", userRouter);
 router.use("/reservation", reservationRouter);
@@ -21,5 +22,6 @@ router.use("/admin", adminRouter);
 router.use("/contman", contmanRouter);
 router.use("/manord", manordRouter);
 router.use("/cour", courRouter);
+router.use("/reservman", reservmanRouter);
 
 module.exports = router;

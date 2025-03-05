@@ -1,0 +1,138 @@
+.all_footer {
+  display: flex;
+  flex-direction: column;
+  background-color: #111;
+  height: max-content;
+  margin-top: 0px;
+  padding: 0px 50px;
+}
+
+.top_footer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  justify-content: space-between;
+  height: max-content;
+  margin: 5px;
+}
+
+.logo {
+  width: 150px;
+  height: 120px;
+}
+
+.logo_link {
+  border-radius: 50%;
+  transition: 0.5s;
+}
+
+.logo_link:hover {
+  box-shadow: 5px 10px 40px 20px rgba(255, 115, 0, 0.179);
+}
+
+.footer_info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.top_fot_h {
+  color: rgb(252, 130, 37);
+  font-family: "Pacifico";
+  margin: 0%;
+  margin-bottom: 20px;
+  font-size: 25px;
+  letter-spacing: 2px;
+}
+
+.top_fot_p {
+  color: rgb(252, 130, 37);
+  margin: 0%;
+  font-size: 22px;
+  font-family: "Merri";
+}
+
+.hr_footer {
+  width: 100%;
+}
+
+.fot_copyright {
+  color: white;
+  text-align: center;
+  font-size: 20px;
+}
+
+@media screen and (max-width: 500px) {
+  .all_footer {
+    max-width: 100%;
+    padding: 0px 5px;
+  }
+
+  .logo {
+    width: 55px;
+    height: 40px;
+  }
+
+  .top_footer {
+    margin-bottom: 0px;
+    align-items: start;
+    gap: 5px;
+  }
+
+  .footer_info {
+    margin-top: 8px;
+  }
+
+  .top_fot_h {
+    margin-bottom: 5px;
+    font-size: 9px;
+    text-align: center;
+  }
+
+  .top_fot_p {
+    font-size: 7px;
+    text-align: center;
+  }
+
+  .fot_copyright {
+    font-size: 8px;
+    margin: 0%;
+  }
+}
+
+@media screen and (min-width: 501px) and (max-width: 750px) {
+  .all_footer {
+    max-width: 100%;
+    padding: 5px 15px;
+  }
+
+  .logo {
+    width: 70px;
+    height: 55px;
+  }
+
+  .top_footer {
+    margin-bottom: 0px;
+    align-items: start;
+  }
+
+  .footer_info {
+    margin-top: 10px;
+  }
+
+  .top_fot_h {
+    margin-bottom: 7px;
+    font-size: 12px;
+  }
+
+  .top_fot_p {
+    font-size: 8px;
+  }
+
+  .fot_copyright {
+    font-size: 12px;
+    margin: 0%;
+  }
+}

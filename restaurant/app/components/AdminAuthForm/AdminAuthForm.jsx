@@ -199,6 +199,8 @@ export const AdminAuthForm = (props) => {
           router.push("/Manord/NewOrder");
         } else if (role.toString() === "3") {
           router.push("/Cour/ReadyOrder");
+        } else if (role.toString() === "4") {
+          router.push("/Reservman/Reserv");
         }
       })
       .catch((error) => {

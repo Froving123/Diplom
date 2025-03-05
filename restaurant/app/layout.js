@@ -10,6 +10,8 @@ import { ManordHeader } from "./components/Header/ManordHeader";
 import { ManordFooter } from "./components/Footer/ManordFooter";
 import { CourHeader } from "./components/Header/CourHeader";
 import { CourFooter } from "./components/Footer/CourFooter";
+import { ReservmanHeader } from "./components/Header/ReservmanHeader";
+import { ReservmanFooter } from "./components/Footer/ReservmanFooter";
 import "./globals.css";
 
 export default function RootLayout({ children }) {
@@ -19,6 +21,7 @@ export default function RootLayout({ children }) {
   const isContmanPage = pathname.startsWith("/Contman");
   const isManordPage = pathname.startsWith("/Manord");
   const isDeliverPage = pathname.startsWith("/Cour");
+  const isReservmanPage = pathname.startsWith("/Reservman");
 
   let header;
   if (isAdminPage) {
@@ -29,6 +32,8 @@ export default function RootLayout({ children }) {
     header = <ManordHeader />;
   } else if (isDeliverPage) {
     header = <CourHeader />;
+  } else if (isReservmanPage) {
+    header = <ReservmanHeader />;
   } else {
     header = <Header />;
   }
@@ -40,6 +45,8 @@ export default function RootLayout({ children }) {
     footer = <ManordFooter />;
   } else if (isDeliverPage) {
     footer = <CourFooter />;
+  } else if (isReservmanPage) {
+    footer = <ReservmanFooter />;
   } else {
     footer = <Footer />;
   }
