@@ -105,7 +105,21 @@ export const Contman_menu = () => {
       <div className={Styles.foods}>
         {categories.map((category) => (
           <div key={category.ID} className={Styles.category}>
-            <h2 className={Styles.category_h}>{category.Наименование}</h2>
+            <div className={Styles.category_name}>
+              <button
+                className={Styles.button_category}
+                onClick={() => removeCategory(category.ID)}
+              >
+                <p className={Styles.remove_text}>Удалить категорию</p>
+              </button>
+              <h2 className={Styles.category_h}>{category.Наименование}</h2>
+              <button
+                className={Styles.button_category}
+                onClick={() => openChangeCategoryForm(category)}
+              >
+                <p className={Styles.remove_text}>Изменить категорию</p>
+              </button>
+            </div>
             <hr className={Styles.hr_name} />
             <div className={Styles.foods_category}>
               {dishes
@@ -116,7 +130,7 @@ export const Contman_menu = () => {
                       className={Styles.button_remove}
                       onClick={() => removeDish(dish.ID)}
                     >
-                      <p className={Styles.remove_text}>Удалить</p>
+                      <p className={Styles.remove_text}>Удалить блюдо</p>
                     </button>
                     <img
                       className={Styles.img_food}
@@ -149,6 +163,12 @@ export const Contman_menu = () => {
             </div>
           </div>
         ))}
+      </div>
+      <div className={Styles.create_content}>
+        <button className={Styles.button_create} onClick={openNewDishForm}>
+          Добавить категорию
+        </button>
+        <hr className={Styles.hr_name} />
       </div>
       <button className={Styles.button_create} onClick={openNewDishForm}>
         Добавить блюдо

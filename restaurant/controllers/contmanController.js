@@ -181,14 +181,15 @@ class ContmanController {
 
       await new Promise((resolve, reject) => {
         conn.query(
-          `
-          DELETE FROM Спец_предложения 
-          WHERE ID = (
-              SELECT MAX(ID)
-              FROM Спец_предложения
-              WHERE ID_блюда = ?
-          )
-          `,
+          `DELETE FROM Спец_предложения WHERE ID_блюда = ?`,
+          [dishId],
+          (err) => (err ? reject(err) : resolve())
+        );
+      });
+
+      await new Promise((resolve, reject) => {
+        conn.query(
+          `DELETE FROM Блюда_в_корзине WHERE ID_блюда = ?`,
           [dishId],
           (err) => (err ? reject(err) : resolve())
         );

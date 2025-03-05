@@ -10,10 +10,10 @@
   justify-content: center;
   gap: 50px;
   height: 100%;
+  margin-bottom: 100px;
 }
 
 .delivery_h {
-  margin-top: 100px;
   color: rgb(252, 130, 37);
   font-family: "Pacifico";
   letter-spacing: 2px;
@@ -27,7 +27,7 @@
   justify-content: left;
   align-items: center;
   flex-wrap: wrap;
-  padding: 0px 50px 100px 50px;
+  padding: 0px 50px 0px 50px;
   gap: 100px;
 }
 
@@ -38,6 +38,24 @@
   justify-items: left;
 }
 
+.category_name {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+}
+
+.button_category {
+  background-color: rgb(255, 106, 43);
+  border-radius: 8px;
+  color: white;
+  padding: 5px 15px;
+  max-height: fit-content;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.5s;
+}
+
 .category_h {
   color: rgb(252, 130, 37);
   font-family: "Pacifico";
@@ -46,7 +64,7 @@
 }
 
 .hr_name {
-  width: 800px;
+  width: 900px;
   height: 5px;
   border: none;
   margin: 0%;
@@ -136,9 +154,19 @@
 }
 
 .button_menu_delivery:hover,
-.button_remove:hover {
+.button_remove:hover,
+.button_category:hover {
   background-color: rgb(253, 116, 57);
   color: black;
+}
+
+.create_content {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  justify-content: center;
+  align-items: start;
 }
 
 .button_create {
