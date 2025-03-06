@@ -53,8 +53,7 @@
   .header {
     max-width: 100%;
     padding: 0px;
-    justify-content: start;
-    gap: 20px;
+    gap: 0px;
   }
 
   .logo {
@@ -65,6 +64,7 @@
   .ul_header {
     gap: 18px;
     padding: 0%;
+    margin-right: 15px;
   }
 
   .nav_p {
@@ -85,18 +85,20 @@
   }
 
   .logo {
-    width: 70px;
+    width: 75px;
     height: 55px;
   }
 
   .ul_header {
-    gap: 17px;
+    gap: 25px;
     margin: 0%;
     padding: 0%;
   }
 
   .nav_p {
     font-size: 16px;
+    text-align: center;
+    width: min-content;
   }
 
   .button_logout {

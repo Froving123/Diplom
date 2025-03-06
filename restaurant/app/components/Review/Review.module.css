@@ -160,18 +160,35 @@
     width: 80%;
   }
 
+  .review_text {
+    gap: 10px;
+  }
+
   .review_content {
     padding-left: 10px;
   }
 
+  .review_text_content {
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 20px;
+    margin-top: 10px;
+  }
+
   .review_user_info {
     font-size: 15px;
-    margin: 10px;
+    margin: 0px;
+  }
+
+  .review_date {
+    font-weight: 600;
+    font-size: 15px;
+    margin-bottom: 10px;
   }
 
   .review_button_delete {
     font-size: 13px;
-    padding: 5px 12px;
+    padding: 5px 8px;
   }
 
   .review_empty_state {

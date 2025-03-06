@@ -166,7 +166,7 @@
   flex-direction: column;
   width: 90%;
   justify-content: center;
-  align-items: start;
+  align-items: flex-start;
 }
 
 .button_create {
@@ -194,14 +194,14 @@
   }
 
   .delivery_h {
-    margin-top: 37px;
+    margin-top: 0px;
     letter-spacing: 2px;
     font-size: 37px;
   }
 
   .foods {
     margin-top: 15px;
-    padding: 0px 15px 30px 15px;
+    padding: 0px 15px 0px 15px;
     gap: 40px;
   }
 
@@ -213,11 +213,22 @@
     align-items: center;
   }
 
+  .category_name {
+    gap: 10px;
+  }
+
+  .button_category {
+    padding: 0px 0px;
+    font-size: 12px;
+  }
+
   .category_h {
     color: rgb(252, 130, 37);
     font-family: "Pacifico";
     letter-spacing: 2px;
     font-size: 25px;
+    line-height: 30px;
+    width: min-content;
   }
 
   .hr_name {
@@ -277,10 +288,19 @@
     font-size: 12px;
   }
 
+  .create_content {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    justify-content: center;
+    align-items: center;
+  }
+
   .button_create {
     margin-bottom: 15px;
     padding: 10px 15px;
-    font-size: 30px;
+    font-size: 20px;
     letter-spacing: 1px;
   }
 }
@@ -292,7 +312,7 @@
   }
 
   .delivery_h {
-    margin-top: 40px;
+    margin-top: 0px;
     letter-spacing: 2px;
     font-size: 40px;
   }
@@ -311,11 +331,22 @@
     align-items: center;
   }
 
+  .category_name {
+    gap: 15px;
+  }
+
+  .button_category {
+    padding: 0px 5px;
+    font-size: 15px;
+  }
+
   .category_h {
     color: rgb(252, 130, 37);
     font-family: "Pacifico";
     letter-spacing: 2px;
     font-size: 25px;
+    line-height: 35px;
+    width: min-content;
   }
 
   .hr_name {
@@ -367,7 +398,22 @@
 
   .button_menu_delivery {
     border-radius: 8px;
-    padding: 10px 15px;
     font-size: 15px;
+  }
+
+  .create_content {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .button_create {
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    font-size: 30px;
+    letter-spacing: 1px;
   }
 }

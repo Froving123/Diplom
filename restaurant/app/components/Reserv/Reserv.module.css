@@ -42,7 +42,6 @@
 .reserv_description {
   font-weight: 900;
   font-size: 22px;
-
   margin: 0%;
   width: auto;
   font-family: Arial, Helvetica, sans-serif;
@@ -114,6 +113,21 @@
     margin-top: 10px;
   }
 
+  .reserv_description {
+    font-weight: 900;
+    font-size: 15px;
+    margin: 0%;
+    width: auto;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .reserv_description_h {
+    font-size: 15px;
+    margin: 0%;
+    width: auto;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
   .reserv_user_info {
     font-size: 13px;
   }
@@ -125,7 +139,7 @@
   }
 
   .reserv_button_delete {
-    font-size: 13px;
+    font-size: 10px;
     padding: 0px 5px;
   }
 
@@ -155,9 +169,24 @@
     margin: 10px;
   }
 
+  .reserv_description {
+    font-weight: 900;
+    font-size: 18px;
+    margin: 0%;
+    width: auto;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .reserv_description_h {
+    font-size: 18px;
+    margin: 0%;
+    width: auto;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
   .reserv_button_delete {
     font-size: 13px;
-    padding: 5px 12px;
+    padding: 5px 7px;
   }
 
   .reserv_empty_state {
