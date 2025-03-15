@@ -8,7 +8,7 @@ const conn = mysql.createConnection({
   host: "MySQL-8.0",
   user: "root",
   password: "Sasha228",
-  database: "Best-Rest",
+  database: "Best-Rest-C",
 });
 
 // Папка для хранения изображений (public/images)
