@@ -186,24 +186,28 @@
   }
 
   .title_new_order {
-    margin-bottom: 10px;
-    margin-left: 0px;
-    font-size: 27px;
+    margin-left: 10px;
+    font-size: 40px;
   }
 
   .ul_new_order {
-    margin-left: 15px;
+    width: 90%;
   }
 
   .li_new_order {
-    padding: 10px;
+    padding: 0px;
+    border-radius: 10px;
     flex-direction: column;
-    gap: 20px;
+    gap: 0px;
+  }
+
+  .li_content_order {
+    margin: 0px 10px 0px 10px;
   }
 
   .new_order_description_h {
-    font-size: 22px;
-    margin-bottom: 10px;
+    font-size: 21px;
+    margin-bottom: 8px;
   }
 
   .new_order_description {
@@ -213,19 +217,39 @@
   }
 
   .new_order_foods {
-    margin-bottom: 20px;
+    margin: 0px 10px 20px 10px;
   }
 
   .food_list {
-    gap: 15px;
+    gap: 10px;
   }
 
   .food_item {
     font-size: 20px;
   }
 
-  .new_order_empty {
+  .buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .button_accept {
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+  }
+
+  .accept_text {
+    margin: 0%;
     font-size: 20px;
-    margin: 15px;
+    font-weight: 600;
+  }
+
+  .new_order_empty {
+    text-align: center;
+    font-size: 17px;
+    margin: 10px;
   }
 }

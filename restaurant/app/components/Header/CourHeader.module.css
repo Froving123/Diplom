@@ -99,16 +99,18 @@
   }
 
   .ul_header {
-    gap: 17px;
+    gap: 30px;
     margin: 0%;
     padding: 0%;
   }
 
   .nav_p {
     font-size: 16px;
+    text-align: center;
+    width: min-content;
   }
 
-  .button_profile {
+  .button_logout {
     font-size: 16px;
   }
 }

@@ -227,7 +227,18 @@
 
   .offer_description {
     font-size: 15px;
-    margin: 10px;
+    margin-top: 10px;
+  }
+
+  .offer_date {
+    font-size: 15px;
+    margin-bottom: 10px;
+  }
+
+  .button_text {
+    margin: 0%;
+    font-size: 13px;
+    font-weight: 600;
   }
 
   .button_edit,
@@ -248,5 +259,11 @@
   .button_create {
     font-size: 16px;
     padding: 9px 18px;
+  }
+
+  .create_text {
+    margin: 0%;
+    font-size: 28px;
+    font-weight: 600;
   }
 }
