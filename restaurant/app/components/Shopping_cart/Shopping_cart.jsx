@@ -17,7 +17,7 @@ export const Shopping_cart = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/bucket/user", {
+      const response = await fetch("/api/bucket/user", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -45,7 +45,7 @@ export const Shopping_cart = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/bucket/increment",
+        "/api/bucket/increment",
         {
           method: "POST",
           headers: {
@@ -78,7 +78,7 @@ export const Shopping_cart = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/bucket/decrement",
+        "/api/bucket/decrement",
         {
           method: "POST",
           headers: {
@@ -117,7 +117,7 @@ export const Shopping_cart = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/bucket/remove", {
+      const response = await fetch("/api/bucket/remove", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

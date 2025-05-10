@@ -15,7 +15,7 @@ export const Discount = () => {
     const fetchDiscountedItem = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/delivery/discount"
+          "/api/delivery/discount"
         );
         const data = await response.json();
         if (response.ok && data.success) {

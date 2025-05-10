@@ -15,7 +15,7 @@ export const CartProvider = ({ children }) => {
   const updateCart = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/bucket/total-price",
+        "/api/bucket/total-price",
         {
           method: "GET",
           headers: {

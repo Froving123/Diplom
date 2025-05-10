@@ -11,7 +11,7 @@ export const Reserv = () => {
   const fetchReserv = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/reservman/reservGet",
+        "/api/reservman/reservGet",
         {
           method: "GET",
           headers: {
@@ -43,7 +43,7 @@ export const Reserv = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/reservman/reservDelete",
+        "/api/reservman/reservDelete",
         {
           method: "POST",
           headers: {

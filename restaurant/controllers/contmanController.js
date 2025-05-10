@@ -5,10 +5,10 @@ const multer = require("multer");
 
 // Настройка подключения к базе данных
 const conn = mysql.createConnection({
-  host: "MySQL-8.0",
+  host: "localhost",
   user: "root",
   password: "Sasha228",
-  database: "Best-Rest-C",
+  database: "BRC",
 });
 
 // Папка для хранения изображений (public/images)

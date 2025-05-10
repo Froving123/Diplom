@@ -14,7 +14,7 @@ export const CourHeader = () => {
 
     if (token) {
       // Отправляем запрос на сервер, чтобы получить данные пользователя
-      fetch("http://localhost:5000/api/admin/profile", {
+      fetch("/api/admin/profile", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

@@ -16,7 +16,7 @@ export const Special_offers = () => {
   const fetchOffers = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/contman/offerGet",
+        "/api/contman/offerGet",
         {
           method: "GET",
         }
@@ -45,7 +45,7 @@ export const Special_offers = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/contman/offerDelete",
+        "/api/contman/offerDelete",
         {
           method: "POST",
           headers: {

@@ -22,7 +22,7 @@ export const ReservForm = (props) => {
     const fetchAllTables = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/reservation/tables",
+          "/api/reservation/tables",
           {
             method: "GET",
             headers: {
@@ -91,7 +91,7 @@ export const ReservForm = (props) => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/reservation/create",
+        "/api/reservation/create",
         {
           method: "POST",
           headers: {

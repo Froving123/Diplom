@@ -51,7 +51,7 @@ export const ChangeDishForm = ({ close, dish }) => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/contman/updateDish",
+        "/api/contman/updateDish",
         {
           method: "POST",
           body: formData, // Отправляем FormData

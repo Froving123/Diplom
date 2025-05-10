@@ -17,7 +17,7 @@ export const Delivery_user = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/order/user", {
+      const response = await fetch("/api/order/user", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -58,7 +58,7 @@ export const Delivery_user = () => {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/order/remove", {
+      const response = await fetch("/api/order/remove", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

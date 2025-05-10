@@ -18,7 +18,7 @@ export const AdminAuthForm = (props) => {
     const fetchAllRole = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/admin/roleGet",
+          "/api/admin/roleGet",
           {
             method: "GET",
             headers: {
@@ -92,7 +92,7 @@ export const AdminAuthForm = (props) => {
       return;
     }
 
-    fetch("http://localhost:5000/api/admin/create-password", {
+    fetch("/api/admin/create-password", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -157,7 +157,7 @@ export const AdminAuthForm = (props) => {
       return;
     }
 
-    fetch("http://localhost:5000/api/admin/login", {
+    fetch("/api/admin/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

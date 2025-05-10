@@ -24,7 +24,7 @@ export const Contman_menu = () => {
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/delivery/categories"
+          "/api/delivery/categories"
         );
         const data = await response.json();
         if (data.success) {
@@ -40,7 +40,7 @@ export const Contman_menu = () => {
     // Загрузка блюд
     const fetchDishes = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/delivery/menu");
+        const response = await fetch("/api/delivery/menu");
         const data = await response.json();
         if (response.ok) {
           setDishes(data.menu);
@@ -87,7 +87,7 @@ export const Contman_menu = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/contman/removeDish",
+        "/api/contman/removeDish",
         {
           method: "POST",
           headers: {
@@ -124,7 +124,7 @@ export const Contman_menu = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/contman/removeCategory",
+        "/api/contman/removeCategory",
         {
           method: "POST",
           headers: {

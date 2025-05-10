@@ -38,7 +38,7 @@ export const NewDishForm = ({ close }) => {
     const fetchAllCatogories = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/contman/categories",
+          "/api/contman/categories",
           {
             method: "GET",
             headers: {
@@ -91,7 +91,7 @@ export const NewDishForm = ({ close }) => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/contman/addDish",
+        "/api/contman/addDish",
         {
           method: "POST",
           body: formData, // Отправляем FormData

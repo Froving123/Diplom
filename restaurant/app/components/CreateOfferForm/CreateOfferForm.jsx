@@ -35,7 +35,7 @@ export const CreateOfferForm = (props) => {
     const fetchActiveDish = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/Contman/dishOffer",
+          "/api/Contman/dishOffer",
           {
             method: "GET",
             headers: {
@@ -78,7 +78,7 @@ export const CreateOfferForm = (props) => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/contman/offerCreate",
+        "/api/contman/offerCreate",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -11,7 +11,7 @@ export const ConfirmedOrder = () => {
   const fetchAcceptOrders = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/manord/acceptOrdersGet",
+        "/api/manord/acceptOrdersGet",
         {
           method: "GET",
           headers: {
@@ -42,7 +42,7 @@ export const ConfirmedOrder = () => {
   const readyOrder = async (orderId) => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/manord/readyOrder",
+        "/api/manord/readyOrder",
         {
           method: "POST",
           headers: {

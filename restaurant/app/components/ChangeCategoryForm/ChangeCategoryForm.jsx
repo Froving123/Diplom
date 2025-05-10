@@ -33,7 +33,7 @@ export const ChangeCategoryForm = ({ close, category }) => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/contman/updateCategory",
+        "/api/contman/updateCategory",
         {
           method: "POST", // Проверь, что на сервере этот маршрут обрабатывает POST (лучше использовать PUT)
           headers: { "Content-Type": "application/json" },

@@ -11,7 +11,7 @@ export const ReadyOrder = () => {
   const fetchReadyOrders = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/cour/readyOrdersGet",
+        "/api/cour/readyOrdersGet",
         {
           method: "GET",
           headers: {
@@ -44,7 +44,7 @@ export const ReadyOrder = () => {
       const token = localStorage.getItem("authTokenAdmin");
 
       const response = await fetch(
-        "http://localhost:5000/api/cour/acceptOrder",
+        "/api/cour/acceptOrder",
         {
           method: "POST",
           headers: {

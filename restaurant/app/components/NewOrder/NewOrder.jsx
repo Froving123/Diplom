@@ -11,7 +11,7 @@ export const NewOrder = () => {
   const fetchNewOrders = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/manord/newOrdersGet",
+        "/api/manord/newOrdersGet",
         {
           method: "GET",
           headers: {
@@ -47,7 +47,7 @@ export const NewOrder = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/manord/cancelOrder",
+        "/api/manord/cancelOrder",
         {
           method: "POST",
           headers: {
@@ -75,7 +75,7 @@ export const NewOrder = () => {
   const acceptOrder = async (orderId) => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/manord/acceptOrder",
+        "/api/manord/acceptOrder",
         {
           method: "POST",
           headers: {

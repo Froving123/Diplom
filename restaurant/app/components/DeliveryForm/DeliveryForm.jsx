@@ -21,7 +21,7 @@ export const DeliveryForm = (props) => {
     const fetchAllPayment = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/order/payment",
+          "/api/order/payment",
           {
             method: "GET",
             headers: {
@@ -114,7 +114,7 @@ export const DeliveryForm = (props) => {
     const token = localStorage.getItem("authToken");
 
     try {
-      const response = await fetch("http://localhost:5000/api/order/create", {
+      const response = await fetch("/api/order/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

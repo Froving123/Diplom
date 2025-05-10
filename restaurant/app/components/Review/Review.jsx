@@ -11,7 +11,7 @@ export const Review = () => {
   const fetchReviews = async () => {
     try {
       const response = await fetch(
-        "http://localhost:5000/api/contman/reviewGet",
+        "/api/contman/reviewGet",
         {
           method: "GET",
         }
@@ -40,7 +40,7 @@ export const Review = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/contman/reviewDelete",
+        "/api/contman/reviewDelete",
         {
           method: "POST",
           headers: {

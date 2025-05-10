@@ -13,7 +13,7 @@ export const AuthDetails = () => {
 
     if (token) {
       // Отправляем запрос на сервер, чтобы получить данные пользователя
-      fetch("http://localhost:5000/api/user/profile", {
+      fetch("/api/user/profile", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,

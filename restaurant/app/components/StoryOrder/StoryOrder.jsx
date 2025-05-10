@@ -13,7 +13,7 @@ export const StoryOrder = () => {
       const token = localStorage.getItem("authTokenAdmin");
 
       const response = await fetch(
-        "http://localhost:5000/api/cour/storyOrdersGet",
+        "/api/cour/storyOrdersGet",
         {
           method: "GET",
           headers: {

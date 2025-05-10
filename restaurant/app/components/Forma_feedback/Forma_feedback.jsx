@@ -40,7 +40,7 @@ export const Forma_feedback = () => {
     const token = localStorage.getItem("authToken");
 
     // Отправляем данные на сервер для создания отзыва
-    fetch("http://localhost:5000/api/feedback/create", {
+    fetch("/api/feedback/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

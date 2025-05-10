@@ -17,7 +17,7 @@ export const Delivery_menu = () => {
     const fetchCategories = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5000/api/delivery/categories"
+          "/api/delivery/categories"
         );
         const data = await response.json();
         if (data.success) {
@@ -33,7 +33,7 @@ export const Delivery_menu = () => {
     // Функция для загрузки блюд с учетом скидок
     const fetchDishes = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/delivery/menu");
+        const response = await fetch("/api/delivery/menu");
         const data = await response.json();
         if (response.ok) {
           setDishes(data.menu);
@@ -62,7 +62,7 @@ export const Delivery_menu = () => {
 
     try {
       // Добавляем блюдо в корзину
-      const response = await fetch("http://localhost:5000/api/bucket/foot", {
+      const response = await fetch("/api/bucket/foot", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

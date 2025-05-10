@@ -13,7 +13,7 @@ export const CourOrder = () => {
       const token = localStorage.getItem("authTokenAdmin");
 
       const response = await fetch(
-        "http://localhost:5000/api/cour/courOrdersGet",
+        "/api/cour/courOrdersGet",
         {
           method: "GET",
           headers: {
@@ -47,7 +47,7 @@ export const CourOrder = () => {
       const token = localStorage.getItem("authTokenAdmin");
 
       const response = await fetch(
-        "http://localhost:5000/api/cour/completeOrder",
+        "/api/cour/completeOrder",
         {
           method: "POST",
           headers: {
