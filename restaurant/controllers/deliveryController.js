@@ -1,5 +1,11 @@
 const mysql = require("mysql");
-const pool = require("../server")
+
+const conn = mysql.createConnection({
+  host: "MySQL-8.0",
+  user: "root",
+  password: "Sasha228",
+  database: "Best-Rest-C",
+});
 
 class DeliveryController {
   async getCategories(req, res) {
