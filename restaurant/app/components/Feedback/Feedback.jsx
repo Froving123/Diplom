@@ -17,7 +17,7 @@ export const Feedback = () => {
   useEffect(() => {
     const fetchFeedbacks = async () => {
       try {
-        const response = await fetch("/back/api/feedback/user");
+        const response = await fetch("/api/feedback/user");
         const result = await response.json();
         if (result.success) {
           setFeedbacks(result.feedbacks);
