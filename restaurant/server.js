@@ -19,7 +19,7 @@ server.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 const conn = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "",
+  password: "Sasha228",
   database: "BRC",
 });
 
