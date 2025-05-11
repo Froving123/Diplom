@@ -53,7 +53,7 @@ export const ReservForm = (props) => {
       const fetchAvailableTables = async () => {
         try {
           const response = await fetch(
-            `http://localhost:5000/api/reservation/active-tables?date=${newItem.date}&time=${newItem.time}&people=${newItem.people}`,
+            `/api/reservation/active-tables?date=${newItem.date}&time=${newItem.time}&people=${newItem.people}`,
             {
               method: "GET",
               headers: {
