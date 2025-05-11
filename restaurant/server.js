@@ -16,12 +16,11 @@ server.use("/api", router);
 server.use(bodyParser.json({ limit: "50mb" })); 
 server.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
-const pool = mysql.createPool({
-  connectionLimit: 10,
-  host: 'localhost',
-  user: 'root',
-  password: 'Sasha228',
-  database: 'BRC',
+const conn = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "Sasha228",
+  database: "BRC",
 });
 
 // Резервное копирование бд
@@ -34,8 +33,8 @@ const backupDB = () => {
     fs.mkdirSync(path.join(__dirname, 'backups'));
   }
 
-  const dumpCommand = `mysqldump -h ${pool.config.host} -u ${pool.config.user} ${pool.config.password ? `-p${pool.config.password}` : ''
-    } ${pool.config.database} > ${backupPath}`;
+  const dumpCommand = `mysqldump -h ${conn.config.host} -u ${conn.config.user} ${conn.config.password ? `-p${conn.config.password}` : ''
+    } ${conn.config.database} > ${backupPath}`;
 
   exec(dumpCommand, (error, stdout, stderr) => {
     if (error) {
@@ -52,7 +51,7 @@ schedule.scheduleJob('00 03 * * *', () => {
   backupDB();
 });
 
-pool.connect((err) => {
+conn.connect((err) => {
   if (err) {
     console.log(err);
   } else {
@@ -63,5 +62,3 @@ pool.connect((err) => {
 server.listen(PORT, () => {
   console.log("server started");
 });
-
-module.exports = pool;

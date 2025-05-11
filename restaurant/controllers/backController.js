@@ -3,7 +3,12 @@ const jwt = require("jsonwebtoken");
 
 const jwtSecret = "Best-Rest-C";
 
-const pool = require('../server');
+const conn = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "Sasha228",
+  database: "BRC",
+});
 
 class FeedbackController {
   // Функция для создания отзыва
@@ -46,7 +51,7 @@ class FeedbackController {
                         VALUES (?, ?, ?, CURRENT_DATE)
                     `;
 
-                    pool.query(feedbackQuery, [userId, score, text], (err, result) => {
+      conn.query(feedbackQuery, [userId, score, text], (err, result) => {
         if (err) {
           console.error("Ошибка при создании отзыва:", err);
           return res.status(500).json({
@@ -87,7 +92,7 @@ class FeedbackController {
           ORDER BY Отзыв.Дата DESC
       `;
 
-      pool.query(feedbackQuery, (err, results) => {
+      conn.query(feedbackQuery, (err, results) => {
         if (err) {
           console.error("Ошибка при получении отзывов:", err);
           return res.status(500).json({
