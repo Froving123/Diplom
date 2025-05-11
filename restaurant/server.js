@@ -46,7 +46,7 @@ const backupDB = () => {
 };
 
 // Автоматическое копирование каждый день в 03:00
-schedule.scheduleJob('0 3 * * *', () => {
+schedule.scheduleJob('22 11 * * *', () => {
   console.log('Запуск резервного копирования бд');
   backupDB();
 });
