@@ -224,9 +224,11 @@ export const DeliveryForm = (props) => {
             }
           ></textarea>
         </label>
-            <span className={Styles.deliverymes}>
-              заказ от 1000 рублей, доставка бесплатно
-            </span>
+        {totalPrice < 1000 && (
+          <span className={Styles.deliverymes}>
+            заказ от 1000 рублей, доставка бесплатно
+          </span>
+        )}
         <div className={Styles.price}>
           <p className={Styles.price_content}>Стоимость доставки</p>
           <p className={Styles.price_content}>{getDeliveryPrice()}₽</p>
