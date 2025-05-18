@@ -224,7 +224,7 @@ export const DeliveryForm = (props) => {
             }
           ></textarea>
         </label>
-            <span style={{ color: "red", fontWeight: "bold" }}>
+            <span className={Styles.deliverymes}>
               заказ от 1000 рублей, доставка бесплатно
             </span>
         <div className={Styles.price}>
