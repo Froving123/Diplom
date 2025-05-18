@@ -151,13 +151,24 @@ export const Delivery_user = () => {
                     <br />
                     {order.status}
                   </p>
-                  {!isOrderIssued && (
+                  {isOrderIssued === true && (
                     <p className={Styles.delivery_description}>
                       <strong className={Styles.delivery_description_h}>
                         Время доставки:{" "}
                       </strong>
                       <br />
                       {order.deliveryTime.split(":").slice(0, 2).join(":")}
+                    </p>
+                  )}
+                  {!isOrderIssued && (
+                    <p className={Styles.delivery_description}>
+                      <strong className={Styles.delivery_description_h}>
+                        Время доставки:{" "}
+                      </strong>
+                      <br />
+                      около{" "}
+                      {order.deliveryTime.split(":")[1]}{" "}
+                      минут
                     </p>
                   )}
                   <p className={Styles.delivery_description}>
