@@ -47,10 +47,10 @@ class OrderController {
           message: "Сессия была закончена, авторизуйтесь заново",
         });
       }
-
+  
       const token = authHeader.split(" ")[1];
       let decodedToken;
-
+  
       try {
         decodedToken = jwt.verify(token, jwtSecret);
       } catch (err) {
@@ -59,23 +59,21 @@ class OrderController {
           message: "Сессия была закончена, авторизуйтесь заново",
         });
       }
-
+  
       const userId = decodedToken.userId;
       const { address, totalPrice, payment, comment } = req.body;
-
+  
       const currentTime = new Date();
       const hours = currentTime.getHours();
       const minutes = currentTime.getMinutes();
-
-      // Проверка, находится ли текущее время в пределах 07:00 - 22:00
+  
       if (hours < 7 || (hours === 22 && minutes > 0) || hours > 22) {
         return res.status(400).json({
           success: false,
           message: "Заказать можно только с 07:00 до 22:00",
         });
       }
-
-      // Добавление адреса
+  
       const insertAddressQuery = `INSERT INTO Адрес (Улица, Дом, Квартира) VALUES (?, ?, ?)`;
       conn.query(
         insertAddressQuery,
@@ -88,18 +86,18 @@ class OrderController {
               message: "Ошибка при добавлении адреса",
             });
           }
-
+  
           const addressId = addressResult.insertId;
-
-          // Добавление заказа
+          const deliveryPrice = totalPrice >= 1000 ? 0 : 500;
+  
           const insertOrderQuery = `
-                INSERT INTO 
-                  Заказ (ID_статуса, ID_адреса, ID_пользователя, Общая_цена_блюд, Цена_доставки, ID_способа, Дата_заказа, Время_заказа, Примечания) 
-                  VALUES ((SELECT ID FROM Статус_заказа WHERE ID = 1), ?, ?, ?, 500, ?, CURDATE(), CURTIME(), ?)
-              `;
+            INSERT INTO 
+              Заказ (ID_статуса, ID_адреса, ID_пользователя, Общая_цена_блюд, Цена_доставки, ID_способа, Дата_заказа, Время_заказа, Примечания) 
+            VALUES ((SELECT ID FROM Статус_заказа WHERE ID = 1), ?, ?, ?, ?, ?, CURDATE(), CURTIME(), ?)
+          `;
           conn.query(
             insertOrderQuery,
-            [addressId, userId, totalPrice, payment, comment],
+            [addressId, userId, totalPrice, deliveryPrice, payment, comment],
             (err, orderResult) => {
               if (err) {
                 console.error("Ошибка при добавлении заказа:", err);
@@ -108,10 +106,9 @@ class OrderController {
                   message: "Ошибка при добавлении заказа",
                 });
               }
-
+  
               const orderId = orderResult.insertId;
-
-              // Получение блюд в корзине
+  
               const findFoodQuery = `SELECT ID_блюда, Количество FROM Блюда_в_корзине WHERE ID_пользователя = ?`;
               conn.query(findFoodQuery, [userId], (err, foodResults) => {
                 if (err || foodResults.length === 0) {
@@ -121,14 +118,14 @@ class OrderController {
                     message: "Блюда не найдены",
                   });
                 }
-
-                // добавление блюд в заказ
+  
                 const insertFoodQuery = `INSERT INTO Блюда_в_заказе (ID_блюда, Количество, ID_заказа) VALUES ?`;
                 const foodValues = foodResults.map((food) => [
                   food.ID_блюда,
                   food.Количество,
                   orderId,
                 ]);
+  
                 conn.query(insertFoodQuery, [foodValues], (err) => {
                   if (err) {
                     console.error("Ошибка при добавлении блюд в заказ:", err);
@@ -137,20 +134,18 @@ class OrderController {
                       message: "Ошибка при добавлении блюд в заказ",
                     });
                   }
-
-                  // Удаление блюд из корзины
+  
                   const deleteFoodQuery = `DELETE FROM Блюда_в_корзине WHERE ID_пользователя = ?`;
                   conn.query(deleteFoodQuery, [userId], (err) => {
                     if (err) {
-                      console.error(
-                        "Ошибка при удалении блюд из корзины:",
-                        err
-                      );
+                      console.error("Ошибка при удалении блюд из корзины:", err);
                       return res.status(500).json({
                         success: false,
                         message: "Ошибка при удалении блюд из корзины",
                       });
                     }
+  
+                    return res.status(200).json({ success: true });
                   });
                 });
               });
@@ -162,7 +157,7 @@ class OrderController {
       console.error("Ошибка на сервере:", error);
       res.status(500).json({ success: false });
     }
-  }
+  }  
 
   async removeOrder(req, res) {
     try {

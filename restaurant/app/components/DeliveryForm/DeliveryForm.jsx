@@ -15,20 +15,20 @@ export const DeliveryForm = (props) => {
   const [availablePayment, setAvailablePayment] = useState([]);
   const { totalPrice, updateCart } = useCart();
   const [error, setError] = useState("");
-  const DELIVERY_PRICE = 500; // Статичная стоимость доставки
+
+  const getDeliveryPrice = () => {
+    return totalPrice >= 1000 ? 0 : 500;
+  };
 
   useEffect(() => {
     const fetchAllPayment = async () => {
       try {
-        const response = await fetch(
-          "/api/order/payment",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch("/api/order/payment", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
         const result = await response.json();
         if (response.ok) {
@@ -55,10 +55,10 @@ export const DeliveryForm = (props) => {
   };
 
   const russianInput = (key) => (e) => {
-    const value = e.target.value.replace(/[^А-Яа-яЁё\s]/g, ""); // Разрешаем только русские буквы и пробелы
+    const value = e.target.value.replace(/[^А-Яа-яЁё\s]/g, "");
     const formattedValue = value.replace(/^[а-яё]/, (match) =>
       match.toUpperCase()
-    ); // Заглавная буква только у первого слова
+    );
     setNewItem((prevState) => ({
       ...prevState,
       [key]: formattedValue,
@@ -72,33 +72,18 @@ export const DeliveryForm = (props) => {
     const hours = currentTime.getHours();
     const minutes = currentTime.getMinutes();
 
-    // Проверка: можно заказывать только с 07:00 до 22:00
     if (hours < 7 || (hours === 22 && minutes > 0) || hours > 22) {
       setError("Заказать можно только с 07:00 до 22:00");
       setTimeout(() => setError(""), 3000);
       return;
     }
 
-    // Проверяем, что все обязательные поля заполнены
     if (!newItem.street || !newItem.home || !newItem.payment) {
       setError("Пожалуйста, заполните все обязательные поля!");
       setTimeout(() => setError(""), 3000);
       return;
     }
 
-    // Очистка формы после отправки
-    setNewItem({
-      street: "",
-      home: "",
-      flat: "",
-      payment: "",
-      comment: "",
-    });
-
-    props.close(); // Закрытие формы
-    window.location.reload(); // Перезагрузка страницы
-
-    // Данные для отправки
     const orderData = {
       address: {
         street: newItem.street,
@@ -107,8 +92,8 @@ export const DeliveryForm = (props) => {
       },
       payment: newItem.payment,
       comment: newItem.comment || "",
-      totalPrice: totalPrice, // Общая стоимость с доставкой
-      deliveryPrice: DELIVERY_PRICE,
+      totalPrice: totalPrice,
+      deliveryPrice: getDeliveryPrice(),
     };
 
     const token = localStorage.getItem("authToken");
@@ -127,7 +112,19 @@ export const DeliveryForm = (props) => {
         const result = await response.json();
         setError(result.message || "Ошибка при создании заказа");
         setTimeout(() => setError(""), 3000);
+        return;
       }
+
+      setNewItem({
+        street: "",
+        home: "",
+        flat: "",
+        payment: "",
+        comment: "",
+      });
+
+      props.close();
+      window.location.reload();
     } catch (error) {
       console.error("Ошибка отправки заказа:", error);
       setError("Произошла ошибка. Повторите попытку позже.");
@@ -140,7 +137,7 @@ export const DeliveryForm = (props) => {
   };
 
   useEffect(() => {
-    updateCart(); // Обновление данных корзины при монтировании
+    updateCart();
   }, [updateCart]);
 
   return (
@@ -168,7 +165,7 @@ export const DeliveryForm = (props) => {
           </span>
           <input
             className={`${Styles["form__field-input"]} ${
-              !newItem.street && error ? Styles["error-border"] : ""
+              !newItem.home && error ? Styles["error-border"] : ""
             }`}
             type="text"
             aria-required="true"
@@ -208,7 +205,7 @@ export const DeliveryForm = (props) => {
               setNewItem({ ...newItem, payment: e.target.value })
             }
           >
-            <option value=""> Выберите способ оплаты</option>
+            <option value="">Выберите способ оплаты</option>
             {availablePayment.map((payment) => (
               <option key={payment.ID} value={payment.ID}>
                 {payment.Наименование}
@@ -227,13 +224,25 @@ export const DeliveryForm = (props) => {
             }
           ></textarea>
         </label>
+
+        <div className={Styles.price}>
+          <p className={Styles.price_content}>
+            <span style={{ color: "red", fontWeight: "bold" }}>
+              заказ от 1000 рублей, доставка бесплатно
+            </span>
+          </p>
+        </div>
+
         <div className={Styles.price}>
           <p className={Styles.price_content}>Стоимость доставки</p>
-          <p className={Styles.price_content}>{DELIVERY_PRICE}₽</p>
+          <p className={Styles.price_content}>{getDeliveryPrice()}₽</p>
         </div>
+
         <div className={Styles.price}>
           <p className={Styles.price_content}>Стоимость заказа</p>
-          <p className={Styles.price_content}>{totalPrice + DELIVERY_PRICE}₽</p>
+          <p className={Styles.price_content}>
+            {totalPrice + getDeliveryPrice()}₽
+          </p>
         </div>
       </div>
       {error && <p className={Styles.error_message}>{error}</p>}
