@@ -224,15 +224,9 @@ export const DeliveryForm = (props) => {
             }
           ></textarea>
         </label>
-
-        <div className={Styles.price}>
-          <p className={Styles.price_content}>
             <span style={{ color: "red", fontWeight: "bold" }}>
               заказ от 1000 рублей, доставка бесплатно
             </span>
-          </p>
-        </div>
-
         <div className={Styles.price}>
           <p className={Styles.price_content}>Стоимость доставки</p>
           <p className={Styles.price_content}>{getDeliveryPrice()}₽</p>
