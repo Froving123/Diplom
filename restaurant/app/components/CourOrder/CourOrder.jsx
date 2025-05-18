@@ -12,8 +12,8 @@ export const CourOrder = () => {
     try {
       const token = localStorage.getItem("authTokenAdmin");
 
-      const response = await fetch(
-        "/api/cour/courOrdersGet",
+       const response = await fetch(
+        "http://localhost:5000/api/cour/courOrdersGet",
         {
           method: "GET",
           headers: {
@@ -46,8 +46,8 @@ export const CourOrder = () => {
     try {
       const token = localStorage.getItem("authTokenAdmin");
 
-      const response = await fetch(
-        "/api/cour/completeOrder",
+       const response = await fetch(
+        "http://localhost:5000/api/cour/completeOrder",
         {
           method: "POST",
           headers: {

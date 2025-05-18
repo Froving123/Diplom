@@ -2,13 +2,13 @@ const mysql = require("mysql");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const jwtSecret = "Best-Rest-CAdmin";
+const jwtSecret = "BRDAdmin";
 
 const conn = mysql.createConnection({
-  host: "localhost",
+  host: "MySQL-8.0",
   user: "root",
   password: "Sasha228",
-  database: "BRC",
+  database: "BRD",
 });
 
 class AdminController {

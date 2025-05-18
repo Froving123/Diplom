@@ -10,8 +10,8 @@ export const Reserv = () => {
   // Получение всех отзывов
   const fetchReserv = async () => {
     try {
-      const response = await fetch(
-        "/api/reservman/reservGet",
+       const response = await fetch(
+        "http://localhost:5000/api/reservman/reservGet",
         {
           method: "GET",
           headers: {
@@ -42,8 +42,8 @@ export const Reserv = () => {
     }
 
     try {
-      const response = await fetch(
-        "/api/reservman/reservDelete",
+       const response = await fetch(
+        "http://localhost:5000/api/reservman/reservDelete",
         {
           method: "POST",
           headers: {

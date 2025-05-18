@@ -10,8 +10,8 @@ export const ReadyOrder = () => {
   // Функция для загрузки новых заказов
   const fetchReadyOrders = async () => {
     try {
-      const response = await fetch(
-        "/api/cour/readyOrdersGet",
+       const response = await fetch(
+        "http://localhost:5000/api/cour/readyOrdersGet",
         {
           method: "GET",
           headers: {
@@ -43,8 +43,8 @@ export const ReadyOrder = () => {
     try {
       const token = localStorage.getItem("authTokenAdmin");
 
-      const response = await fetch(
-        "/api/cour/acceptOrder",
+       const response = await fetch(
+        "http://localhost:5000/api/cour/acceptOrder",
         {
           method: "POST",
           headers: {

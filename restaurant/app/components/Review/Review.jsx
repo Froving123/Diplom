@@ -10,8 +10,8 @@ export const Review = () => {
   // Получение всех отзывов
   const fetchReviews = async () => {
     try {
-      const response = await fetch(
-        "/api/contman/reviewGet",
+       const response = await fetch(
+        "http://localhost:5000/api/contman/reviewGet",
         {
           method: "GET",
         }
@@ -39,8 +39,8 @@ export const Review = () => {
     }
 
     try {
-      const response = await fetch(
-        "/api/contman/reviewDelete",
+       const response = await fetch(
+        "http://localhost:5000/api/contman/reviewDelete",
         {
           method: "POST",
           headers: {

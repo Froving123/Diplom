@@ -90,8 +90,8 @@ export const NewDishForm = ({ close }) => {
     }
 
     try {
-      const response = await fetch(
-        "/api/contman/addDish",
+       const response = await fetch(
+        "http://localhost:5000/api/contman/addDish",
         {
           method: "POST",
           body: formData, // Отправляем FormData

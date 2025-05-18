@@ -5,10 +5,10 @@ const jwt = require("jsonwebtoken");
 const jwtSecret = "Best-Rest-CAdmin";
 
 const conn = mysql.createConnection({
-  host: "localhost",
+  host: "MySQL-8.0",
   user: "root",
   password: "Sasha228",
-  database: "BRC",
+  database: "BRD",
 });
 
 class courController {

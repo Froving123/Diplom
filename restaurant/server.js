@@ -17,10 +17,10 @@ server.use(bodyParser.json({ limit: "50mb" }));
 server.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 const conn = mysql.createConnection({
-  host: "localhost",
+  host: "MySQL-8.0",
   user: "root",
   password: "Sasha228",
-  database: "BRC",
+  database: "BRD",
 });
 
 // Резервное копирование бд

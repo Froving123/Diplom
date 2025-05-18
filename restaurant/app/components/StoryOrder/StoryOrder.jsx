@@ -12,8 +12,8 @@ export const StoryOrder = () => {
     try {
       const token = localStorage.getItem("authTokenAdmin");
 
-      const response = await fetch(
-        "/api/cour/storyOrdersGet",
+       const response = await fetch(
+        "http://localhost:5000/api/cour/storyOrdersGet",
         {
           method: "GET",
           headers: {

@@ -44,8 +44,8 @@ export const Shopping_cart = () => {
     }
 
     try {
-      const response = await fetch(
-        "/api/bucket/increment",
+       const response = await fetch(
+        "http://localhost:5000/api/bucket/increment",
         {
           method: "POST",
           headers: {
@@ -77,8 +77,8 @@ export const Shopping_cart = () => {
     }
 
     try {
-      const response = await fetch(
-        "/api/bucket/decrement",
+       const response = await fetch(
+        "http://localhost:5000/api/bucket/decrement",
         {
           method: "POST",
           headers: {
