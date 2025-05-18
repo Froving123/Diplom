@@ -12,16 +12,13 @@ export const StoryOrder = () => {
     try {
       const token = localStorage.getItem("authTokenAdmin");
 
-      const response = await fetch(
-        "/api/cour/storyOrdersGet",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch("/api/cour/storyOrdersGet", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       const result = await response.json();
 
@@ -111,13 +108,15 @@ export const StoryOrder = () => {
                     <br />
                     {order.status}
                   </p>
-                  <p className={Styles.new_order_description}>
-                    <strong className={Styles.new_order_description_h}>
-                      Примечания к заказу:
-                    </strong>
-                    <br />
-                    {order.comment}
-                  </p>
+                  {order.comment && (
+                    <p className={Styles.delivery_description}>
+                      <strong className={Styles.delivery_description_h}>
+                        Примечания к заказу:{" "}
+                      </strong>
+                      <br />
+                      {order.comment}
+                    </p>
+                  )}
                 </div>
                 <div className={Styles.new_order_foods}>
                   <p className={Styles.new_order_description_h}>Список блюд:</p>

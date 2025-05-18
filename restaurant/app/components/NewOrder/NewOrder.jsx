@@ -10,15 +10,12 @@ export const NewOrder = () => {
   // Функция для загрузки новых заказов
   const fetchNewOrders = async () => {
     try {
-      const response = await fetch(
-        "/api/manord/newOrdersGet",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch("/api/manord/newOrdersGet", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       const result = await response.json();
 
@@ -46,16 +43,13 @@ export const NewOrder = () => {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(
-        "/api/manord/cancelOrder",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ orderId }),
-        }
-      );
+      const response = await fetch("/api/manord/cancelOrder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ orderId }),
+      });
 
       const result = await response.json();
 
@@ -74,16 +68,13 @@ export const NewOrder = () => {
   // Функция для принятия заказа
   const acceptOrder = async (orderId) => {
     try {
-      const response = await fetch(
-        "/api/manord/acceptOrder",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ orderId }),
-        }
-      );
+      const response = await fetch("/api/manord/acceptOrder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ orderId }),
+      });
 
       const result = await response.json();
 
@@ -169,13 +160,15 @@ export const NewOrder = () => {
                     <br />
                     {order.status}
                   </p>
-                  <p className={Styles.new_order_description}>
-                    <strong className={Styles.new_order_description_h}>
-                      Примечания к заказу:
-                    </strong>
-                    <br />
-                    {order.comment}
-                  </p>
+                  {order.comment && (
+                    <p className={Styles.delivery_description}>
+                      <strong className={Styles.delivery_description_h}>
+                        Примечания к заказу:{" "}
+                      </strong>
+                      <br />
+                      {order.comment}
+                    </p>
+                  )}
                 </div>
                 <div className={Styles.new_order_foods}>
                   <p className={Styles.new_order_description_h}>Список блюд:</p>

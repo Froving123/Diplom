@@ -10,15 +10,12 @@ export const ReadyOrder = () => {
   // Функция для загрузки новых заказов
   const fetchReadyOrders = async () => {
     try {
-      const response = await fetch(
-        "/api/cour/readyOrdersGet",
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const response = await fetch("/api/cour/readyOrdersGet", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
       const result = await response.json();
 
@@ -43,17 +40,14 @@ export const ReadyOrder = () => {
     try {
       const token = localStorage.getItem("authTokenAdmin");
 
-      const response = await fetch(
-        "/api/cour/acceptOrder",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ orderId }),
-        }
-      );
+      const response = await fetch("/api/cour/acceptOrder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ orderId }),
+      });
 
       const result = await response.json();
 
@@ -146,13 +140,15 @@ export const ReadyOrder = () => {
                     <br />
                     {order.status}
                   </p>
-                  <p className={Styles.new_order_description}>
-                    <strong className={Styles.new_order_description_h}>
-                      Примечания к заказу:
-                    </strong>
-                    <br />
-                    {order.comment}
-                  </p>
+                  {order.comment && (
+                    <p className={Styles.delivery_description}>
+                      <strong className={Styles.delivery_description_h}>
+                        Примечания к заказу:{" "}
+                      </strong>
+                      <br />
+                      {order.comment}
+                    </p>
+                  )}
                 </div>
                 <div className={Styles.new_order_foods}>
                   <p className={Styles.new_order_description_h}>Список блюд:</p>
