@@ -166,18 +166,18 @@ export const Delivery_user = () => {
                         Время доставки:{" "}
                       </strong>
                       <br />
-                      около{" "}
-                      {order.deliveryTime.split(":")[1]}{" "}
-                      минут
+                      около {order.deliveryTime.split(":")[1]} минут
                     </p>
                   )}
-                  <p className={Styles.delivery_description}>
-                    <strong className={Styles.delivery_description_h}>
-                      Примечания к заказу:{" "}
-                    </strong>
-                    <br />
-                    {order.comment}
-                  </p>
+                  {order.comment && (
+                    <p className={Styles.delivery_description}>
+                      <strong className={Styles.delivery_description_h}>
+                        Примечания к заказу:{" "}
+                      </strong>
+                      <br />
+                      {order.comment}
+                    </p>
+                  )}
                 </div>
                 <div className={Styles.delivery_ul_foods}>
                   <p className={Styles.delivery_description_h}>
