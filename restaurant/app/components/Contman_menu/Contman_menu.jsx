@@ -86,8 +86,8 @@ export const Contman_menu = () => {
     }
 
     try {
-       const response = await fetch(
-        "http://localhost:5000/api/contman/removeDish",
+      const response = await fetch(
+        "/api/contman/removeDish",
         {
           method: "POST",
           headers: {
@@ -123,8 +123,8 @@ export const Contman_menu = () => {
     }
 
     try {
-       const response = await fetch(
-        "http://localhost:5000/api/contman/removeCategory",
+      const response = await fetch(
+        "/api/contman/removeCategory",
         {
           method: "POST",
           headers: {

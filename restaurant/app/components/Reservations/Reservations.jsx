@@ -17,8 +17,8 @@ export const UserReservations = () => {
     }
 
     try {
-       const response = await fetch(
-        "http://localhost:5000/api/reservation/user",
+      const response = await fetch(
+        "/api/reservation/user",
         {
           method: "GET",
           headers: {
@@ -59,8 +59,8 @@ export const UserReservations = () => {
     }
 
     try {
-       const response = await fetch(
-        "http://localhost:5000/api/reservation/remove",
+      const response = await fetch(
+        "/api/reservation/remove",
         {
           method: "POST",
           headers: {

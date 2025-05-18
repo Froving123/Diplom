@@ -27,8 +27,8 @@ export const NewCategoryForm = (props) => {
     }
 
     try {
-       const response = await fetch(
-        "http://localhost:5000/api/contman/addCategory",
+      const response = await fetch(
+        "/api/contman/addCategory",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

@@ -90,8 +90,8 @@ export const ReservForm = (props) => {
     const token = localStorage.getItem("authToken");
 
     try {
-       const response = await fetch(
-        "http://localhost:5000/api/reservation/create",
+      const response = await fetch(
+        "/api/reservation/create",
         {
           method: "POST",
           headers: {

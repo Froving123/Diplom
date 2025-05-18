@@ -10,8 +10,8 @@ export const NewOrder = () => {
   // Функция для загрузки новых заказов
   const fetchNewOrders = async () => {
     try {
-       const response = await fetch(
-        "http://localhost:5000/api/manord/newOrdersGet",
+      const response = await fetch(
+        "/api/manord/newOrdersGet",
         {
           method: "GET",
           headers: {
@@ -46,8 +46,8 @@ export const NewOrder = () => {
     if (!confirmDelete) return;
 
     try {
-       const response = await fetch(
-        "http://localhost:5000/api/manord/cancelOrder",
+      const response = await fetch(
+        "/api/manord/cancelOrder",
         {
           method: "POST",
           headers: {
@@ -74,8 +74,8 @@ export const NewOrder = () => {
   // Функция для принятия заказа
   const acceptOrder = async (orderId) => {
     try {
-       const response = await fetch(
-        "http://localhost:5000/api/manord/acceptOrder",
+      const response = await fetch(
+        "/api/manord/acceptOrder",
         {
           method: "POST",
           headers: {
