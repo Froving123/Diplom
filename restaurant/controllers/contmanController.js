@@ -292,12 +292,12 @@ class ContmanController {
           [categoryId],
           (err, results) => {
             if (err) return reject(err);
-            resolve(results[0]?.ID_статуса);
+            resolve(results[0]?.ID_статуса ?? null);
           }
         );
       });
 
-      // Если категория неактивна (ID_статуса = 2), активируем её
+      // Если категория найдена и статус = 2, меняем её на активную
       if (categoryStatus === 2) {
         await new Promise((resolve, reject) => {
           conn.query(
@@ -306,9 +306,14 @@ class ContmanController {
             (err) => (err ? reject(err) : resolve())
           );
         });
+      } else if (categoryStatus !== 1) {
+        return res.status(400).json({
+          success: false,
+          message: "Некорректный статус категории или категория не найдена",
+        });
       }
 
-      // Обновляем статус блюда на 1 (не скрытое)
+      // Обновляем статус блюда
       await new Promise((resolve, reject) => {
         conn.query(
           "UPDATE Блюда SET ID_статуса = 1 WHERE ID = ?",
@@ -317,7 +322,7 @@ class ContmanController {
         );
       });
 
-      // Обновляем статус спецпредложения на 1, если оно связано с этим блюдом
+      // Обновляем статус спецпредложений
       await new Promise((resolve, reject) => {
         conn.query(
           "UPDATE Спец_предложения SET ID_статуса = 1 WHERE ID_блюда = ?",
@@ -328,7 +333,7 @@ class ContmanController {
 
       res.status(200).json({
         success: true,
-        message: "Блюдо успешно деактивировано",
+        message: "Блюдо успешно восстановлено",
       });
     } catch (error) {
       console.error("Ошибка на сервере:", error);
