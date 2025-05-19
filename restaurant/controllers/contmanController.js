@@ -34,7 +34,7 @@ const upload = multer({ storage: storage });
 class ContmanController {
   async getHideCategories(req, res) {
     try {
-      const query = `SELECT ID, Наименование FROM Категория_блюда ORDER BY ID`;
+      const query = `SELECT ID, Наименование, ID_статуса FROM Категория_блюда ORDER BY ID`;
 
       conn.query(query, (err, results) => {
         if (err) {
