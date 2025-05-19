@@ -5,6 +5,7 @@ import Styles from "./Hide_Offers.module.css";
 
 export const Hide_Offers = () => {
   const [offers, setOffers] = useState([]);
+  const [error, setError] = useState("");
 
   // Получение всех специальных предложений
   const fetchOffers = async () => {
