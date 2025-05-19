@@ -6,7 +6,7 @@ router.get("/hideMenu", contmanController.getHideMenu);
 router.get("/hideCategories", contmanController.getHideCategories);
 router.post("/updateDish", contmanController.updateDish);
 router.post("/hideDish", contmanController.hideDish);
-router.post("/recoveryDish", contmanController.hideDish);
+router.post("/recoveryDish", contmanController.recoveryDish);
 router.post("/removeDish", contmanController.removeDish);
 router.get("/categories", contmanController.getCategories);
 router.post("/hideCategory", contmanController.hideCategory);
