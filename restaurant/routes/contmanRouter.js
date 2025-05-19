@@ -9,7 +9,7 @@ router.post("/hideDish", contmanController.hideDish);
 router.post("/recoveryDish", contmanController.hideDish);
 router.post("/removeDish", contmanController.removeDish);
 router.get("/categories", contmanController.getCategories);
-router.post("/hideCategories", contmanController.hideCategory);
+router.post("/hideCategory", contmanController.hideCategory);
 router.post("/recoveryCategories", contmanController.recoveryCategory);
 router.post("/removeCategory", contmanController.removeCategory);
 router.post("/updateCategory", contmanController.updateCategory);
