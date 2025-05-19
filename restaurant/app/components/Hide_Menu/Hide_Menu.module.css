@@ -1,0 +1,419 @@
+.delivery_menu {
+  background-image: url("/images/back_menu.png");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: top;
+  height: max-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+  height: 100%;
+  margin-bottom: 100px;
+}
+
+.delivery_h {
+  color: rgb(252, 130, 37);
+  font-family: "Pacifico";
+  letter-spacing: 2px;
+  font-size: 65px;
+}
+
+.foods {
+  margin-top: 30px;
+  display: flex;
+  width: 90%;
+  justify-content: left;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 0px 50px 0px 50px;
+  gap: 100px;
+}
+
+.category {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-items: left;
+}
+
+.category_name {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
+}
+
+.button_category {
+  background-color: rgb(255, 106, 43);
+  border-radius: 8px;
+  color: white;
+  padding: 5px 15px;
+  max-height: fit-content;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.5s;
+}
+
+.category_h {
+  color: rgb(252, 130, 37);
+  font-family: "Pacifico";
+  letter-spacing: 2px;
+  font-size: 50px;
+}
+
+.hr_name {
+  width: 900px;
+  height: 5px;
+  border: none;
+  margin: 0%;
+  background-color: rgb(252, 130, 37);
+}
+
+.foods_category {
+  margin-top: 30px;
+  display: flex;
+  gap: 100px;
+}
+
+.food {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(210, 209, 209);
+  box-shadow: 10px 10px 40px 20px #7776761a;
+  border-radius: 10px;
+  gap: 15px;
+  padding: 15px 35px;
+  width: 250px;
+}
+
+.button_remove {
+  background-color: rgb(255, 106, 43);
+  border-radius: 8px;
+  color: white;
+  padding: 0px;
+  font-weight: bold;
+  font-size: 18px;
+  width: 100%;
+  transition: 0.5s;
+}
+
+.img_food {
+  height: 250px;
+  width: 250px;
+  border-radius: 10px;
+  box-shadow: 10px 10px 40px 20px #0000001a;
+  border: 1px solid black;
+}
+
+.food_h {
+  font-size: 30px;
+  line-height: 32px;
+  letter-spacing: 1px;
+  font-family: "Pacifico";
+  margin: 0%;
+  color: rgb(252, 130, 37);
+  text-align: center;
+  font-weight: 500;
+}
+
+.price_menu {
+  font-weight: 700;
+  font-family: "Pacifico";
+  font-size: 27px;
+  letter-spacing: 1px;
+  margin: 0%;
+}
+
+.old_price {
+  text-decoration: line-through;
+  vertical-align: super;
+  font-size: 0.75em;
+  color: rgb(0, 0, 0);
+  margin-right: 4px;
+}
+
+.new_price {
+  color: rgb(255, 0, 0);
+  margin-right: 8px;
+}
+
+.button_menu_delivery {
+  background-color: rgb(255, 106, 43);
+  border-radius: 8px;
+  color: white;
+  margin-top: 10px;
+  padding: 20px 25px;
+  font-weight: bold;
+  font-size: 18px;
+  width: 100%;
+  transition: 0.5s;
+}
+
+.button_menu_delivery:hover,
+.button_remove:hover,
+.button_category:hover {
+  background-color: rgb(253, 116, 57);
+  color: black;
+}
+
+.create_content {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.button_create {
+  background-color: rgb(255, 106, 43);
+  border-radius: 8px;
+  color: white;
+  margin-bottom: 25px;
+  padding: 20px 25px;
+  font-weight: bold;
+  font-size: 45px;
+  letter-spacing: 2px;
+  width: max-content;
+  transition: 0.5s;
+}
+
+.button_create:hover {
+  background-color: rgb(253, 116, 57);
+  color: black;
+}
+
+@media screen and (max-width: 500px) {
+  .delivery_menu {
+    max-width: 100%;
+    gap: 12px;
+  }
+
+  .delivery_h {
+    margin-top: 0px;
+    letter-spacing: 2px;
+    font-size: 37px;
+  }
+
+  .foods {
+    margin-top: 15px;
+    padding: 0px 15px 0px 15px;
+    gap: 40px;
+  }
+
+  .category {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-items: left;
+    align-items: center;
+  }
+
+  .category_name {
+    gap: 10px;
+  }
+
+  .button_category {
+    padding: 0px 0px;
+    font-size: 12px;
+  }
+
+  .category_h {
+    color: rgb(252, 130, 37);
+    font-family: "Pacifico";
+    letter-spacing: 2px;
+    font-size: 25px;
+    line-height: 30px;
+    width: min-content;
+  }
+
+  .hr_name {
+    width: 100%;
+    height: 5px;
+    border: none;
+    margin: 0%;
+    background-color: rgb(252, 130, 37);
+  }
+
+  .foods_category {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .food {
+    border-radius: 7px;
+    width: 170px;
+    gap: 8px;
+    padding: 7px 12px;
+  }
+
+  .img_food {
+    height: 150px;
+    width: 150px;
+    border-radius: 7px;
+  }
+
+  .food_h {
+    font-size: 17px;
+    line-height: 19px;
+  }
+
+  .price_menu {
+    font-size: 20px;
+  }
+
+  .lowprice_div {
+    gap: 5px;
+    padding-right: 55px;
+  }
+
+  .lowprice_menu {
+    font-weight: 700;
+    font-size: 27px;
+  }
+
+  .button_remove {
+    font-size: 12px;
+  }
+
+  .button_menu_delivery {
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 12px;
+  }
+
+  .create_content {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .button_create {
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    font-size: 20px;
+    letter-spacing: 1px;
+  }
+}
+
+@media screen and (min-width: 501px) and (max-width: 750px) {
+  .delivery_menu {
+    max-width: 100%;
+    gap: 15px;
+  }
+
+  .delivery_h {
+    margin-top: 0px;
+    letter-spacing: 2px;
+    font-size: 40px;
+  }
+
+  .foods {
+    margin-top: 15px;
+    padding: 0px 15px 30px 15px;
+    gap: 70px;
+  }
+
+  .category {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-items: left;
+    align-items: center;
+  }
+
+  .category_name {
+    gap: 15px;
+  }
+
+  .button_category {
+    padding: 0px 5px;
+    font-size: 15px;
+  }
+
+  .category_h {
+    color: rgb(252, 130, 37);
+    font-family: "Pacifico";
+    letter-spacing: 2px;
+    font-size: 25px;
+    line-height: 35px;
+    width: min-content;
+  }
+
+  .hr_name {
+    width: 100%;
+    height: 5px;
+    border: none;
+    margin: 0%;
+    background-color: rgb(252, 130, 37);
+  }
+
+  .foods_category {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+
+  .food {
+    border-radius: 7px;
+    gap: 8px;
+    padding: 10px 15px;
+    width: 180px;
+  }
+
+  .img_food {
+    height: 150px;
+    width: 150px;
+    border-radius: 7px;
+  }
+
+  .food_h {
+    font-size: 27px;
+    line-height: 29px;
+  }
+
+  .price_menu {
+    font-size: 22px;
+  }
+
+  .lowprice_div {
+    gap: 5px;
+    padding-right: 55px;
+  }
+
+  .lowprice_menu {
+    font-weight: 700;
+    font-size: 29px;
+  }
+
+  .button_menu_delivery {
+    border-radius: 8px;
+    font-size: 15px;
+  }
+
+  .create_content {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .button_create {
+    margin-bottom: 15px;
+    padding: 10px 15px;
+    font-size: 30px;
+    letter-spacing: 1px;
+  }
+}

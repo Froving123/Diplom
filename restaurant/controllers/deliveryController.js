@@ -10,7 +10,7 @@ const conn = mysql.createConnection({
 class DeliveryController {
   async getCategories(req, res) {
     try {
-      const query = `SELECT ID, Наименование FROM Категория_блюда ORDER BY ID`;
+      const query = `SELECT ID, Наименование FROM Категория_блюда WHERE ID_статуса = 1 ORDER BY ID`;
 
       conn.query(query, (err, results) => {
         if (err) {
@@ -79,14 +79,15 @@ class DeliveryController {
         LEFT JOIN 
             Спец_предложения ON Прайс_лист.ID_блюда = Спец_предложения.ID_блюда
             AND Спец_предложения.Дата_окончания >= CURRENT_DATE
+            AND Спец_предложения.ID_статуса = 1
         JOIN 
             Блюда ON Прайс_лист.ID_блюда = Блюда.ID
         WHERE 
             Спец_предложения.Размер_скидки IS NOT NULL
             AND Прайс_лист.ID = (
-                SELECT MAX(Прайс_лист.ID)
-                FROM Прайс_лист
-                WHERE Прайс_лист.ID_блюда = Прайс_лист.ID_блюда
+                SELECT MAX(ID)
+                FROM Прайс_лист AS PL
+                WHERE PL.ID_блюда = Прайс_лист.ID_блюда
             )
         ORDER BY 
             DiscountedPrice ASC
@@ -150,6 +151,9 @@ class DeliveryController {
         LEFT JOIN 
             Спец_предложения ON Блюда.ID = Спец_предложения.ID_блюда
             AND Спец_предложения.Дата_окончания >= CURRENT_DATE
+            AND Спец_предложения.ID_статуса = 1
+        WHERE 
+            Блюда.ID_статуса = 1
         ORDER BY 
             Категория_блюда.ID, Блюда.ID;
       `;

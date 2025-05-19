@@ -11,7 +11,7 @@ export const ContmanHeader = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("authTokenAdmin");
-  
+
     if (token) {
       // Отправляем запрос на сервер, чтобы получить данные пользователя
       fetch("/api/admin/profile", {
@@ -29,7 +29,7 @@ export const ContmanHeader = () => {
             } else {
               localStorage.removeItem("authTokenAdmin");
               setAuthAdmin(null);
-              window.location.href = "/Admin"; 
+              window.location.href = "/Admin";
             }
           } else {
             localStorage.removeItem("authTokenAdmin");
@@ -41,13 +41,13 @@ export const ContmanHeader = () => {
           console.error("Ошибка при получении данных пользователя:", err);
           localStorage.removeItem("authTokenAdmin");
           setAuthAdmin(null);
-          window.location.href = "/Admin"; 
+          window.location.href = "/Admin";
         });
     } else {
       setAuthAdmin(null);
-      window.location.href = "/Admin"; 
+      window.location.href = "/Admin";
     }
-  }, []);  
+  }, []);
 
   const adminSignOut = () => {
     localStorage.removeItem("authTokenAdmin");
@@ -78,6 +78,26 @@ export const ContmanHeader = () => {
               }`}
             >
               Специальные предложения
+            </Link>
+          </li>
+          <li className={Styles.nav_p}>
+            <Link
+              href="/Contman/HideMenu"
+              className={`${Styles.nav_link} ${
+                pathname === "/Contman/HideMenu" ? Styles.nav_link_active : ""
+              }`}
+            >
+              Скрытое меню
+            </Link>
+          </li>
+          <li className={Styles.nav_p}>
+            <Link
+              href="/Contman/HideOffers"
+              className={`${Styles.nav_link} ${
+                pathname === "/Contman/HideOffers" ? Styles.nav_link_active : ""
+              }`}
+            >
+              Скрытые специальные предложения
             </Link>
           </li>
           <li className={Styles.nav_p}>

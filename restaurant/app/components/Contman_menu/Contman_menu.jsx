@@ -23,9 +23,7 @@ export const Contman_menu = () => {
     // Загрузка категорий
     const fetchCategories = async () => {
       try {
-        const response = await fetch(
-          "/api/delivery/categories"
-        );
+        const response = await fetch("/api/delivery/categories");
         const data = await response.json();
         if (data.success) {
           setCategories(data.categories);
@@ -77,79 +75,71 @@ export const Contman_menu = () => {
     setPopupIsOpenNC(true);
   };
 
-  const removeDish = async (dishId) => {
+  const hideDish = async (dishId) => {
     const confirmDelete = window.confirm(
-      "Вы уверены, что хотите удалить блюдо?"
+      "Вы уверены, что хотите скрыть блюдо?"
     );
     if (!confirmDelete) {
-      return; // Отмена удаления
+      return; // Отмена скрытия
     }
 
     try {
-      const response = await fetch(
-        "/api/contman/removeDish",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ dishId }), // Отправляем dishId
-        }
-      );
+      const response = await fetch("/api/contman/hideDish", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ dishId }), // Отправляем dishId
+      });
 
       const result = await response.json();
 
       if (result.success) {
-        // Если успешное удаление, обновляем блюда локально
+        // Если успешное скрытие, обновляем блюда локально
         setDishes((prevDishes) =>
           prevDishes.filter((dish) => dish.ID !== dishId)
         );
       } else {
         // Если ошибка, выводим сообщение из ответа сервера
-        alert(result.message || "Ошибка при удалении блюда");
+        alert(result.message || "Ошибка при скрывании блюда");
       }
     } catch (err) {
-      console.error("Ошибка при удалении блюда:", err);
-      alert("Произошла ошибка при попытке удалить блюдо. Попробуйте снова.");
+      console.error("Ошибка при скрывании блюда:", err);
+      alert("Произошла ошибка при попытке скрыть блюдо. Попробуйте снова.");
     }
   };
 
-  const removeCategory = async (categoryId) => {
+  const hideCategory = async (categoryId) => {
     const confirmDelete = window.confirm(
-      "Вы уверены, что хотите удалить категорию? Она удалится со всеми блюдами"
+      "Вы уверены, что хотите скрыть категорию? Она скроется со всеми блюдами"
     );
     if (!confirmDelete) {
-      return; // Отмена удаления
+      return; // Отмена скрытия
     }
 
     try {
-      const response = await fetch(
-        "/api/contman/removeCategory",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ categoryId }), // Отправляем categoryId
-        }
-      );
+      const response = await fetch("/api/contman/hideCategory", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ categoryId }), // Отправляем categoryId
+      });
 
       const result = await response.json();
 
       if (result.success) {
-        // Если успешное удаление, обновляем категории локально
+        // Если успешное скрытие, обновляем категории локально
         setCategories((prevCategories) =>
           prevCategories.filter((category) => category.ID !== categoryId)
         );
       } else {
         // Если ошибка, выводим сообщение из ответа сервера
-        alert(result.message || "Ошибка при удалении категории");
+        alert(result.message || "Ошибка при скрывании категории");
       }
     } catch (err) {
-      console.error("Ошибка при удалении категории:", err);
-      alert(
-        "Произошла ошибка при попытке удалить категорию. Попробуйте снова."
-      );
+      console.error("Ошибка при скрывании категории:", err);
+      alert("Произошла ошибка при попытке скрыть категорию. Попробуйте снова.");
     }
   };
 
@@ -162,9 +152,9 @@ export const Contman_menu = () => {
             <div className={Styles.category_name}>
               <button
                 className={Styles.button_category}
-                onClick={() => removeCategory(category.ID)}
+                onClick={() => hideCategory(category.ID)}
               >
-                <p className={Styles.remove_text}>Удалить категорию</p>
+                <p className={Styles.remove_text}>Скрыть категорию</p>
               </button>
               <h2 className={Styles.category_h}>{category.Наименование}</h2>
               <button
@@ -182,9 +172,9 @@ export const Contman_menu = () => {
                   <div key={dish.ID} className={Styles.food}>
                     <button
                       className={Styles.button_remove}
-                      onClick={() => removeDish(dish.ID)}
+                      onClick={() => hideDish(dish.ID)}
                     >
-                      <p className={Styles.remove_text}>Удалить блюдо</p>
+                      <p className={Styles.remove_text}>Скрыть блюдо</p>
                     </button>
                     <img
                       className={Styles.img_food}

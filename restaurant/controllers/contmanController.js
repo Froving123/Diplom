@@ -32,6 +32,75 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 class ContmanController {
+  async getHideCategories(req, res) {
+    try {
+      const query = `SELECT ID, Наименование FROM Категория_блюда ORDER BY ID`;
+
+      conn.query(query, (err, results) => {
+        if (err) {
+          console.error("Ошибка при получении категорий блюд:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при получении категорий",
+          });
+        }
+
+        res.status(200).json({ success: true, categories: results });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
+  async getHideMenu(req, res) {
+    try {
+      const query = `
+        SELECT 
+            Блюда.ID,
+            Блюда.Название,
+            Блюда.Фото,
+            Категория_блюда.Наименование AS Категория,
+            Прайс_лист.Цена AS Цена_без_скидки,
+            COALESCE(Прайс_лист.Цена - Спец_предложения.Размер_скидки, Прайс_лист.Цена) AS Цена_со_скидкой,
+            Спец_предложения.Размер_скидки AS Скидка
+        FROM 
+            Блюда
+        JOIN 
+            Категория_блюда ON Блюда.ID_категории = Категория_блюда.ID
+        JOIN 
+            Прайс_лист ON Прайс_лист.ID = (
+                SELECT MAX(Прайс_лист.ID)
+                FROM Прайс_лист 
+                WHERE Прайс_лист.ID_блюда = Блюда.ID
+            )
+        LEFT JOIN 
+            Спец_предложения ON Блюда.ID = Спец_предложения.ID_блюда
+            AND Спец_предложения.Дата_окончания >= CURRENT_DATE
+            AND Спец_предложения.ID_статуса = 1
+        WHERE 
+            Блюда.ID_статуса = 2
+        ORDER BY 
+            Категория_блюда.ID, Блюда.ID;
+      `;
+
+      conn.query(query, (err, results) => {
+        if (err) {
+          console.error("Ошибка при получении меню с учетом скидок:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при получении меню с учетом скидок",
+          });
+        }
+
+        res.status(200).json({ success: true, menu: results });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
   // Обновление блюда
   updateDish = [
     // Загружаем одно изображение, поле "image"
@@ -115,7 +184,75 @@ class ContmanController {
     },
   ];
 
-  async removeDish(req, res) {
+  async hideDish(req, res) {
+    try {
+      const { dishId } = req.body;
+      if (!dishId) {
+        return res
+          .status(400)
+          .json({ success: false, message: "ID блюда обязателен" });
+      }
+
+      // Получаем детали блюда
+      const getDishDetailsQuery = `
+        SELECT 
+          Блюда.ID AS dishId,
+          Блюда.ID_категории AS categoryId
+        FROM Блюда
+        WHERE Блюда.ID = ? 
+      `;
+
+      const dishDetails = await new Promise((resolve, reject) => {
+        conn.query(getDishDetailsQuery, [dishId], (err, results) => {
+          if (err) return reject(err);
+          resolve(results[0]);
+        });
+      });
+
+      if (!dishDetails) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Блюдо не найдено" });
+      }
+
+      // Обновляем статус блюда на 2 (скрытое)
+      await new Promise((resolve, reject) => {
+        conn.query(
+          "UPDATE Блюда SET ID_статуса = 2 WHERE ID = ?",
+          [dishId],
+          (err) => (err ? reject(err) : resolve())
+        );
+      });
+
+      // Обновляем статус спецпредложения на 2, если оно связано с этим блюдом
+      await new Promise((resolve, reject) => {
+        conn.query(
+          "UPDATE Спец_предложения SET ID_статуса = 2 WHERE ID_блюда = ?",
+          [dishId],
+          (err) => (err ? reject(err) : resolve())
+        );
+      });
+
+      // Удаляем блюдо из корзины
+      await new Promise((resolve, reject) => {
+        conn.query(
+          "DELETE FROM Блюда_в_корзине WHERE ID_блюда = ?",
+          [dishId],
+          (err) => (err ? reject(err) : resolve())
+        );
+      });
+
+      res.status(200).json({
+        success: true,
+        message: "Блюдо успешно деактивировано",
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false });
+    }
+  }
+
+  async recoveryDish(req, res) {
     try {
       const { dishId } = req.body;
       if (!dishId) {
@@ -148,26 +285,86 @@ class ContmanController {
 
       const { categoryId } = dishDetails;
 
-      // Проверяем, сколько блюд в категории
-      const countDishesInCategoryQuery = `
-        SELECT COUNT(*) AS count
+      // Проверяем статус категории
+      const categoryStatus = await new Promise((resolve, reject) => {
+        conn.query(
+          "SELECT ID_статуса FROM Категория_блюда WHERE ID = ?",
+          [categoryId],
+          (err, results) => {
+            if (err) return reject(err);
+            resolve(results[0]?.ID_статуса);
+          }
+        );
+      });
+
+      // Если категория неактивна (ID_статуса = 2), активируем её
+      if (categoryStatus === 2) {
+        await new Promise((resolve, reject) => {
+          conn.query(
+            "UPDATE Категория_блюда SET ID_статуса = 1 WHERE ID = ?",
+            [categoryId],
+            (err) => (err ? reject(err) : resolve())
+          );
+        });
+      }
+
+      // Обновляем статус блюда на 1 (не скрытое)
+      await new Promise((resolve, reject) => {
+        conn.query(
+          "UPDATE Блюда SET ID_статуса = 1 WHERE ID = ?",
+          [dishId],
+          (err) => (err ? reject(err) : resolve())
+        );
+      });
+
+      // Обновляем статус спецпредложения на 1, если оно связано с этим блюдом
+      await new Promise((resolve, reject) => {
+        conn.query(
+          "UPDATE Спец_предложения SET ID_статуса = 1 WHERE ID_блюда = ?",
+          [dishId],
+          (err) => (err ? reject(err) : resolve())
+        );
+      });
+
+      res.status(200).json({
+        success: true,
+        message: "Блюдо успешно деактивировано",
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false });
+    }
+  }
+
+  async removeDish(req, res) {
+    try {
+      const { dishId } = req.body;
+      if (!dishId) {
+        return res
+          .status(400)
+          .json({ success: false, message: "ID блюда обязателен" });
+      }
+
+      // Получаем детали блюда
+      const getDishDetailsQuery = `
+        SELECT 
+          Блюда.ID AS dishId,
+          Блюда.ID_категории AS categoryId
         FROM Блюда
-        WHERE ID_категории = ?
+        WHERE Блюда.ID = ? 
       `;
 
-      const { count } = await new Promise((resolve, reject) => {
-        conn.query(countDishesInCategoryQuery, [categoryId], (err, results) => {
+      const dishDetails = await new Promise((resolve, reject) => {
+        conn.query(getDishDetailsQuery, [dishId], (err, results) => {
           if (err) return reject(err);
           resolve(results[0]);
         });
       });
 
-      // Если в категории одно блюдо, не разрешаем удаление
-      if (count <= 1) {
-        return res.status(400).json({
-          success: false,
-          message: "Нельзя удалить блюдо, так как оно единственное в категории",
-        });
+      if (!dishDetails) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Блюдо не найдено" });
       }
 
       // Удаляем блюдо из других таблиц
@@ -182,14 +379,6 @@ class ContmanController {
       await new Promise((resolve, reject) => {
         conn.query(
           `DELETE FROM Спец_предложения WHERE ID_блюда = ?`,
-          [dishId],
-          (err) => (err ? reject(err) : resolve())
-        );
-      });
-
-      await new Promise((resolve, reject) => {
-        conn.query(
-          `DELETE FROM Блюда_в_корзине WHERE ID_блюда = ?`,
           [dishId],
           (err) => (err ? reject(err) : resolve())
         );
@@ -212,7 +401,7 @@ class ContmanController {
   async getCategories(req, res) {
     try {
       // SQL-запрос для получения всех столов
-      const query = `SELECT ID, Наименование FROM Категория_блюда`;
+      const query = `SELECT ID, Наименование FROM Категория_блюда WHERE ID_статуса = 1`;
 
       conn.query(query, (err, results) => {
         if (err) {
@@ -272,7 +461,6 @@ class ContmanController {
 
         await deleteFromTables("Прайс_лист", "ID_блюда");
         await deleteFromTables("Спец_предложения", "ID_блюда");
-        await deleteFromTables("Блюда_в_корзине", "ID_блюда");
 
         // Удаляем сами блюда
         await new Promise((resolve, reject) => {
@@ -294,6 +482,103 @@ class ContmanController {
       res.status(200).json({
         success: true,
         message: "Категория и все связанные блюда удалены",
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
+  async hideCategory(req, res) {
+    try {
+      const { categoryId } = req.body;
+      if (!categoryId) {
+        return res
+          .status(400)
+          .json({ success: false, message: "ID категории обязателен" });
+      }
+
+      // Получаем все блюда, принадлежащие категории
+      const getDishesQuery = `
+        SELECT ID FROM Блюда WHERE ID_категории = ?
+      `;
+
+      const dishes = await new Promise((resolve, reject) => {
+        conn.query(getDishesQuery, [categoryId], (err, results) => {
+          if (err) return reject(err);
+          resolve(results.map((row) => row.ID)); // массив ID блюд
+        });
+      });
+
+      if (dishes.length > 0) {
+        // Обновляем статус всех блюд на 2 (скрытые)
+        await new Promise((resolve, reject) => {
+          conn.query(
+            "UPDATE Блюда SET ID_статуса = 2 WHERE ID IN (?)",
+            [dishes],
+            (err) => (err ? reject(err) : resolve())
+          );
+        });
+
+        // Обновляем статус спецпредложений на 2
+        await new Promise((resolve, reject) => {
+          conn.query(
+            "UPDATE Спец_предложения SET ID_статуса = 2 WHERE ID_блюда IN (?)",
+            [dishes],
+            (err) => (err ? reject(err) : resolve())
+          );
+        });
+
+        // Удаляем блюда из корзины
+        await new Promise((resolve, reject) => {
+          conn.query(
+            "DELETE FROM Блюда_в_корзине WHERE ID_блюда IN (?)",
+            [dishes],
+            (err) => (err ? reject(err) : resolve())
+          );
+        });
+      }
+
+      // Обновляем статус категории на 2 (скрытая)
+      await new Promise((resolve, reject) => {
+        conn.query(
+          "UPDATE Категория_блюда SET ID_статуса = 2 WHERE ID = ?",
+          [categoryId],
+          (err) => (err ? reject(err) : resolve())
+        );
+      });
+
+      res.status(200).json({
+        success: true,
+        message: "Категория и все связанные блюда успешно скрыты",
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
+  async recoveryCategory(req, res) {
+    try {
+      const { categoryId } = req.body;
+      if (!categoryId) {
+        return res
+          .status(400)
+          .json({ success: false, message: "ID категории обязателен" });
+      }
+
+      // Обновляем статус категории на 1 (не скрытая)
+      await new Promise((resolve, reject) => {
+        conn.query(
+          "UPDATE Категория_блюда SET ID_статуса = 1 WHERE ID = ?",
+          [categoryId],
+          (err) => (err ? reject(err) : resolve())
+        );
+      });
+
+      res.status(200).json({
+        success: true,
+        message: "Категория восстановлена",
       });
     } catch (error) {
       console.error("Ошибка на сервере:", error);
@@ -474,7 +759,8 @@ class ContmanController {
             JOIN 
               Блюда ON Спец_предложения.ID_блюда = Блюда.ID
             WHERE 
-              Спец_предложения.Дата_окончания >= CURRENT_DATE
+              Спец_предложения.Дата_окончания >= CURRENT_DATE AND 
+              Спец_предложения.ID_статуса = 1
           `;
 
       conn.query(query, (err, results) => {
@@ -486,6 +772,120 @@ class ContmanController {
           });
         }
         res.json({ success: true, data: results });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
+  async getHideOffers(req, res) {
+    try {
+      const query = `
+            SELECT 
+              Спец_предложения.ID, 
+              Спец_предложения.Описание, 
+              Спец_предложения.Дата_начала, 
+              Спец_предложения.Дата_окончания, 
+              Спец_предложения.Размер_скидки, 
+              Блюда.Название AS Название_блюда
+            FROM 
+              Спец_предложения
+            JOIN 
+              Блюда ON Спец_предложения.ID_блюда = Блюда.ID
+            WHERE 
+              Спец_предложения.Дата_окончания >= CURRENT_DATE AND 
+              Спец_предложения.ID_статуса = 2
+          `;
+
+      conn.query(query, (err, results) => {
+        if (err) {
+          console.error("Ошибка при получении предложений:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при получении предложений",
+          });
+        }
+        res.json({ success: true, data: results });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
+  // Скрытие спецпредложения
+  async hideOffer(req, res) {
+    const { id } = req.body; // Получение ID из тела запроса
+
+    if (!id) {
+      return res.status(400).json({ success: false, message: "ID не указан" });
+    }
+
+    try {
+      const query = `
+          UPDATE Спец_предложения SET ID_статуса = 2
+          WHERE ID = ?
+        `;
+      conn.query(query, [id], (err, result) => {
+        if (err) {
+          console.error("Ошибка при скрытии предложения:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при скрытии предложения",
+          });
+        }
+
+        if (result.affectedRows === 0) {
+          return res.status(404).json({
+            success: false,
+            message: "Спецпредложение с указанным ID не найдено",
+          });
+        }
+
+        res.json({
+          success: true,
+          message: "Спецпредложение успешно скрыто",
+        });
+      });
+    } catch (error) {
+      console.error("Ошибка на сервере:", error);
+      res.status(500).json({ success: false, message: "Ошибка на сервере" });
+    }
+  }
+
+  async recoveryOffer(req, res) {
+    const { id } = req.body; // Получение ID из тела запроса
+
+    if (!id) {
+      return res.status(400).json({ success: false, message: "ID не указан" });
+    }
+
+    try {
+      const query = `
+          UPDATE Спец_предложения SET ID_статуса = 1
+          WHERE ID = ?
+        `;
+      conn.query(query, [id], (err, result) => {
+        if (err) {
+          console.error("Ошибка при восстановлении предложения:", err);
+          return res.status(500).json({
+            success: false,
+            message: "Ошибка при восстановлении предложения",
+          });
+        }
+
+        if (result.affectedRows === 0) {
+          return res.status(404).json({
+            success: false,
+            message: "Спецпредложение с указанным ID не найдено",
+          });
+        }
+
+        res.json({
+          success: true,
+          message: "Спецпредложение успешно восстановлено",
+        });
       });
     } catch (error) {
       console.error("Ошибка на сервере:", error);
@@ -584,6 +984,7 @@ class ContmanController {
             Спец_предложения
           WHERE 
             Спец_предложения.Дата_окончания >= CURRENT_DATE
+            AND Спец_предложения.ID_статуса = 1
         )
     `;
 
