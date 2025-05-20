@@ -68,7 +68,7 @@ export const ContmanHeader = () => {
               }`}
               onClick={() => setIsMenuOpen(false)}
             >
-              Меню <br>доставки</br>
+              Меню доставки
             </Link>
           </li>
           <li className={Styles.nav_p}>
