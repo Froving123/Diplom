@@ -8,12 +8,12 @@ import { usePathname } from "next/navigation";
 export const ContmanHeader = () => {
   const pathname = usePathname();
   const [authAdmin, setAuthAdmin] = useState(null);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("authTokenAdmin");
 
     if (token) {
-      // Отправляем запрос на сервер, чтобы получить данные пользователя
       fetch("/api/admin/profile", {
         method: "GET",
         headers: {
@@ -22,29 +22,18 @@ export const ContmanHeader = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          if (data.success) {
-            // Проверяем логин на соответствие
-            if (data.user.role.toString() === "1") {
-              setAuthAdmin(data.user);
-            } else {
-              localStorage.removeItem("authTokenAdmin");
-              setAuthAdmin(null);
-              window.location.href = "/Admin";
-            }
+          if (data.success && data.user.role.toString() === "1") {
+            setAuthAdmin(data.user);
           } else {
             localStorage.removeItem("authTokenAdmin");
-            setAuthAdmin(null);
             window.location.href = "/Admin";
           }
         })
-        .catch((err) => {
-          console.error("Ошибка при получении данных пользователя:", err);
+        .catch(() => {
           localStorage.removeItem("authTokenAdmin");
-          setAuthAdmin(null);
           window.location.href = "/Admin";
         });
     } else {
-      setAuthAdmin(null);
       window.location.href = "/Admin";
     }
   }, []);
@@ -55,10 +44,21 @@ export const ContmanHeader = () => {
     window.location.href = "/Admin";
   };
 
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => !prev);
+  };
+
   return (
     <header className={Styles.header}>
       <img className={Styles.logo} src="/images/logo.png" />
-      <nav>
+      
+      {/* Кнопка бургер-меню */}
+      <button className={Styles.burger} onClick={toggleMenu}>
+        ☰
+      </button>
+
+      {/* Навигация */}
+      <nav className={`${Styles.nav} ${isMenuOpen ? Styles.open : ""}`}>
         <ul className={Styles.ul_header}>
           <li className={Styles.nav_p}>
             <Link
@@ -66,6 +66,7 @@ export const ContmanHeader = () => {
               className={`${Styles.nav_link} ${
                 pathname === "/Contman/Menu" ? Styles.nav_link_active : ""
               }`}
+              onClick={() => setIsMenuOpen(false)}
             >
               Меню доставки
             </Link>
@@ -76,6 +77,7 @@ export const ContmanHeader = () => {
               className={`${Styles.nav_link} ${
                 pathname === "/Contman/Discount" ? Styles.nav_link_active : ""
               }`}
+              onClick={() => setIsMenuOpen(false)}
             >
               Специальные предложения
             </Link>
@@ -86,6 +88,7 @@ export const ContmanHeader = () => {
               className={`${Styles.nav_link} ${
                 pathname === "/Contman/HideMenu" ? Styles.nav_link_active : ""
               }`}
+              onClick={() => setIsMenuOpen(false)}
             >
               Скрытое меню
             </Link>
@@ -96,6 +99,7 @@ export const ContmanHeader = () => {
               className={`${Styles.nav_link} ${
                 pathname === "/Contman/HideOffers" ? Styles.nav_link_active : ""
               }`}
+              onClick={() => setIsMenuOpen(false)}
             >
               Скрытые специальные предложения
             </Link>
@@ -106,6 +110,7 @@ export const ContmanHeader = () => {
               className={`${Styles.nav_link} ${
                 pathname === "/Contman/Review" ? Styles.nav_link_active : ""
               }`}
+              onClick={() => setIsMenuOpen(false)}
             >
               Отзывы
             </Link>
@@ -120,3 +125,4 @@ export const ContmanHeader = () => {
     </header>
   );
 };
+
