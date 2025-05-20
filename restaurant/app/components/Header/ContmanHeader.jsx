@@ -51,7 +51,7 @@ export const ContmanHeader = () => {
   return (
     <header className={Styles.header}>
       <img className={Styles.logo} src="/images/logo.png" />
-      
+
       {/* Кнопка бургер-меню */}
       <button className={Styles.burger} onClick={toggleMenu}>
         ☰
@@ -125,4 +125,3 @@ export const ContmanHeader = () => {
     </header>
   );
 };
-
