@@ -188,6 +188,7 @@ export const AdminAuthForm = (props) => {
         setError("");
         setEmail("");
         setPassword("");
+        setCopyPassword("");
         setRole("");
         alert("Сотрудник успешно авторизован");
         props.close();
@@ -213,9 +214,10 @@ export const AdminAuthForm = (props) => {
   };
 
   const handleClear = () => {
-    setLogin("");
+    setEmail("");
     setPassword("");
     setCopyPassword("");
+    setRole("");
   };
 
   return (
