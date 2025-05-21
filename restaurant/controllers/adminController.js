@@ -122,7 +122,7 @@ class AdminController {
           }
   
           if (roleResults.length === 0) {
-            return res.status(403).json({ success: false, message: "У вас нет доступа с выбранной ролью" });
+            return res.status(403).json({ success: false, message: "У вас нет доступа к выбранной роли" });
           }
   
           // Проверка пароля
