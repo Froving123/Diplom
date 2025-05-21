@@ -12,11 +12,11 @@ export const ContmanHeader = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("authTokenAdmin");
-  
+
     if (!token) {
       return;
     }
-  
+
     fetch("/api/admin/profile", {
       method: "GET",
       headers: {
@@ -29,7 +29,7 @@ export const ContmanHeader = () => {
           data.success &&
           Array.isArray(data.user.roles) &&
           data.user.roles.some((role) => role.id === 1);
-  
+
         if (hasAdminRole) {
           setAuthAdmin(data.user);
         } else {
@@ -41,8 +41,8 @@ export const ContmanHeader = () => {
         localStorage.removeItem("authTokenAdmin");
         window.location.href = "/Admin";
       });
-  }, []);  
-  
+  }, []);
+
   const adminSignOut = () => {
     localStorage.removeItem("authTokenAdmin");
     setAuthAdmin(null);

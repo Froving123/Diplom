@@ -17,15 +17,12 @@ export const AdminAuthForm = (props) => {
   useEffect(() => {
     const fetchAllRole = async () => {
       try {
-        const response = await fetch(
-          "/api/admin/roleGet",
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch("/api/admin/roleGet", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
         const result = await response.json();
         if (response.ok) {

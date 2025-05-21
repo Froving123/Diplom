@@ -11,43 +11,36 @@ export const ManordHeader = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("authTokenAdmin");
-  
-    if (token) {
-      // Отправляем запрос на сервер, чтобы получить данные пользователя
-      fetch("/api/admin/profile", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            // Проверяем логин на соответствие
-            if (data.user.role.toString() === "2") {
-              setAuthAdmin(data.user);
-            } else {
-              localStorage.removeItem("authTokenAdmin");
-              setAuthAdmin(null);
-              window.location.href = "/Admin"; 
-            }
-          } else {
-            localStorage.removeItem("authTokenAdmin");
-            setAuthAdmin(null);
-            window.location.href = "/Admin";
-          }
-        })
-        .catch((err) => {
-          console.error("Ошибка при получении данных пользователя:", err);
-          localStorage.removeItem("authTokenAdmin");
-          setAuthAdmin(null);
-          window.location.href = "/Admin"; 
-        });
-    } else {
-      setAuthAdmin(null);
-      window.location.href = "/Admin"; 
+
+    if (!token) {
+      return;
     }
-  }, []);  
+
+    fetch("/api/admin/profile", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const hasAdminRole =
+          data.success &&
+          Array.isArray(data.user.roles) &&
+          data.user.roles.some((role) => role.id === 2);
+
+        if (hasAdminRole) {
+          setAuthAdmin(data.user);
+        } else {
+          localStorage.removeItem("authTokenAdmin");
+          window.location.href = "/Admin";
+        }
+      })
+      .catch(() => {
+        localStorage.removeItem("authTokenAdmin");
+        window.location.href = "/Admin";
+      });
+  }, []);
 
   const adminSignOut = () => {
     localStorage.removeItem("authTokenAdmin");
@@ -74,7 +67,9 @@ export const ManordHeader = () => {
             <Link
               href="/Manord/ConfirmedOrder"
               className={`${Styles.nav_link} ${
-                pathname === "/Manord/ConfirmedOrder" ? Styles.nav_link_active : ""
+                pathname === "/Manord/ConfirmedOrder"
+                  ? Styles.nav_link_active
+                  : ""
               }`}
             >
               Принятые заказы
