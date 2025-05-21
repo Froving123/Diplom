@@ -14,7 +14,6 @@ export const ContmanHeader = () => {
     const token = localStorage.getItem("authTokenAdmin");
   
     if (!token) {
-      setIsLoading(false);
       return;
     }
   
@@ -29,21 +28,20 @@ export const ContmanHeader = () => {
         const hasAdminRole =
           data.success &&
           Array.isArray(data.user.roles) &&
-          data.user.roles.some((role) => role.id === 1); // проверка на нужную роль
+          data.user.roles.some((role) => role.id === 1);
   
         if (hasAdminRole) {
           setAuthAdmin(data.user);
         } else {
           localStorage.removeItem("authTokenAdmin");
+          window.location.href = "/Admin";
         }
       })
       .catch(() => {
         localStorage.removeItem("authTokenAdmin");
-      })
-      .finally(() => {
-        setIsLoading(false);
+        window.location.href = "/Admin";
       });
-  }, []);
+  }, []);  
   
   const adminSignOut = () => {
     localStorage.removeItem("authTokenAdmin");
