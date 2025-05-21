@@ -29,7 +29,7 @@ export const AdminAuthForm = (props) => {
 
         const result = await response.json();
         if (response.ok) {
-          setAvailableRole(result.role);
+          setAvailableRole(result.roles);
         } else {
           setError(result.message || "Ошибка при получении всех должностей");
           setTimeout(() => setError(""), 3000);
