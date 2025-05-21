@@ -12,32 +12,39 @@ export const ContmanHeader = () => {
 
   useEffect(() => {
     const token = localStorage.getItem("authTokenAdmin");
-
-    if (token) {
-      fetch("/api/admin/profile", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success && data.user.role.toString() === "1") {
-            setAuthAdmin(data.user);
-          } else {
-            localStorage.removeItem("authTokenAdmin");
-            window.location.href = "/Admin";
-          }
-        })
-        .catch(() => {
-          localStorage.removeItem("authTokenAdmin");
-          window.location.href = "/Admin";
-        });
-    } else {
-      window.location.href = "/Admin";
+  
+    if (!token) {
+      setIsLoading(false);
+      return;
     }
+  
+    fetch("/api/admin/profile", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const hasAdminRole =
+          data.success &&
+          Array.isArray(data.user.roles) &&
+          data.user.roles.some((role) => role.id === 1); // проверка на нужную роль
+  
+        if (hasAdminRole) {
+          setAuthAdmin(data.user);
+        } else {
+          localStorage.removeItem("authTokenAdmin");
+        }
+      })
+      .catch(() => {
+        localStorage.removeItem("authTokenAdmin");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
-
+  
   const adminSignOut = () => {
     localStorage.removeItem("authTokenAdmin");
     setAuthAdmin(null);
