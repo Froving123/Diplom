@@ -10,7 +10,7 @@ export const AdminAuthForm = (props) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [copyPassword, setCopyPassword] = useState("");
-  const [roles, setRoles] = useState("");
+  const [role, setRole] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
 
@@ -29,7 +29,7 @@ export const AdminAuthForm = (props) => {
 
         const result = await response.json();
         if (response.ok) {
-          setAvailableRole(result.roles);
+          setAvailableRole(result.role);
         } else {
           setError(result.message || "Ошибка при получении всех должностей");
           setTimeout(() => setError(""), 3000);
@@ -114,7 +114,7 @@ export const AdminAuthForm = (props) => {
 
         // Очищаем формы
         setError("");
-        setEmail("");
+        setLogin("");
         setCopyPassword("");
         setPassword("");
         alert("Сотрудник успешно создал пароль");
@@ -133,7 +133,7 @@ export const AdminAuthForm = (props) => {
   const logIn = (e) => {
     e.preventDefault();
 
-    if (!email || !password || !roles) {
+    if (!email || !password || !role) {
       setError("Пожалуйста, заполните все поля");
       setTimeout(() => {
         setError("");
@@ -165,7 +165,7 @@ export const AdminAuthForm = (props) => {
       body: JSON.stringify({
         email,
         password,
-        roles, // добавлено поле role
+        role, // добавлено поле role
       }),
     })
       .then((response) => response.json())
@@ -189,18 +189,18 @@ export const AdminAuthForm = (props) => {
         setEmail("");
         setPassword("");
         setCopyPassword("");
-        setRoles("");
+        setRole("");
         alert("Сотрудник успешно авторизован");
         props.close();
 
         // Перенаправляем пользователя на нужную страницу в зависимости от роли
-        if (roles.toString() === "1") {
+        if (role.toString() === "1") {
           router.push("/Contman/Menu");
-        } else if (roles.toString() === "2") {
+        } else if (role.toString() === "2") {
           router.push("/Manord/NewOrder");
-        } else if (roles.toString() === "3") {
+        } else if (role.toString() === "3") {
           router.push("/Cour/ReadyOrder");
-        } else if (roles.toString() === "4") {
+        } else if (role.toString() === "4") {
           router.push("/Reservman/Reserv");
         }
       })
@@ -217,7 +217,7 @@ export const AdminAuthForm = (props) => {
     setEmail("");
     setPassword("");
     setCopyPassword("");
-    setRoles("");
+    setRole("");
   };
 
   return (
@@ -252,13 +252,13 @@ export const AdminAuthForm = (props) => {
               </span>
               <select
                 className={Styles["form__field-input"]}
-                value={roles}
-                onChange={(e) => setRoles(e.target.value)}
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
               >
                 <option value="">Выберите должность</option>
-                {availableRole.map((roles) => (
-                  <option key={roles.ID} value={roles.ID}>
-                    {roles.Наименование}
+                {availableRole.map((role) => (
+                  <option key={role.ID} value={role.ID}>
+                    {role.Наименование}
                   </option>
                 ))}
               </select>
